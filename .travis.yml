@@ -31,7 +31,7 @@ script:
 # run tests omiting slow attributed tests.
 - nosetests --with-coverage --cover-inclusive --cover-package=msmtools
 # run pylint (non fatal exit and show only errors)
-- pylint -j 4 --rcfile=.pylintrc msmtools || true
+# - pylint -j 4 --rcfile=.pylintrc msmtools || true
 
 after_success:
 - coveralls
