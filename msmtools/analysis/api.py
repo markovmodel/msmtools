@@ -26,7 +26,7 @@
 r"""
 
 =======================
-PyEMMA MSM Analysis API
+ Analysis API
 =======================
 
 """

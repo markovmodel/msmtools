@@ -26,7 +26,7 @@
 
 r"""
 =========================
-PyEMMA MSM Estimation API
+ Estimation API
 =========================
 
 """
