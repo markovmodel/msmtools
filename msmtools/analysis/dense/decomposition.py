@@ -38,7 +38,7 @@ import numbers
 import warnings
 
 from scipy.linalg import eig, eigh, eigvals, eigvalsh, solve, lu_factor, lu_solve
-from msmtools.tools.exceptions import SpectralWarning, ImaginaryEigenValueWarning
+from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
 
 
 def backward_iteration(A, mu, x0, tol=1e-14, maxiter=100):

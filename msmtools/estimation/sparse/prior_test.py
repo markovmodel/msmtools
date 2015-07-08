@@ -31,13 +31,13 @@ r"""Unit test for the prior module
 import unittest
 
 import numpy as np
-from msmtools.tools.numeric import assert_allclose
+from msmtools.util.numeric import assert_allclose
 
 from scipy.sparse import csr_matrix
 
 import prior
 
-from msmtools.tools.numeric import allclose_sparse
+from msmtools.util.numeric import allclose_sparse
 
 
 class TestPrior(unittest.TestCase):

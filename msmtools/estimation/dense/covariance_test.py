@@ -31,7 +31,7 @@ r"""Unit tests for the covariance module
 import unittest
 
 import numpy as np
-from msmtools.tools.numeric import assert_allclose
+from msmtools.util.numeric import assert_allclose
 
 from covariance import tmatrix_cov, dirichlet_covariance, error_perturbation
 

@@ -30,7 +30,7 @@ r"""
 =================
 
 """
-from msmtools.tools.annotators import shortcut
+from msmtools.util.annotators import shortcut
 
 from scipy.sparse import issparse
 from scipy.sparse.sputils import isdense

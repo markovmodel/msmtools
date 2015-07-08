@@ -36,7 +36,7 @@ against numerical differentiation results.
 
 import unittest
 import numpy as np
-from msmtools.tools.numeric import assert_allclose
+from msmtools.util.numeric import assert_allclose
 
 from sensitivity import timescale_sensitivity, eigenvalue_sensitivity, mfpt_sensitivity, \
     forward_committor_sensitivity, backward_committor_sensitivity, eigenvector_sensitivity, \

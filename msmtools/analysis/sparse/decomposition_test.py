@@ -31,7 +31,7 @@ r"""Test package for the decomposition module
 import unittest
 
 import numpy as np
-from msmtools.tools.numeric import assert_allclose
+from msmtools.util.numeric import assert_allclose
 
 from scipy.linalg import eig, eigvals
 

@@ -43,7 +43,10 @@ import warnings
 from functools import wraps
 import inspect
 
-__all__ = ['doc_inherit']
+__all__ = ['doc_inherit',
+           'deprecated',
+           'shortcut',
+           ]
 
 
 class DocInherit(object):
@@ -155,8 +158,6 @@ def shortcut(name):
     # extract callers frame
     frame = inspect.stack()[1][0]
     # get caller module of decorator
-    if name == 'statdist':
-        print "hi there"
 
     def wrap(f):
         # docstrings are also being copied

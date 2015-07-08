@@ -30,7 +30,7 @@ r"""Unit test for the ReactiveFlux object
 """
 import unittest
 import numpy as np
-from msmtools.tools.numeric import assert_allclose
+from msmtools.util.numeric import assert_allclose
 
 import api as msmapi
 import msmtools.analysis as msmana

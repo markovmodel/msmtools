@@ -26,7 +26,7 @@
 import unittest
 
 import numpy as np
-from msmtools.tools.numeric import assert_allclose
+from msmtools.util.numeric import assert_allclose
 import scipy.sparse
 
 import likelihood

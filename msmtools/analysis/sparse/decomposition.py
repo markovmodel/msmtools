@@ -41,7 +41,7 @@ from scipy.sparse.linalg import factorized
 
 import warnings
 
-from msmtools.tools.exceptions import ImaginaryEigenValueWarning, SpectralWarning
+from msmtools.util.exceptions import ImaginaryEigenValueWarning, SpectralWarning
 
 
 def backward_iteration(A, mu, x0, tol=1e-15, maxiter=100):

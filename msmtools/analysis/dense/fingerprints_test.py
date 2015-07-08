@@ -32,7 +32,7 @@ r"""Unit test for the fingerprint module
 import unittest
 
 import numpy as np
-from msmtools.tools.numeric import assert_allclose
+from msmtools.util.numeric import assert_allclose
 
 from decomposition import rdl_decomposition, timescales
 
