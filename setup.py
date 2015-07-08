@@ -98,8 +98,6 @@ def extensions():
     from setup_util import detect_openmp
     openmp_enabled, needs_gomp = detect_openmp()
 
-    import mdtraj
-
     exts = []
 
     mle_trev_given_pi_dense_module = \
@@ -191,18 +189,6 @@ def get_cmdclass():
     return vervsioneer_cmds
 
 
-def script_entry_points():
-    import pkgutil
-    path = os.path.join('pyemma', 'cli')
-    names = [name for _, name, _ in pkgutil.iter_modules([path])]
-    s = ['%s = pyemma.cli.%s:main' % (script, script) for script in names]
-    entry_points = {
-        'console_scripts': s
-    }
-
-    return entry_points
-
-
 metadata = dict(
     name='msmtools',
     maintainer='Martin K. Scherer',
@@ -219,14 +205,13 @@ metadata = dict(
     keywords='Markov State Model Algorithms',
     # packages are found if their folder contains an __init__.py,
     packages=find_packages(),
-    entry_points=script_entry_points(),
     cmdclass=get_cmdclass(),
     tests_require=['nose'],
     test_suite='nose.collector',
     # runtime dependencies
     install_requires=['numpy>=1.6.0',
                       'scipy>=0.11',
-                     ],
+                      ],
 
     zip_safe=False,
 )
@@ -244,9 +229,8 @@ else:
     # setuptools>=2.2 can handle setup_requires
     metadata['setup_requires'] = ['numpy>=1.6.0',
                                   'setuptools>3.6',
-                                  'mdtraj>=1.2.0',
                                   'nose',
-                                 ]
+                                  ]
 
     # when on git, we require cython
     if os.path.exists('.git'):
