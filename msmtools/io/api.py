@@ -30,16 +30,15 @@ PyEMMA MSM io API
 =================
 
 """
-
-__docformat__ = "restructuredtext en"
-
-from msmtools.util.annotators import shortcut
+from msmtools.tools.annotators import shortcut
 
 from scipy.sparse import issparse
 from scipy.sparse.sputils import isdense
 
-import msmtools.util.discrete_trajectories as trajectory
+from msmtools.io import discrete_trajectory
 import matrix.matrix as matrix
+
+__docformat__ = "restructuredtext en"
 
 __author__ = "Benjamin Trendelkamp-Schroer, Martin Scherer, Frank Noe"
 __copyright__ = "Copyright 2014, Computational Molecular Biology Group, FU-Berlin"
@@ -120,7 +119,7 @@ def read_discrete_trajectory(filename):
     array([0, 1, 0, 0, 1, 1, 0])
     
     """
-    return trajectory.read_discrete_trajectory(filename)
+    return discrete_trajectory.read_discrete_trajectory(filename)
 
 
 @shortcut('write_dtraj')
@@ -170,7 +169,7 @@ def write_discrete_trajectory(filename, dtraj):
     array([0, 1, 0, 0, 1, 1, 0])    
     
     """
-    trajectory.write_discrete_trajectory(filename, dtraj)
+    discrete_trajectory.write_discrete_trajectory(filename, dtraj)
 
 
 ################################################################################
@@ -227,7 +226,7 @@ def load_discrete_trajectory(filename):
     array([0, 1, 0, 0, 1, 1, 0])       
     
     """
-    return trajectory.load_discrete_trajectory(filename)
+    return discrete_trajectory.load_discrete_trajectory(filename)
 
 
 @shortcut('save_dtraj')
@@ -277,7 +276,7 @@ def save_discrete_trajectory(filename, dtraj):
     array([0, 1, 0, 0, 1, 1, 0])       
     
     """
-    trajectory.save_discrete_trajectory(filename, dtraj)
+    discrete_trajectory.save_discrete_trajectory(filename, dtraj)
 
 
 ################################################################################

@@ -56,10 +56,10 @@ import dense.covariance
 import dense.mle_trev_given_pi
 import dense.tmatrix_sampler
 
-from msmtools.util.annotators import shortcut
-from msmtools.util.discrete_trajectories import count_states as _count_states
-from msmtools.util.discrete_trajectories import number_of_states as _number_of_states
-from msmtools.util.types import ensure_dtraj_list as _ensure_dtraj_list
+from msmtools.tools.annotators import shortcut
+from msmtools.io.discrete_trajectory import count_states as _count_states
+from msmtools.io.discrete_trajectory import number_of_states as _number_of_states
+from msmtools.tools.types import ensure_dtraj_list as _ensure_dtraj_list
 
 __author__ = "Benjamin Trendelkamp-Schroer, Martin Scherer, Frank Noe"
 __copyright__ = "Copyright 2014, Computational Molecular Biology Group, FU-Berlin"

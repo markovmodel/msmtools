@@ -33,11 +33,11 @@ import unittest
 import warnings
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from msmtools.tools.numeric import assert_allclose
 
 from scipy.linalg import eig, eigvals
 
-from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
+from msmtools.tools.exceptions import SpectralWarning, ImaginaryEigenValueWarning
 from birth_death_chain import BirthDeathChain
 
 from decomposition import stationary_distribution_from_eigenvector

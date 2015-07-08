@@ -1,4 +1,3 @@
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -22,36 +21,36 @@
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+'''
+Created on May 26, 2014
 
-"""Unit test for the reaction pathway decomposition
-
-.. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
-
-"""
-import unittest
-import numpy as np
-
-from msmtools.util.numeric import assert_allclose
-
-from mapping import from_lcc_labels, to_lcc_labels
+@author: marscher
+'''
 
 
-class TestLccLabels(unittest.TestCase):
+class SpectralWarning(RuntimeWarning):
+    pass
 
-    def setUp(self):
-        self.lcc = np.array([1, 3, 5])
-        self.ix = np.arange(self.lcc.shape[0])
 
-        self.states_in_lcc = np.array([0, 2, 0, 0, 1])
-        self.states = np.array([1, 5, 1, 1, 3])
+class ImaginaryEigenValueWarning(SpectralWarning):
+    pass
 
-    def test_from_lcc_labels(self):
-        states_in_lcc = to_lcc_labels(self.states, self.lcc)
-        assert_allclose(states_in_lcc, self.states_in_lcc)
 
-    def test_to_lcc_labels(self):
-        states = from_lcc_labels(self.states_in_lcc, self.lcc)
-        assert_allclose(states, self.states)
+class PrecisionWarning(RuntimeWarning):
+    r"""
+    This warning indicates that some operation in your code leads
+    to a conversion of datatypes, which involves a loss/gain in
+    precision.
 
-if __name__ == "__main__":
-    unittest.main()
+    """
+    pass
+
+
+class NotConvergedWarning(RuntimeWarning):
+    r"""
+    This warning indicates that some iterative procdure has not
+    converged or reached the maximum number of iterations implemented
+    as a safe guard to prevent arbitrary many iterations in loops with
+    a conditional termination criterion.
+
+    """

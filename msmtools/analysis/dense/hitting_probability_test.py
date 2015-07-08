@@ -31,7 +31,7 @@ r"""Unit test, dense implementation of hitting probabilities
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from msmtools.tools.numeric import assert_allclose
 
 from hitting_probability import hitting_probability
 

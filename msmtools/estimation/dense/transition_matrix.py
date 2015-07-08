@@ -31,7 +31,7 @@ Created on Jan 13, 2014
 
 import numpy as np
 import warnings
-import msmtools.util.exceptions
+import msmtools.tools.exceptions
 
 
 def transition_matrix_non_reversible(C):

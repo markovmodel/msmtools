@@ -30,7 +30,7 @@ Created on Jun 3, 2014
 '''
 import unittest
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from msmtools.tools.numeric import assert_allclose
 
 from committor_test import BirthDeathChain
 

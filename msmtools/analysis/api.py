@@ -39,10 +39,10 @@ import numpy as _np
 from scipy.sparse import issparse as _issparse
 from scipy.sparse import csr_matrix as _csr_matrix
 
-from msmtools.util.annotators import shortcut
+from msmtools.tools.annotators import shortcut
 
 # type-checking
-from msmtools.util import types as _types
+from msmtools.tools import types as _types
 
 import dense.assessment
 import dense.committor

@@ -32,7 +32,7 @@ r"""Unit tests for the mean first passage time module
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from msmtools.tools.numeric import assert_allclose
 import scipy.sparse
 
 from mean_first_passage_time import mfpt, mfpt_between_sets

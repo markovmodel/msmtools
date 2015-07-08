@@ -25,7 +25,7 @@
 
 import unittest
 
-from msmtools.util.numeric import assert_allclose
+from msmtools.tools.numeric import assert_allclose
 import scipy.sparse
 
 import transition_matrix

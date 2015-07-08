@@ -31,7 +31,7 @@ r"""This module provides unit tests for the expectations module
 
 import unittest
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from msmtools.tools.numeric import assert_allclose
 from scipy.linalg import eig
 
 import expectations

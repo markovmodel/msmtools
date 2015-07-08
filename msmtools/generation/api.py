@@ -31,7 +31,7 @@ Created on Jan 8, 2014
 import math
 import numpy as np
 import scipy.stats
-import msmtools.util.types as types
+import msmtools.tools.types as types
 
 __all__ = ['transition_matrix_metropolis_1d',
            'generate_traj',
