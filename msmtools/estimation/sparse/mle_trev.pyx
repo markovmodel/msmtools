@@ -8,7 +8,7 @@ import numpy
 import scipy
 import scipy.sparse
 cimport numpy
-import pyemma.msm.estimation
+import msmtools.estimation
 import warnings
 import msmtools.tools.exceptions
 
@@ -20,7 +20,7 @@ def mle_trev(C, double maxerr = 1.0E-12, int maxiter = 1000000):
   assert maxerr > 0, 'maxerr must be positive'
   assert maxiter > 0, 'maxiter must be positive'
   assert C.shape[0] == C.shape[1], 'C must be a square matrix.'
-  assert pyemma.msm.estimation.is_connected(C, directed=True), 'C must be strongly connected'
+  assert msmtools.estimation.is_connected(C, directed=True), 'C must be strongly connected'
   
   C_sum_py = C.sum(axis=1).A1
   cdef numpy.ndarray[double, ndim=1, mode="c"] C_sum = C_sum_py.astype(numpy.float64, order='C', copy=False)

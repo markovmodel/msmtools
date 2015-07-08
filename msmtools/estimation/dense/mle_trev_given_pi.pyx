@@ -6,7 +6,7 @@ r"""Cython implementation of iterative likelihood maximization.
 
 import numpy
 cimport numpy
-import pyemma.msm.estimation
+import msmtools.estimation
 import warnings
 import msmtools.util.exceptions
 
@@ -27,7 +27,7 @@ def mle_trev_given_pi(
   assert eps >= 0, 'eps must be non-negative'
   if eps>0:
      warnings.warn('A regularization parameter value eps!=0 is not necessary for convergence. The parameter will be removed in future versions.', DeprecationWarning)
-  assert pyemma.msm.estimation.is_connected(C, directed=False), 'C must be (weakly) connected'
+  assert msmtools.estimation.is_connected(C, directed=False), 'C must be (weakly) connected'
 
   cdef numpy.ndarray[double, ndim=2, mode="c"] c_C = C.astype(numpy.float64, order='C', copy=False)
   cdef numpy.ndarray[double, ndim=1, mode="c"] c_mu = mu.astype(numpy.float64, order='C', copy=False)
