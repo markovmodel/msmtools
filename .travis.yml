@@ -1,0 +1,58 @@
+language: python
+python:
+ - 2.7
+
+sudo: false
+
+env:
+  global:
+    - PATH=$HOME/miniconda/bin:$HOME/miniconda/envs/ci/bin/:$PATH
+    - common_py_deps="pylint nose python-coveralls cython"
+    - doc_deps="sphinx==1.2.3"
+    - deps="scipy numpy"
+  matrix:
+    secure: "byk9bmnGvP3qDfpYvPKX4909KeS6pJQtfW+GkSsuHy4vnp++gu2IsXC/CJeCB0r7hpoRp7Z+XlOtYmJLvb585LZmGaqIs5LKs1DimJniAg5anpywOnaXodspeFcz6UWtLlIAQQS3SvP9SXvvrlIiF8IwXqWfEewtoGbpiCj3dEo="
+
+before_install:
+# before we invoke setup.py, install $common_deps with conda and let the rest
+# (currently only pystallone) be resolved by setuptools.
+- deactivate # travis python venv
+- tools/ci/travis/install_miniconda.sh
+- source activate ci
+- conda list
+# use a headless plotting backend for matplotlib
+- mkdir -p ~/.config/matplotlib/
+- touch ~/.config/matplotlib/matplotlibrc
+- "echo 'backend: Agg' >> ~/.config/matplotlib/matplotlibrc"
+install:
+- python setup.py develop 
+
+script:
+# run tests omiting slow attributed tests.
+- nosetests --with-coverage --cover-inclusive --cover-package=msmtools
+# run pylint (non fatal exit and show only errors)
+- pylint -j 4 --rcfile=.pylintrc msmtools || true
+
+after_success:
+- coveralls
+- tools/ci/travis/make_docs.sh
+
+deploy:
+  edge: true # testing bleeding edge git deployment code
+  provider: pypi
+  distributions: "sdist"
+  skip_cleanup: true
+# docs_dir is ignored by travis (despite the issue filed against this feature, maybe its not yet active?
+#  docs_dir: doc/build/html
+# TODO: security tokens are encrypted on repository base (reencrypt when moving repo to cmb organisation) 
+  user:
+    secure: "Z6h333HK9R9b4vwYzk5N54IeMJ8vmd4V+vXRTLNnOCCqVkWcocWY9HBX2s9jk3TkSJbg9eL/EVzCv7HVGY1A80czNN160Vj3z5J51WEfHk4hhC7GDSXEU1CGRdp3j+79/WeaioOstq3y4Mxy6v1Afn3k7gAY7ui+yYbSEbRIG0A="
+  password:
+    secure: "F3I26Mx0vbiIrSf/MsE8OGNV4xr82Wx4AWItHcXEq+pwBreNyCg/KVQInJ90lSh2RmvGAMmzw6rQ4EFaHYrFuAekilM/4tkRBGF/pSrEG7KSL2ysyoJIqTRncJCs1USyNYWodmXjRTQjLyJKoZufpNZ4u6Da1pVQDZqbsL0LtZo="
+  on:
+    python: 2.7 # only upload docs and sdist for py27
+    tags: true
+    # TODO: should only deploy for tagged master release as soon as stable
+    # temporary workaround for travis issue #1675
+    all_branches: true
+
