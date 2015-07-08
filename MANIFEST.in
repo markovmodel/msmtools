@@ -1,2 +1,23 @@
 include versioneer.py
 include msmtools/_version.py
+
+
+recursive-include msmtools tests/* tests/data/*                                   
+recursive-include msmtools testfiles/
+
+
+# setup stuff                                                                   
+include setup_util.py
+
+# sources of extensions (incl. cython)                                          
+include msmtools/estimation/dense/*.h                                         
+include msmtools/estimation/sparse/*.h                                        
+include msmtools/estimation/dense/*.c
+include msmtools/estimation/sparse/*.c
+
+#include cython files                                                           
+recursive-include msmtools *.pyx
+
+
+include README*
+include LICENSE*
