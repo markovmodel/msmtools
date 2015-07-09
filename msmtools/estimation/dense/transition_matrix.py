@@ -62,8 +62,8 @@ def __initX(C):
     """
     Computes an initial guess for a reversible correlation matrix
     """
-    from ..api import tmatrix
-    from ...analysis import statdist
+    from msmtools.estimation import tmatrix
+    from msmtools.analysis import statdist
 
     T = tmatrix(C)
     mu = statdist(T)
@@ -138,8 +138,8 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
         history of likelihood history. Has the length of the number of iterations needed. 
         Only returned if return_conv = True
     """
-    from ..api import is_connected
-    from ...estimation import log_likelihood
+    from msmtools.estimation import is_connected
+    from msmtools.estimation import log_likelihood
     # check input
     if (not is_connected(C)):
         ValueError('Count matrix is not fully connected. ' +
