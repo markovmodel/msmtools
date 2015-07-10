@@ -23,7 +23,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: noe
+@author: noe, trendelkampschroer
 '''
 import unittest
 import numpy as np
@@ -34,10 +34,14 @@ import msmtools.analysis as msmana
 class Test(unittest.TestCase):
 
     def setUp(self):
-        pass
+        """Safe random state"""
+        self.state = np.random.get_state()
+        """Set seed to enforce deterministic behavior"""
+        np.random.seed(42)
 
     def tearDown(self):
-        pass
+        """Reset state"""
+        np.random.set_state(self.state)
 
     def test_trajectory(self):
         P = np.array([[0.9,0.1],
