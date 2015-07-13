@@ -5,7 +5,12 @@ BASE_ENV=$TARGET/envs/ci
 
 function install_miniconda {
 	echo "installing miniconda"
-	wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O mc.sh -o /dev/null
+        if [[ $TRAVIS_PYTHON_VERSION == '3.4' ]]; then
+            fn="Miniconda3-latest-Linux-x86_64.sh"
+        elif [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then
+            fn="Miniconda-latest-Linux-x86_64.sh"
+        fi
+	wget http://repo.continuum.io/miniconda/$fn -O mc.sh -o /dev/null
 	bash mc.sh -b -f -p $TARGET
 }
 
