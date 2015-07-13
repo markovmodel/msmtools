@@ -29,6 +29,7 @@ r"""
 ===================
 
 """
+from __future__ import absolute_import
 
 __docformat__ = "restructuredtext en"
 
@@ -36,8 +37,8 @@ from scipy.sparse.base import issparse
 from scipy.sparse.sputils import isdense
 from scipy.sparse import csr_matrix
 
-import dense
-import sparse
+from . import dense
+from . import sparse
 
 __author__ = "Benjamin Trendelkamp-Schroer, Martin Scherer, Frank Noe"
 __copyright__ = "Copyright 2014, Computational Molecular Biology Group, FU-Berlin"
@@ -154,7 +155,7 @@ def tpt(T, A, B, mu=None, qminus=None, qplus=None, rate_matrix=False):
     netflux = to_netflux(grossflux)
 
     # construct flux object
-    from reactive_flux import ReactiveFlux
+    from .reactive_flux import ReactiveFlux
 
     F = ReactiveFlux(A, B, netflux, mu=mu, qminus=qminus, qplus=qplus, gross_flux=grossflux)
     # done

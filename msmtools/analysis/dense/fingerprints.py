@@ -30,11 +30,13 @@ dynamical fingerprints, expectations and correlations
 .. moduleauthor:: M.Scherer <m.scherer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+from six.moves import range
 
 import numpy as np
 
-from decomposition import rdl_decomposition, timescales_from_eigenvalues
-from stationary_vector import stationary_distribution_from_backward_iteration as statdist
+from .decomposition import rdl_decomposition, timescales_from_eigenvalues
+from .stationary_vector import stationary_distribution_from_backward_iteration as statdist
 
 ################################################################################
 # Fingerprints

@@ -28,19 +28,21 @@ r"""Unit test for the fingerprint module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import unittest
 
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-from decomposition import rdl_decomposition, timescales
+from .decomposition import rdl_decomposition, timescales
 
-from committor_test import BirthDeathChain
+from .committor_test import BirthDeathChain
 
-from fingerprints import fingerprint_correlation, fingerprint_relaxation, fingerprint
-from fingerprints import correlation_decomp, correlation_matvec, correlation
-from fingerprints import relaxation_decomp, relaxation_matvec, relaxation
+from .fingerprints import fingerprint_correlation, fingerprint_relaxation, fingerprint
+from .fingerprints import correlation_decomp, correlation_matvec, correlation
+from .fingerprints import relaxation_decomp, relaxation_matvec, relaxation
+from six.moves import range
 
 
 class TestFingerprint(unittest.TestCase):

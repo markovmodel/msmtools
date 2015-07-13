@@ -28,11 +28,12 @@ Created on 07.10.2013
 
 @author: marscher
 '''
+from __future__ import absolute_import
 import unittest
 import numpy as np
 
-import assessment
-from committor_test import BirthDeathChain
+from . import assessment
+from .committor_test import BirthDeathChain
 
 
 def create_rate_matrix():

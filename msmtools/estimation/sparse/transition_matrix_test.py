@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
@@ -28,7 +29,7 @@ import unittest
 from msmtools.util.numeric import assert_allclose
 import scipy.sparse
 
-import transition_matrix
+from . import transition_matrix
 
 """Unit tests for the transition_matrix module"""
 

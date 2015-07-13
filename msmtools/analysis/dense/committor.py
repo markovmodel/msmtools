@@ -29,6 +29,8 @@ backward comittors using dense linear algebra.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+from six.moves import range
 
 import numpy as np
 from scipy.linalg import solve

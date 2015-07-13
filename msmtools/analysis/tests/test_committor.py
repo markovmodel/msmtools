@@ -28,6 +28,7 @@ r"""Unit tests for the committor API-function
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import unittest
 import numpy as np
@@ -36,6 +37,7 @@ from msmtools.util.numeric import assert_allclose
 from msmtools.analysis import committor
 
 from birth_death_chain import BirthDeathChain
+from six.moves import range
 
 
 class TestCommittorDense(unittest.TestCase):
@@ -81,13 +83,13 @@ class TestCommittorSparse(unittest.TestCase):
 
     def test_forward_comittor(self):
         P = self.bdc.transition_matrix_sparse()
-        un = committor(P, range(10), range(90, 100), forward=True)
+        un = committor(P, list(range(10)), list(range(90, 100)), forward=True)
         u = self.bdc.committor_forward(9, 90)
         assert_allclose(un, u)
 
     def test_backward_comittor(self):
         P = self.bdc.transition_matrix_sparse()
-        un = committor(P, range(10), range(90, 100), forward=False)
+        un = committor(P, list(range(10)), list(range(90, 100)), forward=False)
         u = self.bdc.committor_backward(9, 90)
         assert_allclose(un, u)
 

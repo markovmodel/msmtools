@@ -1,4 +1,3 @@
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -87,11 +86,12 @@ Priors
 
 .. autosummary::
    :toctree: generated/
-   
+
    prior_neighbor
    prior_const
    prior_rev
 
 
 """
+from __future__ import absolute_import
 from .api import *

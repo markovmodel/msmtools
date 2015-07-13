@@ -28,10 +28,12 @@ Created on 29.11.2013
 
 .. moduleauthor:: marscher, noe
 '''
+from __future__ import absolute_import
 
 import numpy as np
 
-from decomposition import rdl_decomposition
+from .decomposition import rdl_decomposition
+from six.moves import range
 
 
 def time_correlation_by_diagonalization(P, pi, obs1, obs2=None, time=1, rdl=None):
@@ -108,17 +110,17 @@ def time_correlation_direct_by_mtx_vec_prod(P, mu, obs1, obs2=None, time=1, star
         # calculate difference properly!
         time_prev = start_values[0]
         t_diff = time - time_prev
-        r = xrange(t_diff)
+        r = range(t_diff)
     else:
         if time >= 2:
             P_i_obs = np.dot(P, np.dot(P, obs2))  # vector <P, <P, obs2> := P^2 * obs
-            r = xrange(time - 2)
+            r = range(time - 2)
         elif time == 1:
             P_i_obs = np.dot(P, obs2)  # P^1 = P*obs
-            r = xrange(0)
+            r = range(0)
         elif time == 0:  # P^0 = I => I*obs2 = obs2
             P_i_obs = obs2
-            r = xrange(0)
+            r = range(0)
 
     for k in r:  # since we already substituted started with 0
         P_i_obs = np.dot(P, P_i_obs)
@@ -172,11 +174,11 @@ def time_correlations_direct(P, pi, obs1, obs2=None, times=[1]):
         rdl = (R, D, L)
 
     if use_diagonalization:
-        for i in xrange(n_t):
+        for i in range(n_t):
             f[i] = time_correlation_by_diagonalization(P, pi, obs1, obs2, times[i], rdl)
     else:
         start_values = None
-        for i in xrange(n_t):
+        for i in range(n_t):
             f[i], start_values = \
                 time_correlation_direct_by_mtx_vec_prod(P, pi, obs1, obs2,
                                                         times[i], start_values, True)
@@ -219,17 +221,17 @@ def time_relaxation_direct_by_mtx_vec_prod(P, p0, obs, time=1, start_values=None
         pk_i = start_values[1]
         time_prev = start_values[0]
         t_diff = time - time_prev
-        r = xrange(t_diff)
+        r = range(t_diff)
     else:
         if time >= 2:
             pk_i = np.dot(np.dot(p0, P), P)  # pk_2
-            r = xrange(time - 2)
+            r = range(time - 2)
         elif time == 1:
             pk_i = np.dot(p0, P)  # propagate once
-            r = xrange(0)
+            r = range(0)
         elif time == 0:  # P^0 = I => p0*I = p0
             pk_i = p0
-            r = xrange(0)
+            r = range(0)
 
     for k in r:  # perform the rest of the propagations p0 P^t_diff
         pk_i = np.dot(pk_i, P)
@@ -296,10 +298,10 @@ def time_relaxations_direct(P, p0, obs, times=[1]):
     f = np.empty(n_t, dtype=D.dtype)
 
     if use_diagonalization:
-        for i in xrange(n_t):
+        for i in range(n_t):
             f[i] = time_relaxation_direct_by_diagonalization(P, p0, obs, times[i], rdl)
     else:
         start_values = None
-        for i in xrange(n_t):
+        for i in range(n_t):
             f[i], start_values = time_relaxation_direct_by_mtx_vec_prod(P, p0, obs, times[i], start_values, True)
     return f

@@ -28,9 +28,11 @@ Created on 22.11.2013
 
 @author: Jan-Hendrik Prinz
 '''
+from __future__ import absolute_import
+from six.moves import range
 
 import numpy
-from stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
+from .stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
 
 
 # TODO:make faster. So far not effectively programmed

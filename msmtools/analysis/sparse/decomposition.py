@@ -31,6 +31,8 @@ Matrices are represented by scipy.sparse matrices throughout this module.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+
 import numpy as np
 import scipy.sparse.linalg
 import warnings
@@ -38,8 +40,8 @@ import warnings
 from scipy.sparse import diags
 
 from msmtools.util.exceptions import ImaginaryEigenValueWarning, SpectralWarning
-from stationary_vector import stationary_distribution_from_backward_iteration
-from assessment import is_reversible
+from .stationary_vector import stationary_distribution_from_backward_iteration
+from .assessment import is_reversible
 
 def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
     r"""Compute the eigenvalues of a sparse transition matrix.

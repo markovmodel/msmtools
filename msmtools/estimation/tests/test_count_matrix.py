@@ -24,6 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Unit tests for the count_matrix module"""
+from __future__ import absolute_import
 
 import unittest
 

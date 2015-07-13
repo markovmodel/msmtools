@@ -28,12 +28,13 @@ r"""Unit tests for the covariance module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import unittest
 
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-from covariance import tmatrix_cov, dirichlet_covariance, error_perturbation
+from .covariance import tmatrix_cov, dirichlet_covariance, error_perturbation
 
 
 class TestCovariance(unittest.TestCase):

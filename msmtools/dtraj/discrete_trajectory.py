@@ -30,11 +30,13 @@ We store them either as single column ascii files or as ndarrays of shape (n,) i
 .. moduleauthor:: F. Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import numpy as np
 
 from msmtools.util.annotators import shortcut
 from msmtools.util.types import ensure_dtraj_list as _ensure_dtraj_list
+from six.moves import range
 
 
 ################################################################################
@@ -242,7 +244,7 @@ def index_states(dtrajs, subset = None):
     # select subset unless given
     n = number_of_states(dtrajs)
     if subset is None:
-        subset = range(n)
+        subset = list(range(n))
     else:
         if np.max(subset) >= n:
             raise ValueError('Selected subset is not a subset of the states in dtrajs.')
@@ -254,7 +256,7 @@ def index_states(dtrajs, subset = None):
     is_requested[subset] = True
     # efficient access to requested state indexes
     full2states = np.zeros((n), dtype=int)
-    full2states[subset] = range(len(subset))
+    full2states[subset] = list(range(len(subset)))
     # initialize results
     res    = np.ndarray((len(subset)), dtype=object)
     counts = np.zeros((len(subset)), dtype=int)
@@ -336,7 +338,7 @@ def sample_indexes_by_state(indexes, nsample, subset=None, replace=True):
     n = len(indexes)
     # define set of states to work on
     if subset is None:
-        subset = range(n)
+        subset = list(range(n))
 
     # list of states
     res = np.ndarray((len(subset)), dtype=object)

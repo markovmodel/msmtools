@@ -30,6 +30,8 @@ r"""
 =========================
 
 """
+from __future__ import absolute_import
+from six.moves import range
 
 __docformat__ = "restructuredtext en"
 
@@ -41,20 +43,8 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import coo_matrix
 from scipy.sparse import issparse
 from scipy.sparse.sputils import isdense
-
-import sparse.count_matrix
-import sparse.connectivity
-import sparse.likelihood
-import sparse.transition_matrix
-import sparse.prior
-import sparse.mle_trev_given_pi
-import sparse.mle_trev
-
-import dense.bootstrapping
-import dense.transition_matrix
-import dense.covariance
-import dense.mle_trev_given_pi
-import dense.tmatrix_sampler
+from . import dense
+from . import sparse
 
 from msmtools.util.annotators import shortcut
 from msmtools.dtraj.discrete_trajectory import count_states as _count_states
@@ -1117,8 +1107,8 @@ def sample_tmatrix(C, nsample=1, reversible=False, mu=None, T0=None, return_stat
     if mu is not None:
         raise NotImplementedError('Transition matrix sampling with fixed stationary dist. is currently not implemented')
 
-    from dense.tmatrix_sampler import sample_nonrev
-    from dense.tmatrix_sampler import sample_rev
+    from .dense.tmatrix_sampler import sample_nonrev
+    from .dense.tmatrix_sampler import sample_rev
 
     if reversible:
         return sample_rev(C, nsample=nsample, return_statdist=return_statdist)
@@ -1200,8 +1190,8 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1):
         C = C.toarray()
 
     if reversible:
-        from dense.tmatrix_sampler import TransitionMatrixSamplerRev
+        from .dense.tmatrix_sampler import TransitionMatrixSamplerRev
         return TransitionMatrixSamplerRev(C=C, T_init=T0, nstep=nstep)
     else:
-        from dense.tmatrix_sampler import TransitionMatrixSamplerNonrev
+        from .dense.tmatrix_sampler import TransitionMatrixSamplerNonrev
         return TransitionMatrixSamplerNonrev(C=C)

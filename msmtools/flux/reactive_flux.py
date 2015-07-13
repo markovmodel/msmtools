@@ -29,8 +29,10 @@ analysis of Markov models.
 __moduleauthor__ = "Benjamin Trendelkamp-Schroer, Frank Noe"
 
 """
+from __future__ import absolute_import
 import numpy as np
-import api as tptapi
+from . import api as tptapi
+from six.moves import range
 
 __all__ = ['ReactiveFlux']
 
@@ -312,8 +314,8 @@ class ReactiveFlux(object):
             if len(s) > 0:
                 Bsets.append(s)
         tpt_sets = Asets + Isets + Bsets
-        Aindexes = range(0, len(Asets))
-        Bindexes = range(len(Asets) + len(Isets), len(tpt_sets))
+        Aindexes = list(range(0, len(Asets)))
+        Bindexes = list(range(len(Asets) + len(Isets), len(tpt_sets)))
 
         return (tpt_sets, Aindexes, Bindexes)
 

@@ -27,6 +27,7 @@ r"""Test package for the expectations module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import unittest
 
 import numpy as np
@@ -37,7 +38,7 @@ import scipy.sparse
 import scipy.sparse.linalg
 from scipy.sparse import diags
 
-import expectations
+from . import expectations
 
 
 def random_orthonormal_sparse_vectors(d, k):

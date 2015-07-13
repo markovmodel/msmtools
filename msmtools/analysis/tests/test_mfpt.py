@@ -29,6 +29,7 @@ r"""Unit tests for the mean first passage time API-functions
 .. moduleauthor:: C.Wehmeyer <christoph DOT wehmeyer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import unittest
 
 import numpy as np

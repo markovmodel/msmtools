@@ -38,6 +38,7 @@ class Bar(Foo):
 
 Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
 """
+from __future__ import absolute_import
 
 import warnings
 from functools import wraps
@@ -124,12 +125,12 @@ def deprecated(msg):
             warnings.warn_explicit(
                 user_msg,
                 category=DeprecationWarning,
-                filename=func.func_code.co_filename,
-                lineno=func.func_code.co_firstlineno + 1
+                filename=func.__code__.co_filename,
+                lineno=func.__code__.co_firstlineno + 1
             )
             return func(*args, **kwargs)
 
-        new_func.func_dict['__deprecated__'] = True
+        new_func.__dict__['__deprecated__'] = True
 
         # TODO: search docstring for notes section and append deprecation notice (with msg)
 
@@ -162,7 +163,7 @@ def shortcut(name):
     def wrap(f):
         # docstrings are also being copied
         frame.f_globals[name] = f
-        if frame.f_globals.has_key('__all__'):
+        if '__all__' in frame.f_globals:
             # add shortcut if it's not already there.
             if name not in frame.f_globals['__all__']:
                 frame.f_globals['__all__'].append(name)

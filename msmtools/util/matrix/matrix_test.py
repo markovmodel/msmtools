@@ -28,13 +28,14 @@ r"""Unit tests for matrix io implementations
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import os
 import unittest
 
 import numpy as np
 import scipy.sparse
 
-import matrix
+from . import matrix
 
 ################################################################################
 # util

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from six.moves import range
 
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.

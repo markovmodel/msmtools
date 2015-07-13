@@ -28,8 +28,10 @@ r"""This module implements the transition matrix covariance function
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import numpy as np
+from six.moves import range
 
 
 def tmatrix_cov(C, row=None):

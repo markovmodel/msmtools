@@ -25,6 +25,7 @@
 '''
 @author: noe, trendelkampschroer
 '''
+from __future__ import absolute_import
 import unittest
 import numpy as np
 import msmtools.generation as msmgen

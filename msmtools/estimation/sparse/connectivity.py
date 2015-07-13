@@ -28,10 +28,12 @@ r"""This module implements the connectivity functionality
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import numpy as np
 import scipy.sparse
 import scipy.sparse.csgraph as csgraph
+from six.moves import range
 
 
 def connected_sets(C, directed=True):

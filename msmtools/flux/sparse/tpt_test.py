@@ -28,6 +28,7 @@ r"""Unit test for the TPT-module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import unittest
 import numpy as np
@@ -35,7 +36,8 @@ from msmtools.util.numeric import assert_allclose
 
 from scipy.sparse import csr_matrix
 
-import tpt
+from . import tpt
+from six.moves import range
 
 
 class BirthDeathChain():
@@ -254,8 +256,8 @@ class BirthDeathChain():
             
         """
         flux = self.flux(a, b)
-        A = range(a + 1)
-        notA = range(a + 1, flux.shape[0])
+        A = list(range(a + 1))
+        notA = list(range(a + 1, flux.shape[0]))
         F = flux[A, :][:, notA].sum()
         return F
 

@@ -28,11 +28,14 @@ Created on Jul 23, 2014
 
 @author: noe
 '''
+from __future__ import absolute_import
 
 import numpy as np
 import scipy
 from scipy.stats import rv_discrete
 import random
+import six
+from six.moves import range
 
 
 # By FN
@@ -77,7 +80,7 @@ def bootstrap_trajectories(trajs, correlation_length):
     See API function for full documentation.
     """
     # if we have just one trajectory, put it into a one-element list:
-    if (isinstance(trajs[0], (int, long, float))):
+    if (isinstance(trajs[0], (int, int, float))):
         trajs = [trajs]
     ntraj = len(trajs)
 
@@ -93,7 +96,7 @@ def bootstrap_trajectories(trajs, correlation_length):
     for i in range(ntraj):
         w_trajs[i] = len(trajs[i])
     w_trajs /= np.sum(w_trajs)  # normalize to sum 1.0
-    distrib_trajs = rv_discrete(values=(range(ntraj), w_trajs))
+    distrib_trajs = rv_discrete(values=(list(range(ntraj)), w_trajs))
 
     # generate subtrajectories
     Laccum = 0
@@ -137,7 +140,7 @@ def bootstrap_counts(dtrajs, lagtime):
     See API function for full documentation.
     """
     # if we have just one trajectory, put it into a one-element list:
-    if (isinstance(dtrajs[0], (int, long))):
+    if (isinstance(dtrajs[0], six.integer_types)):
         dtrajs = [dtrajs]
     ntraj = len(dtrajs)
 
@@ -156,7 +159,7 @@ def bootstrap_counts(dtrajs, lagtime):
     # assigning trajectory sampling weights
     w_trajs = np.maximum(0.0, lengths - lagtime)
     w_trajs /= np.sum(w_trajs)  # normalize to sum 1.0
-    distrib_trajs = rv_discrete(values=(range(ntraj), w_trajs))
+    distrib_trajs = rv_discrete(values=(list(range(ntraj)), w_trajs))
     # sample number of counts from each trajectory
     n_from_traj = np.bincount(distrib_trajs.rvs(size=nsample), minlength=ntraj)
 

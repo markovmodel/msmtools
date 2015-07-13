@@ -33,6 +33,7 @@ This module provides unit tests for the sensitivity module
 Most tests consist of the comparison of some (randomly selected)
 sensitivity matrices against numerical differentiation results.
 '''
+from __future__ import absolute_import
 
 import unittest
 import numpy as np

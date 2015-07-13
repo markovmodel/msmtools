@@ -31,11 +31,12 @@ Created on 06.12.2013
 This module provides the unittest for the pcca module
 
 '''
+from __future__ import absolute_import
 import unittest
 import numpy as np
 
 from msmtools.util.numeric import assert_allclose
-from pcca import pcca
+from .pcca import pcca
 
 
 class TestPCCA(unittest.TestCase):
@@ -174,14 +175,14 @@ class TestPCCA(unittest.TestCase):
         Pc_ref = np.dot(ms1,ms2)
         # ---------------------------------------
 
-        from pcca import coarsegrain
+        from .pcca import coarsegrain
         Pc = coarsegrain(P, 3)
         # test against Marcus+Susanna's expression
         assert np.max(np.abs(Pc - Pc_ref)) < 1e-10
         # test mass conservation
         assert np.allclose(Pc.sum(axis=1), np.ones(m))
 
-        from pcca import PCCA
+        from .pcca import PCCA
         p = PCCA(P, m)
         # test against Marcus+Susanna's expression
         assert np.max(np.abs(p.coarse_grained_transition_matrix - Pc_ref)) < 1e-10

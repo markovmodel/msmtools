@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import print_function
+import six
+from six.moves import range
 
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
@@ -131,7 +135,7 @@ def is_float_array(l):
     return False
 
 def is_string(s):
-    return isinstance(s, basestring)
+    return isinstance(s, six.string_types)
 
 def is_iterable(I):
     return isinstance(I, collections.Iterable)
@@ -141,7 +145,7 @@ def is_list(S):
     return isinstance(S, (list, tuple))
 
 def is_list_of_string(S):
-    return isinstance(S, (list, tuple)) and (all(isinstance(s, basestring) for s in S))
+    return isinstance(S, (list, tuple)) and (all(isinstance(s, six.string_types) for s in S))
 
 def ensure_dtraj(dtraj):
     r"""Makes sure that dtraj is a discrete trajectory (array of int)
@@ -392,7 +396,7 @@ def assert_array(A, shape=None, uniform=None, ndim=None, size=None, dtype=None, 
         if isinstance(ex, AssertionError):
             raise ex
         else:  # other exception raised in the test code above
-            print 'Found exception: ',ex
+            print('Found exception: ',ex)
             raise AssertionError('Given argument is not an array of the expected shape or type:\n'+
                                  'arg = '+str(A)+'\ntype = '+str(type(A)))
 

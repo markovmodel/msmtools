@@ -24,6 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Unit tests for the count_matrix module"""
+from __future__ import absolute_import
 
 import unittest
 
@@ -34,10 +35,11 @@ import numpy as np
 from msmtools.util.numeric import assert_allclose
 import scipy.sparse
 
-from count_matrix import count_matrix, count_matrix_mult
-from count_matrix import count_matrix_bincount, count_matrix_bincount_mult
-from count_matrix import count_matrix_coo, count_matrix_coo_mult
-from count_matrix import make_square_coo_matrix, add_coo_matrix
+from .count_matrix import count_matrix, count_matrix_mult
+from .count_matrix import count_matrix_bincount, count_matrix_bincount_mult
+from .count_matrix import count_matrix_coo, count_matrix_coo_mult
+from .count_matrix import make_square_coo_matrix, add_coo_matrix
+from six.moves import range
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
 

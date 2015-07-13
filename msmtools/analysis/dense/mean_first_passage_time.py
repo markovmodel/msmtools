@@ -29,9 +29,10 @@ r"""Dense implementation of mean first passage time computation
 .. moduleauthor:: C.Wehmeyer <christoph DOT wehmeyer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import numpy as np
 from scipy.linalg import solve
-from stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
+from .stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
 
 
 def mfpt(T, target):

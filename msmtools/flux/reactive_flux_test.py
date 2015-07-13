@@ -28,11 +28,12 @@ r"""Unit test for the ReactiveFlux object
 .. moduleauthor:: F.Noe <frank  DOT noe AT fu-berlin DOT de> 
 
 """
+from __future__ import absolute_import
 import unittest
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-import api as msmapi
+from . import api as msmapi
 import msmtools.analysis as msmana
 
 
