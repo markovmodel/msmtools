@@ -26,8 +26,7 @@
 
 """ MSMTools
 
-desc lines
-
+MSMTools contains an API to estimate and analyze Markov state models.
 """
 # TODO: extend docstring
 DOCLINES = __doc__.split("\n")
@@ -39,7 +38,7 @@ import versioneer
 import warnings
 
 CLASSIFIERS = """\
-Development Status :: 4 - Beta
+Development Status :: 5 - Production/Stable 
 Environment :: Console
 Environment :: MacOS X
 Intended Audience :: Science/Research
