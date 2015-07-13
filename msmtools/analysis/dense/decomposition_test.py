@@ -1,4 +1,3 @@
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -40,8 +39,6 @@ from scipy.linalg import eig, eigvals
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
 from birth_death_chain import BirthDeathChain
 
-from decomposition import stationary_distribution_from_eigenvector
-from decomposition import stationary_distribution_from_backward_iteration
 from decomposition import eigenvalues, eigenvectors, rdl_decomposition
 from decomposition import timescales
 
@@ -62,18 +59,6 @@ class TestDecomposition(unittest.TestCase):
         q[self.dim / 2 + 1] = 0.001
 
         self.bdc = BirthDeathChain(q, p)
-
-    def test_statdist_decomposition(self):
-        P = self.bdc.transition_matrix()
-        mu = self.bdc.stationary_distribution()
-        mun = stationary_distribution_from_eigenvector(P)
-        assert_allclose(mu, mun)
-
-    def test_statdist_iteration(self):
-        P = self.bdc.transition_matrix()
-        mu = self.bdc.stationary_distribution()
-        mun = stationary_distribution_from_backward_iteration(P)
-        assert_allclose(mu, mun)
 
     def test_eigenvalues(self):
         P = self.bdc.transition_matrix()
@@ -138,11 +123,46 @@ class TestDecomposition(unittest.TestCase):
         Xn[di] = 0.0
         assert_allclose(Xn,0)
 
+    def test_eigenvectors_reversible(self):
+        P = self.bdc.transition_matrix()
+
+        # k==None
+        ev = eigvals(P)
+        ev = ev[np.argsort(np.abs(ev))[::-1]]
+        Dn = np.diag(ev)
+
+        # right eigenvectors
+        Rn = eigenvectors(P, reversible=True)
+        assert_allclose(np.dot(P,Rn),np.dot(Rn,Dn))
+        # left eigenvectors
+        Ln = eigenvectors(P, right=False, reversible=True)
+        assert_allclose(np.dot(Ln.T,P),np.dot(Dn,Ln.T))
+        # orthogonality
+        Xn = np.dot(Ln.T, Rn)
+        di = np.diag_indices(Xn.shape[0])
+        Xn[di] = 0.0
+        assert_allclose(Xn,0)
+
+        # k!=None
+        Dnk = Dn[:,0:self.k][0:self.k,:]
+        # right eigenvectors
+        Rn = eigenvectors(P, k=self.k, reversible=True)
+        assert_allclose(np.dot(P,Rn),np.dot(Rn,Dnk))
+        # left eigenvectors
+        Ln = eigenvectors(P, right=False, k=self.k, reversible=True)
+        assert_allclose(np.dot(Ln.T,P),np.dot(Dnk,Ln.T))
+        # orthogonality
+        Xn = np.dot(Ln.T, Rn)
+        di = np.diag_indices(self.k)
+        Xn[di] = 0.0
+        assert_allclose(Xn,0)
+        
+
     def test_rdl_decomposition(self):
         P = self.bdc.transition_matrix()
         mu = self.bdc.stationary_distribution()
 
-        """Non-reversible"""
+        """norm='standard'"""
 
         """k=None"""
         Rn, Dn, Ln = rdl_decomposition(P)
@@ -155,6 +175,9 @@ class TestDecomposition(unittest.TestCase):
         assert_allclose(Xn, np.eye(self.dim))
         """Probability vector"""
         assert_allclose(np.sum(Ln[0, :]), 1.0)
+        """Standard l2-normalization of right eigenvectors except dominant one"""
+        Yn = np.dot(Rn.T, Rn)
+        assert_allclose(np.diag(Yn)[1:], 1.0)
 
         """k is not None"""
         Rn, Dn, Ln = rdl_decomposition(P, k=self.k)
@@ -167,8 +190,11 @@ class TestDecomposition(unittest.TestCase):
         assert_allclose(Xn, np.eye(self.k))
         """Probability vector"""
         assert_allclose(np.sum(Ln[0, :]), 1.0)
+        """Standard l2-normalization of right eigenvectors except dominant one"""
+        Yn = np.dot(Rn.T, Rn)
+        assert_allclose(np.diag(Yn)[1:], 1.0)
 
-        """Reversible"""
+        """norm='reversible'"""
 
         """k=None"""
         Rn, Dn, Ln = rdl_decomposition(P, norm='reversible')
@@ -197,6 +223,103 @@ class TestDecomposition(unittest.TestCase):
         assert_allclose(np.sum(Ln[0, :]), 1.0)
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
+
+        """norm='auto'"""
+
+        """k=None"""
+        Rn, Dn, Ln = rdl_decomposition(P, norm='auto')
+        Xn = np.dot(Ln, Rn)
+        """Right-eigenvectors"""
+        assert_allclose(np.dot(P, Rn), np.dot(Rn, Dn))
+        """Left-eigenvectors"""
+        assert_allclose(np.dot(Ln, P), np.dot(Dn, Ln))
+        """Orthonormality"""
+        assert_allclose(Xn, np.eye(self.dim))
+        """Probability vector"""
+        assert_allclose(np.sum(Ln[0, :]), 1.0)
+        """Reversibility"""
+        assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
+
+        """k is not None"""
+        Rn, Dn, Ln = rdl_decomposition(P, norm='auto', k=self.k)
+        Xn = np.dot(Ln, Rn)
+        """Right-eigenvectors"""
+        assert_allclose(np.dot(P, Rn), np.dot(Rn, Dn))
+        """Left-eigenvectors"""
+        assert_allclose(np.dot(Ln, P), np.dot(Dn, Ln))
+        """Orthonormality"""
+        assert_allclose(Xn, np.eye(self.k))
+        """Probability vector"""
+        assert_allclose(np.sum(Ln[0, :]), 1.0)
+        """Reversibility"""
+        assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
+
+    def test_rdl_decomposition_rev(self):
+        P = self.bdc.transition_matrix()
+        mu = self.bdc.stationary_distribution()
+
+        """norm='standard'"""
+
+        """k=None"""
+        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='standard')
+        Xn = np.dot(Ln, Rn)
+        """Right-eigenvectors"""
+        assert_allclose(np.dot(P, Rn), np.dot(Rn, Dn))
+        """Left-eigenvectors"""
+        assert_allclose(np.dot(Ln, P), np.dot(Dn, Ln))
+        """Orthonormality"""
+        assert_allclose(Xn, np.eye(self.dim))
+        """Probability vector"""
+        assert_allclose(np.sum(Ln[0, :]), 1.0)
+        """Standard l2-normalization of right eigenvectors except dominant one"""
+        Yn = np.dot(Rn.T, Rn)
+        assert_allclose(np.diag(Yn)[1:], 1.0)
+
+        """k is not None"""
+        Rn, Dn, Ln = rdl_decomposition(P, k=self.k, reversible=True, norm='standard')
+        Xn = np.dot(Ln, Rn)
+        """Right-eigenvectors"""
+        assert_allclose(np.dot(P, Rn), np.dot(Rn, Dn))
+        """Left-eigenvectors"""
+        assert_allclose(np.dot(Ln, P), np.dot(Dn, Ln))
+        """Orthonormality"""
+        assert_allclose(Xn, np.eye(self.k))
+        """Probability vector"""
+        assert_allclose(np.sum(Ln[0, :]), 1.0)
+        """Standard l2-normalization of right eigenvectors except dominant one"""
+        Yn = np.dot(Rn.T, Rn)
+        assert_allclose(np.diag(Yn)[1:], 1.0)
+
+        """norm='reversible'"""
+        """k=None"""
+        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible')
+
+        Xn = np.dot(Ln, Rn)
+        """Right-eigenvectors"""
+        assert_allclose(np.dot(P, Rn), np.dot(Rn, Dn))
+        """Left-eigenvectors"""
+        assert_allclose(np.dot(Ln, P), np.dot(Dn, Ln))
+        """Orthonormality"""
+        assert_allclose(Xn, np.eye(self.dim))
+        """Probability vector"""
+        assert_allclose(np.sum(Ln[0, :]), 1.0)    
+        """Reversibility"""
+        assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
+
+        """k is not None"""
+        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible', k=self.k)
+        Xn = np.dot(Ln, Rn)
+        """Right-eigenvectors"""
+        assert_allclose(np.dot(P, Rn), np.dot(Rn, Dn))
+        """Left-eigenvectors"""
+        assert_allclose(np.dot(Ln, P), np.dot(Dn, Ln))
+        """Orthonormality"""
+        assert_allclose(Xn, np.eye(self.k))
+        """Probability vector"""
+        assert_allclose(np.sum(Ln[0, :]), 1.0)
+        """Reversibility"""
+        assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
+            
 
     def test_timescales(self):
         P = self.bdc.transition_matrix()
@@ -250,7 +373,6 @@ class TestTimescales(unittest.TestCase):
             tsn = timescales(0.5 * self.T + 0.5 * self.P)
             assert_allclose(tsn, ts)
             assert issubclass(w[-1].category, ImaginaryEigenValueWarning)
-
 
 if __name__ == "__main__":
     unittest.main()

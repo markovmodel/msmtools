@@ -31,7 +31,7 @@ r"""Dense implementation of mean first passage time computation
 """
 import numpy as np
 from scipy.linalg import solve
-from decomposition import stationary_distribution_from_backward_iteration as stationary_distribution
+from stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
 
 
 def mfpt(T, target):

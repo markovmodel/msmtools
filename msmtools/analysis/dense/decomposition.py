@@ -1,4 +1,3 @@
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -26,7 +25,7 @@
 r"""This module provides matrix-decomposition based functions for the
 analysis of stochastic matrices
 
-Below are the dense implementations for functions specified in msm.api. 
+Below are the dense implementations for functions specified in api
 Dense matrices are represented by numpy.ndarrays throughout this module.
 
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
@@ -38,139 +37,47 @@ import numbers
 import warnings
 
 from scipy.linalg import eig, eigh, eigvals, eigvalsh, solve, lu_factor, lu_solve
+
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
 
-
-def backward_iteration(A, mu, x0, tol=1e-14, maxiter=100):
-    r"""Find eigenvector to approximate eigenvalue via backward iteration.
-
-    Parameters
-    ----------
-    A : (N, N) ndarray
-        Matrix for which eigenvector is desired
-    mu : float
-        Approximate eigenvalue for desired eigenvector
-    x0 : (N, ) ndarray
-        Initial guess for eigenvector
-    tol : float
-        Tolerace parameter for termination of iteration
-
-    Returns
-    -------
-    x : (N, ) ndarray
-        Eigenvector to approximate eigenvalue mu
-
-    """
-    T = A - mu * np.eye(A.shape[0])
-    """LU-factor of T"""
-    lupiv = lu_factor(T)
-    """Starting iterate with ||y_0||=1"""
-    r0 = 1.0 / np.linalg.norm(x0)
-    y0 = x0 * r0
-    """Local variables for inverse iteration"""
-    y = 1.0 * y0
-    r = 1.0 * r0
-    for i in range(maxiter):
-        x = lu_solve(lupiv, y)
-        r = 1.0 / np.linalg.norm(x)
-        y = x * r
-        if r <= tol:
-            return y
-    msg = "Failed to converge after %d iterations, residuum is %e" % (maxiter, r)
-    raise RuntimeError(msg)
-
-
-def stationary_distribution_from_backward_iteration(P, eps=1e-15):
-    r"""Fast computation of the stationary vector using backward
-    iteration.
-
-    Parameters
-    ----------
-    P : (M, M) ndarray
-        Transition matrix
-    eps : float (optional)
-        Perturbation parameter for the true eigenvalue.
-        
-    Returns
-    -------
-    pi : (M,) ndarray
-        Stationary vector
-
-    """
-    A = np.transpose(P)
-    mu = 1.0 - eps
-    x0 = np.ones(P.shape[0])
-    y = backward_iteration(A, mu, x0)
-    pi = y / y.sum()
-    return pi
-
-
-def stationary_distribution_from_eigenvector(T):
-    r"""Compute stationary distribution of stochastic matrix T. 
-
-    The stationary distribution is the left eigenvector corresponding to the 
-    non-degenerate eigenvalue :math: `\lambda=1`.
-
-    Input:
-    ------
-    T : numpy array, shape(d,d)
-        Transition matrix (stochastic matrix).
-
-    Returns
-    -------
-    mu : numpy array, shape(d,)
-        Vector of stationary probabilities.
-
-    """
-    val, L = eig(T, left=True, right=False)
-
-    """ Sorted eigenvalues and left and right eigenvectors. """
-    perm = np.argsort(val)[::-1]
-
-    val = val[perm]
-    L = L[:, perm]
-    """ Make sure that stationary distribution is non-negative and l1-normalized """
-    nu = np.abs(L[:, 0])
-    mu = nu / np.sum(nu)
-    return mu
-
+from stationary_vector import stationary_distribution_from_backward_iteration
+from assessment import is_reversible
 
 def eigenvalues(T, k=None, reversible=False, mu=None):
-    r"""Compute eigenvalues of given transition matrix.
-    
-    Eigenvalues are computed using the numpy.linalg interface 
-    for the corresponding LAPACK routines.    
+    r"""Compute eigenvalues of given transition matrix.   
 
-    Input
-    -----
-    T : numpy.ndarray, shape=(d,d)
-        Transition matrix (stochastic matrix).
-    k : int (optional) or tuple of ints
-        Compute the first k eigenvalues of T.
-    reversible : bool (optional)
-        Indicate that transition matrix is reversible. Will compute its stationary distribution `\mu` (unless given)
-        and then compute the eigenvalues of the symmetric matrix `\sqrt(\mu_i / \mu_j)` which is equivalent but
-        much faster
-    mu : numpy.ndarray, shape=(d)
-        Stationary distribution of T. Will only be used if reversible=True in order to symmetrize T.
+    Parameters
+    ----------
+    T : (d, d) ndarray
+        Transition matrix (stochastic matrix)
+    k : int or tuple of ints, optional
+        Compute the first k eigenvalues of T
+    reversible : bool, optional
+        Indicate that transition matrix is reversible 
+    mu : (d,) ndarray, optional
+        Stationary distribution of T 
 
     Returns
     -------
-    eig : numpy.ndarray, shape(n,)
+    eig : (n,) ndarray, 
         The eigenvalues of T ordered with decreasing absolute value.
         If k is None then n=d, if k is int then n=k otherwise
         n is the length of the given tuple of eigenvalue indices.
 
+    Notes
+    -----
+    Eigenvalues are computed using the numpy.linalg interface 
+    for the corresponding LAPACK routines.    
+
+    If reversible=True the the eigenvalues of the similar symmetric
+    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be computed.
+
+    The precomputed stationary distribution will only be used if
+    reversible=True.
+    
     """
     if reversible:
-        # compute stationary distribution if not given
-        if mu is None:
-            mu = stationary_distribution_from_backward_iteration(T)
-        # symmetrize T
-        smu = np.sqrt(mu)
-        S = smu[:,None] * T / smu
-        # symmetric eigenvalue problem
-        evals = eigvalsh(S)
+        evals = eigenvalues_rev(T, k=k, mu=mu)
     else:
         evals = eigvals(T)
 
@@ -188,45 +95,79 @@ def eigenvalues(T, k=None, reversible=False, mu=None):
     else:
         return evals
 
+def eigenvalues_rev(T, k=None, mu=None):
+    r"""Compute eigenvalues of reversible transition matrix.   
 
-def eigenvectors(T, k=None, right=True):
-    r"""Compute eigenvectors of given transition matrix.
-
-    Eigenvectors are computed using the numpy.linalg interface 
-    for the corresponding LAPACK routines.    
-
-    Input
-    -----
-    T : numpy.ndarray, shape(d,d)
-        Transition matrix (stochastic matrix).
-    k : int (optional) or tuple of ints
-        Compute the first k eigenvalues of T.
+    Parameters
+    ----------
+    T : (d, d) ndarray
+        Transition matrix (stochastic matrix)
+    k : int or tuple of ints, optional
+        Compute the first k eigenvalues of T
+    mu : (d,) ndarray, optional
+        Stationary distribution of T
 
     Returns
     -------
-    eigvec : numpy.ndarray, shape=(d, n)
-        The eigenvectors of T ordered with decreasing absolute value of
-        the corresponding eigenvalue. If k is None then n=d, if k is\
-        int then n=k otherwise n is the length of the given tuple of\
-        eigenvector indices.
-
+    eig : (n,) ndarray, 
+        The eigenvalues of T ordered with decreasing absolute value.
+        If k is None then n=d, if k is int then n=k otherwise
+        n is the length of the given tuple of eigenvalue indices.
+        
     """
-    if right:
-        val, R = eig(T, left=False, right=True)
-        """ Sorted eigenvalues and left and right eigenvectors. """
-        perm = np.argsort(np.abs(val))[::-1]
 
-        # eigval=val[perm]
-        eigvec = R[:, perm]
+    """compute stationary distribution if not given"""
+    if mu is None:
+        mu = stationary_distribution_from_backward_iteration(T)
+    """ symmetrize T """
+    smu = np.sqrt(mu)
+    S = smu[:,None] * T / smu
+    """ symmetric eigenvalue problem """
+    evals = eigvalsh(S)
+    return evals
 
+def eigenvectors(T, k=None, right=True, reversible=False, mu=None):
+    r"""Compute eigenvectors of transition matrix.
+    
+    Parameters
+    ----------
+    T : (d, d) ndarray
+        Transition matrix (stochastic matrix)
+    k : int or tuple of ints, optional
+        Compute the first k eigenvalues of T
+    right : bool, optional
+        If right=True compute right eigenvectors, left eigenvectors
+        otherwise
+    reversible : bool, optional
+        Indicate that transition matrix is reversible
+    mu : (d,) ndarray, optional
+        Stationary distribution of T 
+        
+    Returns
+    -------
+    eigvec : (d, n) ndarray
+        The eigenvectors of T ordered with decreasing absolute value
+        of the corresponding eigenvalue. If k is None then n=d, if k
+        is int then n=k otherwise n is the length of the given tuple
+        of eigenvector indices
+        
+    Notes
+    -----
+    Eigenvectors are computed using the numpy.linalg interface for the
+    corresponding LAPACK routines.
+
+    If reversible=True the the eigenvectors of the similar symmetric
+    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be used to compute the 
+    eigenvectors of T.
+
+    The precomputed stationary distribution will only be used if
+    reversible=True.    
+    
+    """
+    if reversible:
+        eigvec = eigenvectors_rev(T, right=right, mu=mu)
     else:
-        val, L = eig(T, left=True, right=False)
-
-        """ Sorted eigenvalues and left and right eigenvectors. """
-        perm = np.argsort(np.abs(val))[::-1]
-
-        # eigval=val[perm]
-        eigvec = L[:, perm]
+        eigvec = eigenvectors_nrev(T, right=right)  
 
     """ Return eigenvectors """
     if k is None:
@@ -237,8 +178,77 @@ def eigenvectors(T, k=None, right=True):
         ind = np.asarray(k)
         return eigvec[:, ind]
 
+def eigenvectors_nrev(T, right=True):
+    r"""Compute eigenvectors of transition matrix.
+    
+    Parameters
+    ----------
+    T : (d, d) ndarray
+        Transition matrix (stochastic matrix)
+    k : int or tuple of ints, optional
+        Compute the first k eigenvalues of T
+    right : bool, optional
+        If right=True compute right eigenvectors, left eigenvectors
+        otherwise
 
-def rdl_decomposition(T, k=None, norm='standard'):
+    Returns
+    -------
+    eigvec : (d, d) ndarray
+        The eigenvectors of T ordered with decreasing absolute value
+        of the corresponding eigenvalue
+    
+    """
+    if right:
+        val, R = eig(T, left=False, right=True)
+        """ Sorted eigenvalues and left and right eigenvectors. """
+        perm = np.argsort(np.abs(val))[::-1]
+        # eigval=val[perm]
+        eigvec = R[:, perm]
+
+    else:
+        val, L = eig(T, left=True, right=False)
+
+        """ Sorted eigenvalues and left and right eigenvectors. """
+        perm = np.argsort(np.abs(val))[::-1]
+        # eigval=val[perm]
+        eigvec = L[:, perm]
+    return eigvec    
+
+def eigenvectors_rev(T, right=True, mu=None):
+    r"""Compute eigenvectors of reversible transition matrix.
+
+    Parameters
+    ----------
+    T : (d, d) ndarray
+        Transition matrix (stochastic matrix)
+    right : bool, optional
+        If right=True compute right eigenvectors, left eigenvectors
+        otherwise
+    mu : (d,) ndarray, optional
+        Stationary distribution of T   
+
+    Returns
+    -------
+    eigvec : (d, d) ndarray
+        The eigenvectors of T ordered with decreasing absolute value
+        of the corresponding eigenvalue           
+        
+    """
+    if mu is None:
+        mu = stationary_distribution_from_backward_iteration(T)
+    """ symmetrize T """
+    smu = np.sqrt(mu)
+    S = smu[:,None] * T / smu
+    val, eigvec = eigh(S)
+    """Sort eigenvectors"""
+    perm = np.argsort(np.abs(val))[::-1]
+    eigvec = eigvec[:, perm]
+    if right:
+        return eigvec / smu[:, np.newaxis]
+    else:
+        return eigvec * smu[:, np.newaxis]          
+
+def rdl_decomposition(T, k=None, reversible=False, norm='standard', mu=None):
     r"""Compute the decomposition into left and right eigenvectors.
     
     Parameters
@@ -247,12 +257,16 @@ def rdl_decomposition(T, k=None, norm='standard'):
         Transition matrix    
     k : int (optional)
         Number of eigenvector/eigenvalue pairs
-    norm: {'standard', 'reversible'}
+    norm: {'standard', 'reversible', 'auto'}
         standard: (L'R) = Id, L[:,0] is a probability distribution,
             the stationary distribution mu of T. Right eigenvectors
             R have a 2-norm of 1.
         reversible: R and L are related via L=L[:,0]*R.
-        auto: will be reversible if T is reversible, otherwise standard.
+        auto: will be reversible if T is reversible, otherwise standard
+    reversible : bool, optional
+        Indicate that transition matrix is reversible
+    mu : (d,) ndarray, optional
+        Stationary distribution of T 
 
     Returns
     -------
@@ -267,7 +281,62 @@ def rdl_decomposition(T, k=None, norm='standard'):
         The normalized (with respect to `R`) left eigenvectors, such that the 
         row ``L[i, :]`` is the left eigenvector corresponding to the eigenvalue
         ``w[i]``, ``dot(L[i, :], T)``=``w[i]*L[i, :]``
-        
+
+    Notes
+    -----
+    If reversible=True the the eigenvalues and eigenvectors of the
+    similar symmetric matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be
+    used to compute the eigenvalues and eigenvectors of T.
+
+    The precomputed stationary distribution will only be used if
+    reversible=True.    
+    
+    """    
+    # auto-set norm
+    if norm == 'auto':
+        if is_reversible(T):
+            norm = 'reversible'
+        else:
+            norm = 'standard'
+
+    if reversible:
+        R, D, L = rdl_decomposition_rev(T, norm=norm, mu=mu)
+    else:
+        R, D, L = rdl_decomposition_nrev(T, norm=norm) 
+
+    if k is None:
+        return R, D, L
+    else:
+        return R[:, 0:k], D[0:k, 0:k], L[0:k, :]   
+
+def rdl_decomposition_nrev(T, norm='standard'):
+    r"""Decomposition into left and right eigenvectors.
+
+    Parameters
+    ----------
+    T : (M, M) ndarray 
+        Transition matrix    
+    norm: {'standard', 'reversible'}
+        standard: (L'R) = Id, L[:,0] is a probability distribution,
+            the stationary distribution mu of T. Right eigenvectors
+            R have a 2-norm of 1
+        reversible: R and L are related via L=L[:,0]*R
+
+    Returns
+    -------
+    R : (M, M) ndarray
+        The normalized (with respect to L) right eigenvectors, such that the 
+        column R[:,i] is the right eigenvector corresponding to the eigenvalue 
+        w[i], dot(T,R[:,i])=w[i]*R[:,i]
+    D : (M, M) ndarray
+        A diagonal matrix containing the eigenvalues, each repeated
+        according to its multiplicity
+    L : (M, M) ndarray
+        The normalized (with respect to `R`) left eigenvectors, such that the 
+        row ``L[i, :]`` is the left eigenvector corresponding to the eigenvalue
+        ``w[i]``, ``dot(L[i, :], T)``=``w[i]*L[i, :]``
+    
+
     """
     d = T.shape[0]
     w, R = eig(T)
@@ -280,14 +349,6 @@ def rdl_decomposition(T, k=None, norm='standard'):
     """Diagonal matrix containing eigenvalues"""
     D = np.diag(w)
 
-    # auto-set norm
-    if norm == 'auto':
-        from msmtools.analysis import is_reversible
-
-        if (is_reversible(T)):
-            norm = 'reversible'
-        else:
-            norm = 'standard'
     # Standard norm: Euclidean norm is 1 for r and LR = I.
     if norm == 'standard':
         L = solve(np.transpose(R), np.eye(d))
@@ -296,10 +357,7 @@ def rdl_decomposition(T, k=None, norm='standard'):
         R[:, 0] = R[:, 0] * np.sum(L[:, 0])
         L[:, 0] = L[:, 0] / np.sum(L[:, 0])
 
-        if k is None:
-            return R, D, np.transpose(L)
-        else:
-            return R[:, 0:k], D[0:k, 0:k], np.transpose(L[:, 0:k])
+        return R, D, np.transpose(L)
 
     # Reversible norm:
     elif norm == 'reversible':
@@ -323,34 +381,120 @@ def rdl_decomposition(T, k=None, norm='standard'):
         R = R / np.sqrt(s[np.newaxis, :])
         L = L / np.sqrt(s[np.newaxis, :])
 
-        if k is None:
-            return R, D, np.transpose(L)
-        else:
-            return R[:, 0:k], D[0:k, 0:k], np.transpose(L[:, 0:k])
+        return R, D, np.transpose(L)
+
     else:
         raise ValueError("Keyword 'norm' has to be either 'standard' or 'reversible'")
 
+def rdl_decomposition_rev(T, norm='reversible', mu=None):
+    r"""Decomposition into left and right eigenvectors for reversible
+    transition matrices.
+    
+    Parameters
+    ----------
+    T : (M, M) ndarray 
+        Transition matrix    
+    norm: {'standard', 'reversible'}
+        standard: (L'R) = Id, L[:,0] is a probability distribution,
+            the stationary distribution mu of T. Right eigenvectors
+            R have a 2-norm of 1.
+        reversible: R and L are related via L=L[:,0]*R.
+    mu : (M,) ndarray, optional
+        Stationary distribution of T   
 
+    Returns
+    -------
+    R : (M, M) ndarray
+        The normalized (with respect to L) right eigenvectors, such that the 
+        column R[:,i] is the right eigenvector corresponding to the eigenvalue 
+        w[i], dot(T,R[:,i])=w[i]*R[:,i]
+    D : (M, M) ndarray
+        A diagonal matrix containing the eigenvalues, each repeated
+        according to its multiplicity
+    L : (M, M) ndarray
+        The normalized (with respect to `R`) left eigenvectors, such that the 
+        row ``L[i, :]`` is the left eigenvector corresponding to the eigenvalue
+        ``w[i]``, ``dot(L[i, :], T)``=``w[i]*L[i, :]``
+
+    Notes
+    -----
+    The eigenvalues and eigenvectors of the similar symmetric matrix
+    `\sqrt(\mu_i / \mu_j) p_{ij}` will be used to compute the
+    eigenvalues and eigenvectors of T.
+
+    The stationay distribution will be computed if no precomputed stationary
+    distribution is given.
+    
+    """    
+    if mu is None:
+        mu = stationary_distribution_from_backward_iteration(T)
+    """ symmetrize T """
+    smu = np.sqrt(mu)
+    S = smu[:,None] * T / smu
+    val, eigvec = eigh(S)
+    """Sort eigenvalues and eigenvectors"""
+    perm = np.argsort(np.abs(val))[::-1]
+    val = val[perm]
+    eigvec = eigvec[:, perm]
+
+    """Diagonal matrix of eigenvalues"""
+    D = np.diag(val)
+    
+    """Right and left eigenvectors"""
+    R = eigvec / smu[:, np.newaxis]
+    L = eigvec * smu[:, np.newaxis]
+
+    """Ensure that R[:,0] is positive and unity"""
+    tmp = R[0, 0]
+    R[:, 0] = R[:, 0] / tmp
+
+    """Ensure that L[:, 0] is probability vector""" 
+    L[:, 0] = L[:, 0] *  tmp
+
+    if norm == 'reversible':
+        return R, D, L.T
+    elif norm == 'standard':
+        """Standard l2-norm of right eigenvectors"""
+        w = np.diag(np.dot(R.T, R))
+        sw = np.sqrt(w)
+        """Don't change normalization of eigenvectors for dominant eigenvalue"""
+        sw[0] = 1.0
+        
+        R = R / sw[np.newaxis, :]
+        L = L * sw[np.newaxis, :]
+        return R, D, L.T
+    else:
+        raise ValueError("Keyword 'norm' has to be either 'standard' or 'reversible'")           
+ 
 def timescales(T, tau=1, k=None, reversible=False, mu=None):
     r"""Compute implied time scales of given transition matrix
     
     Parameters
     ----------
-    T : transition matrix
-    tau : lag time
-    k : int (optional)
-        Compute the first k implied time scales.
-    reversible : bool (optional)
-        Indicate that transition matrix is reversible. Will compute its stationary distribution `\mu` (unless given)
-        and then compute the eigenvalues of the symmetric matrix `\sqrt(\mu_i / \mu_j)` which is equivalent but
-        much faster
-    mu : numpy.ndarray, shape=(d)
-        Stationary distribution of T. Will only be used if reversible=True in order to symmetrize T.
+    T : (M, M) ndarray
+        Transition matrix
+    tau : int, optional
+        lag time
+    k : int, optional
+        Number of time scales
+    reversible : bool, optional
+        Indicate that transition matirx is reversible
+    mu : (M,) ndarray, optional
+        Stationary distribution of T
 
     Returns
     -------
-    ts : ndarray
-        The implied time scales of the transition matrix.          
+    ts : (N,) ndarray
+        Implied time scales of the transition matrix.          
+        If k=None then N=M else N=k
+
+    Notes
+    -----
+    If reversible=True the the eigenvalues of the similar symmetric
+    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be computed.
+
+    The precomputed stationary distribution will only be used if
+    reversible=True.
     
     """
     values = eigenvalues(T, reversible=reversible, mu=mu)

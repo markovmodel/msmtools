@@ -33,7 +33,7 @@ backward comittors using dense linear algebra.
 import numpy as np
 from scipy.linalg import solve
 
-from decomposition import stationary_distribution_from_backward_iteration as statdist
+from stationary_vector import stationary_distribution_from_backward_iteration as statdist
 
 
 def forward_committor(T, A, B):
