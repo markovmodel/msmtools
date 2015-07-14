@@ -21,18 +21,14 @@ before_install:
 - tools/ci/travis/install_miniconda.sh
 - source activate ci
 - conda list
-# use a headless plotting backend for matplotlib
-- mkdir -p ~/.config/matplotlib/
-- touch ~/.config/matplotlib/matplotlibrc
-- "echo 'backend: Agg' >> ~/.config/matplotlib/matplotlibrc"
 install:
 - python setup.py develop 
 
 script:
 # run tests omiting slow attributed tests.
-- nosetests --with-coverage --cover-inclusive --cover-package=msmtools
-# run pylint (non fatal exit and show only errors)
-# - pylint -j 4 --rcfile=.pylintrc msmtools || true
+- nosetests --processes=2 --with-coverage --cover-inclusive --cover-package=msmtools
+# run pylint to maintain py3k compatibility
+- pylint --py3k --ignore=_version.py msmtools
 
 after_success:
 - coveralls
