@@ -47,6 +47,7 @@ from msmtools.util import types as _types
 import dense.assessment
 import dense.committor
 import dense.fingerprints
+import dense.stationary_vector
 import dense.decomposition
 import dense.expectations
 import dense.pcca
@@ -57,6 +58,7 @@ import dense.hitting_probability
 
 import sparse.assessment
 import sparse.decomposition
+import sparse.stationary_vector
 import sparse.expectations
 import sparse.committor
 import sparse.fingerprints
@@ -367,9 +369,9 @@ def stationary_distribution(T):
                          "and handle them separately")
     # we're good to go...
     if _issparse(T):
-        return sparse.decomposition.stationary_distribution_from_backward_iteration(T)
+        return sparse.stationary_vector.stationary_distribution_from_backward_iteration(T)
     else:
-        return dense.decomposition.stationary_distribution_from_backward_iteration(T)
+        return dense.stationary_vector.stationary_distribution_from_backward_iteration(T)
 
 
 def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
@@ -384,12 +386,10 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
         it is recommended that ncv > 2*k
-    reversible : bool (optional)
-        Indicate that transition matrix is reversible. Will compute its stationary distribution `\mu` (unless given)
-        and then compute the eigenvalues of the symmetric matrix `\sqrt(\mu_i / \mu_j)` which is equivalent but
-        much faster
-    mu : numpy.ndarray, shape=(d)
-        Stationary distribution of T. Will only be used if reversible=True in order to symmetrize T.
+    reversible : bool, optional
+        Indicate that transition matrix is reversible 
+    mu : (M,) ndarray, optional
+        Stationary distribution of T 
 
     Returns
     -------
@@ -400,6 +400,12 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
     Notes
     -----
     Eigenvalues are returned in order of decreasing magnitude.
+
+    If reversible=True the the eigenvalues of the similar symmetric
+    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be computed.
+
+    The precomputed stationary distribution will only be used if
+    reversible=True.
 
     Examples
     --------
@@ -414,7 +420,7 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
-        return sparse.decomposition.eigenvalues(T, k, ncv=ncv)
+        return sparse.decomposition.eigenvalues(T, k, ncv=ncv, reversible=reversible, mu=mu)
     else:
         return dense.decomposition.eigenvalues(T, k, reversible=reversible, mu=mu)
 
@@ -435,12 +441,10 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
     ncv : int (optional, for sparse T only)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
         it is recommended that ncv > 2*k
-    reversible : bool (optional)
-        Indicate that transition matrix is reversible. Will compute its stationary distribution `\mu` (unless given)
-        and then compute the eigenvalues of the symmetric matrix `\sqrt(\mu_i / \mu_j)` which is equivalent but
-        much faster
-    mu : numpy.ndarray, shape=(d)
-        Stationary distribution of T. Will only be used if reversible=True in order to symmetrize T.
+    reversible : bool, optional
+        Indicate that transition matrix is reversible 
+    mu : (M,) ndarray, optional
+        Stationary distribution of T 
 
     Returns
     -------
@@ -453,6 +457,12 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
     The implied time scale :math:`t_i` is defined as
 
     .. math:: t_i=-\frac{\tau}{\log \lvert \lambda_i \rvert}
+
+    If reversible=True the the eigenvalues of the similar symmetric
+    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be computed.
+
+    The precomputed stationary distribution will only be used if
+    reversible=True.
 
     Examples
     --------
@@ -467,12 +477,13 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
-        return sparse.decomposition.timescales(T, tau=tau, k=k, ncv=ncv)
+        return sparse.decomposition.timescales(T, tau=tau, k=k, ncv=ncv, 
+                                               reversible=reversible, mu=mu)
     else:
         return dense.decomposition.timescales(T, tau=tau, k=k, reversible=reversible, mu=mu)
 
 
-def eigenvectors(T, k=None, right=True, ncv=None):
+def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
     r"""Compute eigenvectors of given transition matrix.
     
     Parameters
@@ -484,6 +495,13 @@ def eigenvectors(T, k=None, right=True, ncv=None):
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than `k`;
         it is recommended that `ncv > 2*k`
+    right : bool, optional
+        If right=True compute right eigenvectors, left eigenvectors
+        otherwise
+    reversible : bool, optional
+        Indicate that transition matrix is reversible 
+    mu : (M,) ndarray, optional
+        Stationary distribution of T 
 
     
     Returns
@@ -492,9 +510,6 @@ def eigenvectors(T, k=None, right=True, ncv=None):
         The eigenvectors of T ordered with decreasing absolute value of
         the corresponding eigenvalue. If k is None then n=d, if k is
         int then n=k.
-
-        If right = True, the right eigenvectors are returned as column vectors.
-        If right = False, the left eigenvectors are returned as row vectors
 
     See also
     --------
@@ -505,7 +520,8 @@ def eigenvectors(T, k=None, right=True, ncv=None):
     Eigenvectors are computed using the scipy interface 
     to the corresponding LAPACK/ARPACK routines.    
 
-    The returned eigenvectors :math:`v_i` are normalized such that 
+    If reversible=False, the returned eigenvectors :math:`v_i` are
+    normalized such that
 
     ..  math::
 
@@ -516,6 +532,13 @@ def eigenvectors(T, k=None, right=True, ncv=None):
 
     If you desire orthonormal left and right eigenvectors please use the
     rdl_decomposition method.
+
+    If reversible=True the the eigenvectors of the similar symmetric
+    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be used to compute the 
+    eigenvectors of T.
+
+    The precomputed stationary distribution will only be used if
+    reversible=True.    
 
     Examples
     --------
@@ -548,7 +571,7 @@ def eigenvectors(T, k=None, right=True, ncv=None):
             return dense.decomposition.eigenvectors(T, k=k, right=right).T
 
 
-def rdl_decomposition(T, k=None, norm='auto', ncv=None):
+def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=None):
     r"""Compute the decomposition into eigenvalues, left and right
     eigenvectors.
     
@@ -574,7 +597,11 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None):
 
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
+    reversible : bool, optional
+        Indicate that transition matrix is reversible 
+    mu : (M,) ndarray, optional
+        Stationary distribution of T        
     
     Returns
     -------
@@ -623,9 +650,11 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None):
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
-        return sparse.decomposition.rdl_decomposition(T, k=k, norm=norm, ncv=ncv)
+        return sparse.decomposition.rdl_decomposition(T, k=k, norm=norm, ncv=ncv, 
+                                                      reversible=reversible, mu=mu)
     else:
-        return dense.decomposition.rdl_decomposition(T, k=k, norm=norm)
+        return dense.decomposition.rdl_decomposition(T, k=k, norm=norm,
+                                                     reversible=reversible, mu=mu)
 
 
 def mfpt(T, target, origin=None, tau=1, mu=None):

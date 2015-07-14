@@ -30,7 +30,7 @@ Created on 22.11.2013
 '''
 
 import numpy
-from decomposition import stationary_distribution_from_backward_iteration as stationary_distribution
+from stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
 
 
 # TODO:make faster. So far not effectively programmed
@@ -64,7 +64,7 @@ def forward_committor_sensitivity(T, A, B, index):
 
     K = T - numpy.diag(numpy.ones(n))
 
-    U = K[numpy.ix_(notAB, notAB)]
+    U = K[numpy.ix_(notAB.tolist(), notAB.tolist())]
 
     v = numpy.zeros(m)
 

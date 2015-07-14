@@ -33,7 +33,7 @@ expectation values for a given transition matrix.
 import numpy as np
 
 from decomposition import rdl_decomposition
-from decomposition import stationary_distribution_from_backward_iteration as statdist
+from stationary_vector import stationary_distribution_from_backward_iteration as statdist
 
 
 def expected_counts(p0, T, n):
