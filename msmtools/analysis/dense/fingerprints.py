@@ -56,7 +56,7 @@ def fingerprint_correlation(P, obs1, obs2=None, tau=1, k=None):
     obs1 : (M,) ndarray
         Observable, represented as vector on state space
     obs2 : (M,) ndarray (optional)
-        Second observable, for cross-correlations    
+        Second observable, for cross-correlations
     tau : int (optional)
         Lag time of given transition matrix, for correct time-scales
     k : int (optional)
@@ -86,7 +86,7 @@ def fingerprint_relaxation(P, p0, obs, tau=1, k=None):
     obs1 : (M,) ndarray
         Observable, represented as vector on state space
     obs2 : (M,) ndarray (optional)
-        Second observable, for cross-correlations    
+        Second observable, for cross-correlations
     tau : int (optional)
         Lag time of given transition matrix, for correct time-scales
     k : int (optional)
@@ -98,7 +98,7 @@ def fingerprint_relaxation(P, p0, obs, tau=1, k=None):
         Time-scales of the transition matrix
     amplitudes : (N,) ndarray
         Amplitudes for the relaxation experiment
-        
+
     """
     one_vec = np.ones(P.shape[0])
     return fingerprint(P, one_vec, obs2=obs, p0=p0, k=k, tau=tau)
@@ -130,7 +130,7 @@ def fingerprint(P, obs1, obs2=None, p0=None, tau=1, k=None):
         Time-scales of the transition matrix
     amplitudes : (N,) ndarray
         Amplitudes for the given observable(s)
-        
+
     """
     if obs2 is None:
         obs2 = obs1
@@ -157,7 +157,7 @@ def fingerprint(P, obs1, obs2=None, p0=None, tau=1, k=None):
 
 def expectation(P, obs):
     r"""Equilibrium expectation of given observable.
-    
+
     Parameters
     ----------
     P : (M, M) ndarray
@@ -168,7 +168,7 @@ def expectation(P, obs):
     Returns
     -------
     x : float
-        Expectation value    
+        Expectation value
 
     """
     pi = statdist(P)
@@ -181,7 +181,7 @@ def expectation(P, obs):
 
 def correlation(P, obs1, obs2=None, times=[1], k=None):
     r"""Time-correlation for equilibrium experiment.
-    
+
     Parameters
     ----------
     P : (M, M) ndarray
@@ -199,7 +199,7 @@ def correlation(P, obs1, obs2=None, times=[1], k=None):
     -------
     correlations : ndarray
         Correlation values at given times
-        
+
     """
     M = P.shape[0]
     T = np.asarray(times).max()
@@ -211,7 +211,7 @@ def correlation(P, obs1, obs2=None, times=[1], k=None):
 
 def correlation_decomp(P, obs1, obs2=None, times=[1], k=None):
     r"""Time-correlation for equilibrium experiment - via decomposition.
-    
+
     Parameters
     ----------
     P : (M, M) ndarray
@@ -229,7 +229,7 @@ def correlation_decomp(P, obs1, obs2=None, times=[1], k=None):
     -------
     correlations : ndarray
         Correlation values at given times
-        
+
     """
     if obs2 is None:
         obs2 = obs1
@@ -268,7 +268,7 @@ def correlation_matvec(P, obs1, obs2=None, times=[1]):
     -------
     correlations : ndarray
         Correlation values at given times
-        
+
     """
     if obs2 is None:
         obs2 = obs1
@@ -333,7 +333,7 @@ def relaxation(P, p0, obs, times=[1], k=None):
     -------
     res : ndarray
         Array of expectation value at given times
-        
+
     """
     M = P.shape[0]
     T = np.asarray(times).max()
@@ -367,7 +367,7 @@ def relaxation_decomp(P, p0, obs, times=[1], k=None):
     -------
     res : ndarray
         Array of expectation value at given times
-        
+
     """
     R, D, L = rdl_decomposition(P, k=k)
     """Extract eigenvalues"""
@@ -406,7 +406,7 @@ def relaxation_matvec(P, p0, obs, times=[1]):
     -------
     res : ndarray
         Array of expectation value at given times
-        
+
     """
     times = np.asarray(times)
     """Sort in increasing order"""
@@ -450,12 +450,12 @@ def propagate(A, x, N):
         Vector to propagate
     N : int
         Number of steps to propagate
-        
+
     Returns
     -------
     y : (M, ) ndarray
         Propagated vector
-    
+
     """
     y = 1.0 * x
     for i in range(N):

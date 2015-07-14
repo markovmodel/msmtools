@@ -96,28 +96,28 @@ class ReactiveFlux(object):
     @property
     def nstates(self):
         r"""Returns the number of states.
-        
+
         """
         return np.shape(self._flux)[0]
 
     @property
     def A(self):
         r"""Returns the set of reactant (source) states.
-        
+
         """
         return self._A
 
     @property
     def B(self):
         r"""Returns the set of product (target) states
-        
+
         """
         return self._B
 
     @property
     def I(self):
         r"""Returns the set of intermediate states
-        
+
         """
         return list(set(range(self.nstates)) - set(self._A) - set(self._B))
 
@@ -245,7 +245,7 @@ class ReactiveFlux(object):
     def major_flux(self, fraction=0.9):
         r"""Returns the main pathway part of the net flux comprising
         at most the requested fraction of the full flux.
-        
+
         """
         (paths, pathfluxes) = self.pathways(fraction=fraction)
         return self._pathways_to_flux(paths, pathfluxes, n=self.nstates)
@@ -253,7 +253,7 @@ class ReactiveFlux(object):
     # this will be a private function in tpt. only Parameter left will be the sets to be distinguished
     def _compute_coarse_sets(self, user_sets):
         r"""Computes the sets to coarse-grain the tpt flux to.
-        
+
         Parameters
         ----------
             (tpt_sets, A, B) with
@@ -263,7 +263,7 @@ class ReactiveFlux(object):
                 set indexes in A
             B : int-iterable
                 set indexes in B
-        
+
         Returns
         -------
         sets : list of int-iterables
@@ -281,7 +281,7 @@ class ReactiveFlux(object):
              intermediates, they will be split at these boundaries. Thus each
              set in user_sets can remain intact or be split into two or three
              subsets
-             
+
         """
         # set-ify everything
         setA = set(self.A)
@@ -289,7 +289,7 @@ class ReactiveFlux(object):
         setI = set(self.I)
         raw_sets = [set(user_set) for user_set in user_sets]
 
-        # anything missing? Compute all listed states 
+        # anything missing? Compute all listed states
         set_all = set(range(self.nstates))
         set_all_user = []
         for user_set in raw_sets:
@@ -321,13 +321,13 @@ class ReactiveFlux(object):
         return (tpt_sets, Aindexes, Bindexes)
 
     def coarse_grain(self, user_sets):
-        r"""Coarse-grains the flux onto user-defined sets. 
-        
+        r"""Coarse-grains the flux onto user-defined sets.
+
         Parameters
         ----------
         user_sets : list of int-iterables
             sets of states that shall be distinguished in the coarse-grained flux.
-        
+
         Returns
         -------
         (sets, tpt) : (list of int-iterables, tpt-object)
@@ -335,9 +335,9 @@ class ReactiveFlux(object):
             tpt object correspond to these sets of states in this order. Sets might
             be identical, if the user has already provided a complete partition that
             respects the boundary between A, B and the intermediates. If not, Sets
-            will have more members than provided by the user, containing the 
-            "remainder" states and reflecting the splitting at the A and B 
-            boundaries.  
+            will have more members than provided by the user, containing the
+            "remainder" states and reflecting the splitting at the A and B
+            boundaries.
             tpt contains a new tpt object for the coarse-grained flux. All its
             quantities (gross_flux, net_flux, A, B, committor, backward_committor)
             are coarse-grained to sets.
@@ -347,13 +347,13 @@ class ReactiveFlux(object):
         All user-specified sets will be split (if necessary) to
         preserve the boundary between A, B and the intermediate
         states.
-        
+
         """
         # coarse-grain sets
         (tpt_sets, Aindexes, Bindexes) = self._compute_coarse_sets(user_sets)
         nnew = len(tpt_sets)
 
-        # coarse-grain fluxHere we should branch between sparse and dense implementations, but currently there is only a 
+        # coarse-grain fluxHere we should branch between sparse and dense implementations, but currently there is only a
         F_coarse = tptapi.coarsegrain(self._gross_flux, tpt_sets)
         Fnet_coarse = tptapi.to_netflux(F_coarse)
 

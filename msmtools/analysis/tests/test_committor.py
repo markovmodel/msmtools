@@ -65,7 +65,7 @@ class TestCommittorDense(unittest.TestCase):
         un = committor(P, [0, 1], [8, 9], forward=False)
         u = self.bdc.committor_backward(1, 8)
         assert_allclose(un, u)
-        
+
 
 class TestCommittorSparse(unittest.TestCase):
     def setUp(self):

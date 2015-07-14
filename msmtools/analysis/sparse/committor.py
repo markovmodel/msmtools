@@ -127,7 +127,7 @@ def backward_committor(T, A, B):
     Returns
     -------
     u : (M, ) ndarray
-        Vector of forward committor probabilities    
+        Vector of forward committor probabilities
 
     Notes
     -----

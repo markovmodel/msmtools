@@ -41,23 +41,23 @@ from six.moves import range
 
 
 class TestPathways(unittest.TestCase):
-    
+
     def setUp(self):
         """Small flux-network"""
         F = np.zeros((8, 8))
         F[0, 2] = 10.0
-        F[2, 6] = 10.0    
+        F[2, 6] = 10.0
         F[1, 3] = 100.0
         F[3, 4] = 30.0
         F[3, 5] = 70.0
         F[4, 6] = 5.0
         F[4, 7] = 25.0
         F[5, 6] = 30.0
-        F[5, 7] = 40.0        
+        F[5, 7] = 40.0
         """Reactant and product states"""
         A = [0, 1]
         B = [6, 7]
-    
+
         self.F = F
         self.F_sparse = csr_matrix(F)
         self.A = A
@@ -108,8 +108,8 @@ class TestPathways(unittest.TestCase):
             paths, capacities = pathways(self.F, self.A, self.B, fraction=1.0, maxiter=1)
             for i in range(len(paths)):
                 assert_allclose(paths[i], self.paths[i])
-                assert_allclose(capacities[i], self.capacities[i])            
-            assert issubclass(w[-1].category, RuntimeWarning)        
+                assert_allclose(capacities[i], self.capacities[i])
+            assert issubclass(w[-1].category, RuntimeWarning)
 
     def test_pathways_sparse(self):
         paths, capacities = pathways(self.F_sparse, self.A, self.B)
@@ -131,11 +131,11 @@ class TestPathways(unittest.TestCase):
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            paths, capacities = pathways(self.F, self.A, self.B, fraction=1.0, maxiter=1)      
+            paths, capacities = pathways(self.F, self.A, self.B, fraction=1.0, maxiter=1)
             for i in range(len(paths)):
                 assert_allclose(paths[i], self.paths[i])
-                assert_allclose(capacities[i], self.capacities[i])            
+                assert_allclose(capacities[i], self.capacities[i])
             assert issubclass(w[-1].category, RuntimeWarning)
-        
+
 if __name__ == "__main__":
     unittest.main()

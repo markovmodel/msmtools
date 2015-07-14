@@ -58,15 +58,15 @@ __all__ = ['read_discrete_trajectory',
 
 @shortcut('read_dtraj')
 def read_discrete_trajectory(filename):
-    r"""Read discrete trajectory from ascii file.   
-    
+    r"""Read discrete trajectory from ascii file.
+
     Parameters
-    ---------- 
+    ----------
     filename : str
-        The filename of the discretized trajectory file. 
-        The filename can either contain the full or the 
+        The filename of the discretized trajectory file.
+        The filename can either contain the full or the
         relative path to the file.
-    
+
     Returns
     -------
     dtraj : (M, ) ndarray of int
@@ -84,19 +84,19 @@ def read_discrete_trajectory(filename):
     Examples
     --------
 
-    >>> from tempfile import NamedTemporaryFile    
+    >>> from tempfile import NamedTemporaryFile
     >>> from msmtools.io import write_discrete_trajectory, load_discrete_trajectory
 
     Use temporary file
-    
+
     >>> tmpfile = NamedTemporaryFile()
 
     Discrete trajectory
-    
+
     >>> dtraj = np.array([0, 1, 0, 0, 1, 1, 0])
 
     Write to disk (as ascii file)
-    
+
     >>> write_discrete_trajectory(tmpfile.name, dtraj)
 
     Read from disk
@@ -104,20 +104,20 @@ def read_discrete_trajectory(filename):
     >>> X = read_discrete_trajectory(tmpfile.name)
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
-    
+
     """
     return discrete_trajectory.read_discrete_trajectory(filename)
 
 
 @shortcut('write_dtraj')
 def write_discrete_trajectory(filename, dtraj):
-    r"""Write discrete trajectory to ascii file.   
-    
+    r"""Write discrete trajectory to ascii file.
+
     Parameters
-    ---------- 
-    filename : str 
-        The filename of the discrete state trajectory file. 
-        The filename can either contain the full or the 
+    ----------
+    filename : str
+        The filename of the discrete state trajectory file.
+        The filename can either contain the full or the
         relative path to the file.
     dtraj : array-like of int
         Discrete state trajectory
@@ -128,33 +128,33 @@ def write_discrete_trajectory(filename, dtraj):
 
     Notes
     -----
-    The discrete trajectory is written to a 
+    The discrete trajectory is written to a
     single column ascii file with integer entries.
 
     Examples
     --------
 
-    >>> from tempfile import NamedTemporaryFile    
+    >>> from tempfile import NamedTemporaryFile
     >>> from msmtools.io import write_discrete_trajectory, load_discrete_trajectory
 
     Use temporary file
-    
+
     >>> tmpfile = NamedTemporaryFile()
 
     Discrete trajectory
-    
+
     >>> dtraj = np.array([0, 1, 0, 0, 1, 1, 0])
 
     Write to disk (as ascii file)
-    
+
     >>> write_discrete_trajectory(tmpfile.name, dtraj)
 
     Read from disk
 
     >>> X = read_discrete_trajectory(tmpfile.name)
     >>> X
-    array([0, 1, 0, 0, 1, 1, 0])    
-    
+    array([0, 1, 0, 0, 1, 1, 0])
+
     """
     discrete_trajectory.write_discrete_trajectory(filename, dtraj)
 
@@ -165,15 +165,15 @@ def write_discrete_trajectory(filename, dtraj):
 
 @shortcut('load_dtraj')
 def load_discrete_trajectory(filename):
-    r"""Read discrete trajectory form binary file.   
+    r"""Read discrete trajectory form binary file.
 
     Parameters
-    ---------- 
-    filename : str 
-        The filename of the discrete state trajectory file. 
-        The filename can either contain the full or the 
+    ----------
+    filename : str
+        The filename of the discrete state trajectory file.
+        The filename can either contain the full or the
         relative path to the file.
-    
+
     Returns
     -------
     dtraj : (M,) ndarray of int
@@ -191,41 +191,41 @@ def load_discrete_trajectory(filename):
     Examples
     --------
 
-    >>> from tempfile import NamedTemporaryFile    
+    >>> from tempfile import NamedTemporaryFile
     >>> from msmtools.io import load_discrete_trajectory, save_discrete_trajectory
 
     Use temporary file
-    
+
     >>> tmpfile = NamedTemporaryFile()
 
     Discrete trajectory
-    
+
     >>> dtraj = np.array([0, 1, 0, 0, 1, 1, 0])
 
     Write to disk (as ascii file)
-    
+
     >>> save_discrete_trajectory(tmpfile.name, dtraj)
 
     Read from disk
 
     >>> X = load_discrete_trajectory(tmpfile.name)
     >>> X
-    array([0, 1, 0, 0, 1, 1, 0])       
-    
+    array([0, 1, 0, 0, 1, 1, 0])
+
     """
     return discrete_trajectory.load_discrete_trajectory(filename)
 
 
 @shortcut('save_dtraj')
 def save_discrete_trajectory(filename, dtraj):
-    r"""Write discrete trajectory to binary file.  
+    r"""Write discrete trajectory to binary file.
 
     Parameters
-    ---------- 
-    filename : str 
-        The filename of the discrete state trajectory file. 
-        The filename can either contain the full or the 
-        relative path to the file.      
+    ----------
+    filename : str
+        The filename of the discrete state trajectory file.
+        The filename can either contain the full or the
+        relative path to the file.
     dtraj : array-like of int
         Discrete state trajectory
 
@@ -235,32 +235,32 @@ def save_discrete_trajectory(filename, dtraj):
 
     Notes
     -----
-    The discrete trajectory is stored as ndarray of integers 
+    The discrete trajectory is stored as ndarray of integers
     in numpy .npy format.
 
     Examples
     --------
 
-    >>> from tempfile import NamedTemporaryFile    
+    >>> from tempfile import NamedTemporaryFile
     >>> from msmtools.io import load_discrete_trajectory, save_discrete_trajectory
 
     Use temporary file
-    
+
     >>> tmpfile = NamedTemporaryFile()
 
     Discrete trajectory
-    
+
     >>> dtraj = np.array([0, 1, 0, 0, 1, 1, 0])
 
     Write to disk (as ascii file)
-    
+
     >>> save_discrete_trajectory(tmpfile.name, dtraj)
 
     Read from disk
 
     >>> X = load_discrete_trajectory(tmpfile.name)
     >>> X
-    array([0, 1, 0, 0, 1, 1, 0])       
-    
+    array([0, 1, 0, 0, 1, 1, 0])
+
     """
     discrete_trajectory.save_discrete_trajectory(filename, dtraj)

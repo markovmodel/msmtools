@@ -41,7 +41,7 @@ from six.moves import range
 
 def flux_matrix(T, pi, qminus, qplus, netflux=True):
     r"""Compute the TPT flux network for the reaction A-->B.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray
@@ -53,25 +53,25 @@ def flux_matrix(T, pi, qminus, qplus, netflux=True):
     qplus : (M,) ndarray
         Forward committor
     netflux : boolean
-        True: net flux matrix will be computed  
+        True: net flux matrix will be computed
         False: gross flux matrix will be computed
-    
+
     Returns
     -------
     flux : (M, M) ndarray
         Matrix of flux values between pairs of states.
-    
+
     Notes
     -----
     Computation of the flux network relies on transition path theory
     (TPT). The central object used in transition path theory is the
     forward and backward comittor function.
-    
+
     See also
     --------
     committor.forward_committor, committor.backward_committor
-    
-    
+
+
     """
     ind = np.diag_indices(T.shape[0])
     flux = pi[:, np.newaxis] * qminus[:, np.newaxis] * T * qplus[np.newaxis, :]
@@ -86,20 +86,20 @@ def flux_matrix(T, pi, qminus, qplus, netflux=True):
 
 def to_netflux(flux):
     r"""Compute the netflux from the gross flux.
-    
+
         f_ij^{+}=max{0, f_ij-f_ji}
         for all pairs i,j
-    
+
     Parameters
     ----------
     flux : (M, M) ndarray
         Matrix of flux values between pairs of states.
-    
+
     Returns
     -------
     netflux : (M, M) ndarray
         Matrix of netflux values between pairs of states.
-    
+
     """
     netflux = flux - np.transpose(flux)
     """Set negative fluxes to zero"""
@@ -110,12 +110,12 @@ def to_netflux(flux):
 
 def flux_production(F):
     r"""Returns the net flux production for all states
-    
+
     Parameters
     ----------
     F : (n, n) ndarray
         Matrix of flux values between pairs of states.
-    
+
     Returns
     -------
     prod : (n) ndarray
@@ -129,7 +129,7 @@ def flux_production(F):
 
 def flux_producers(F, rtol=1e-05, atol=1e-12):
     r"""Return indexes of states that are net flux producers.
-    
+
     Parameters
     ----------
     F : (n, n) ndarray
@@ -138,14 +138,14 @@ def flux_producers(F, rtol=1e-05, atol=1e-12):
         relative tolerance. fulfilled if max(outflux-influx, 0) / max(outflux,influx) < rtol
     atol : float
         absolute tolerance. fulfilled if max(outflux-influx, 0) < atol
-    
+
     Returns
     -------
     producers : (n) ndarray of int
         indexes of states that are net flux producers. May include "dirty" producers, i.e.
         states that have influx but still produce more outflux and thereby violate flux
         conservation.
-    
+
     """
     n = F.shape[0]
     influxes = np.array(np.sum(F, axis=0)).flatten()  # all that flows in
@@ -160,7 +160,7 @@ def flux_producers(F, rtol=1e-05, atol=1e-12):
 
 def flux_consumers(F, rtol=1e-05, atol=1e-12):
     r"""Return indexes of states that are net flux producers.
-    
+
     Parameters
     ----------
     F : (n, n) ndarray
@@ -169,14 +169,14 @@ def flux_consumers(F, rtol=1e-05, atol=1e-12):
         relative tolerance. fulfilled if max(outflux-influx, 0) / max(outflux,influx) < rtol
     atol : float
         absolute tolerance. fulfilled if max(outflux-influx, 0) < atol
-    
+
     Returns
     -------
     producers : (n) ndarray of int
         indexes of states that are net flux producers. May include "dirty" producers, i.e.
         states that have influx but still produce more outflux and thereby violate flux
         conservation.
-    
+
     """
     # can be used with sparse or dense
     n = np.shape(F)[0]
@@ -192,19 +192,19 @@ def flux_consumers(F, rtol=1e-05, atol=1e-12):
 
 def coarsegrain(F, sets):
     r"""Coarse-grains the flux to the given sets
-    
+
     $fc_{i,j} = \sum_{i \in I,j \in J} f_{i,j}$
     Note that if you coarse-grain a net flux, it does not necessarily have a net
-    flux property anymore. If want to make sure you get a netflux, 
+    flux property anymore. If want to make sure you get a netflux,
     use to_netflux(coarsegrain(F,sets)).
-    
+
     Parameters
     ----------
     F : (n, n) ndarray
         Matrix of flux values between pairs of states.
     sets : list of array-like of ints
         The sets of states onto which the flux is coarse-grained.
-    
+
     """
     nnew = len(sets)
     Fc = np.zeros((nnew, nnew))
@@ -225,20 +225,20 @@ def coarsegrain(F, sets):
 def total_flux(F, A=None):
     r"""Compute the total flux, or turnover flux, that is produced by the
         flux sources and consumed by the flux sinks
-    
+
     Parameters
     ----------
     F : (n, n) ndarray
         Matrix of flux values between pairs of states.
     A : array_like (optional)
         List of integer state labels for set A (reactant)
-    
+
     Returns
     -------
     F : float
         The total flux, or turnover flux, that is produced by the
         flux sources and consumed by the flux sinks
-    
+
     """
     if A is None:
         prod = flux_production(F)
@@ -255,7 +255,7 @@ def total_flux(F, A=None):
 
 def rate(totflux, pi, qminus):
     r"""Transition rate for reaction A to B.
-    
+
     Parameters
     ----------
     totflux : float
@@ -264,13 +264,13 @@ def rate(totflux, pi, qminus):
         Stationary distribution
     qminus : (M,) ndarray
         Backward comittor
-    
+
     Returns
     -------
     kAB : float
         The reaction rate (per time step of the
         Markov chain)
-    
+
     """
     kAB = totflux / (pi * qminus).sum()
     return kAB
@@ -278,7 +278,7 @@ def rate(totflux, pi, qminus):
 
 def mfpt(totflux, pi, qminus):
     r"""Mean first passage time for reaction A to B.
-    
+
     Parameters
     ----------
     totflux : float
@@ -287,12 +287,12 @@ def mfpt(totflux, pi, qminus):
         Stationary distribution
     qminus : (M,) ndarray
         Backward comittor
-    
+
     Returns
     -------
     kAB : float
         The reaction rate (per time step of the
         Markov chain)
-    
+
     """
     return 1.0 / rate(totflux, pi, qminus)

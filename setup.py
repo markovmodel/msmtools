@@ -38,7 +38,7 @@ import versioneer
 import warnings
 
 CLASSIFIERS = """\
-Development Status :: 5 - Production/Stable 
+Development Status :: 5 - Production/Stable
 Environment :: Console
 Environment :: MacOS X
 Intended Audience :: Science/Research

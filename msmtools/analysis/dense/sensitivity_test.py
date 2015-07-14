@@ -30,7 +30,7 @@ Created on 06.12.2013
 
 This module provides unit tests for the sensitivity module
 
-Most tests consist of the comparison of some (randomly selected) sensitivity matrices 
+Most tests consist of the comparison of some (randomly selected) sensitivity matrices
 against numerical differentiation results.
 '''
 from __future__ import absolute_import

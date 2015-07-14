@@ -97,14 +97,14 @@ _type_not_supported = \
 @shortcut('is_tmatrix')
 def is_transition_matrix(T, tol=1e-12):
     r"""Check if the given matrix is a transition matrix.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray or scipy.sparse matrix
         Matrix to check
     tol : float (optional)
         Floating point tolerance to check with
-    
+
     Returns
     -------
     is_transition_matrix : bool
@@ -129,7 +129,7 @@ def is_transition_matrix(T, tol=1e-12):
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> is_transition_matrix(T)
     True
-        
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
@@ -140,7 +140,7 @@ def is_transition_matrix(T, tol=1e-12):
 
 def is_rate_matrix(K, tol=1e-12):
     r"""Check if the given matrix is a rate matrix.
-    
+
     Parameters
     ----------
     K : (M, M) ndarray or scipy.sparse matrix
@@ -172,7 +172,7 @@ def is_rate_matrix(K, tol=1e-12):
     >>> K = np.array([[0.3, -0.2, -0.1], [-0.5, 0.5, 0.0], [-0.1, -0.1, 0.2]])
     >>> is_rate_matrix(K)
     True
-        
+
     """
     K = _types.ensure_ndarray_or_sparse(K, ndim=2, uniform=True, kind='numeric')
     if _issparse(K):
@@ -183,15 +183,15 @@ def is_rate_matrix(K, tol=1e-12):
 
 def is_connected(T, directed=True):
     r"""Check connectivity of the given matrix.
-    
+
     Parameters
     ----------
-    T : (M, M) ndarray or scipy.sparse matrix 
+    T : (M, M) ndarray or scipy.sparse matrix
         Matrix to check
     directed : bool (optional)
        If True respect direction of transitions, if False do not
        distinguish between forward and backward transitions
-       
+
     Returns
     -------
     is_connected : bool
@@ -208,14 +208,14 @@ def is_connected(T, directed=True):
     going from state :math:`i` to state :math:`j` in :math:`N` steps
     is positive, :math:`\mathbb{P}(X_{N}=j|X_{0}=i)>0`.
 
-    A transition matrix with this property is also called irreducible. 
+    A transition matrix with this property is also called irreducible.
 
     Viewing the transition matrix as the adjency matrix of a
     (directed) graph the transition matrix is irreducible if and only
     if the corresponding graph has a single connected
     component. Connectivity of a graph can be efficiently checked
     using Tarjan's algorithm.
-        
+
     References
     ----------
     .. [1] Hoel, P G and S C Port and C J Stone. 1972. Introduction to
@@ -235,7 +235,7 @@ def is_connected(T, directed=True):
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> is_connected(T)
     True
-    
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
@@ -247,16 +247,16 @@ def is_connected(T, directed=True):
 
 def is_reversible(T, mu=None, tol=1e-12):
     r"""Check reversibility of the given transition matrix.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray or scipy.sparse matrix
         Transition matrix
-    mu : (M,) ndarray (optional) 
+    mu : (M,) ndarray (optional)
          Test reversibility with respect to this vector
     tol : float (optional)
         Floating point tolerance to check with
-    
+
     Returns
     -------
     is_reversible : bool
@@ -291,7 +291,7 @@ def is_reversible(T, mu=None, tol=1e-12):
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     is_reversible(T)
     True
-        
+
     """
     # check input
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -369,9 +369,9 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
         The number of Lanczos vectors generated, `ncv` must be greater than k;
         it is recommended that ncv > 2*k
     reversible : bool, optional
-        Indicate that transition matrix is reversible 
+        Indicate that transition matrix is reversible
     mu : (M,) ndarray, optional
-        Stationary distribution of T 
+        Stationary distribution of T
 
     Returns
     -------
@@ -397,7 +397,7 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> w = eigenvalues(T)
     >>> w
-    array([1.0+0.j, 0.9+0.j, -0.1+0.j]) 
+    array([1.0+0.j, 0.9+0.j, -0.1+0.j])
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -424,9 +424,9 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
         The number of Lanczos vectors generated, `ncv` must be greater than k;
         it is recommended that ncv > 2*k
     reversible : bool, optional
-        Indicate that transition matrix is reversible 
+        Indicate that transition matrix is reversible
     mu : (M,) ndarray, optional
-        Stationary distribution of T 
+        Stationary distribution of T
 
     Returns
     -------
@@ -455,11 +455,11 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
     >>> ts = timescales(T)
     >>> ts
     array([        inf,  9.49122158,  0.43429448])
-    
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
-        return sparse.decomposition.timescales(T, tau=tau, k=k, ncv=ncv, 
+        return sparse.decomposition.timescales(T, tau=tau, k=k, ncv=ncv,
                                                reversible=reversible, mu=mu)
     else:
         return dense.decomposition.timescales(T, tau=tau, k=k, reversible=reversible, mu=mu)
@@ -467,7 +467,7 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
 
 def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
     r"""Compute eigenvectors of given transition matrix.
-    
+
     Parameters
     ----------
     T : numpy.ndarray, shape(d,d) or scipy.sparse matrix
@@ -481,11 +481,11 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
         If right=True compute right eigenvectors, left eigenvectors
         otherwise
     reversible : bool, optional
-        Indicate that transition matrix is reversible 
+        Indicate that transition matrix is reversible
     mu : (M,) ndarray, optional
-        Stationary distribution of T 
+        Stationary distribution of T
 
-    
+
     Returns
     -------
     eigvec : numpy.ndarray, shape=(d, n)
@@ -495,12 +495,12 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
 
     See also
     --------
-    rdl_decomposition    
+    rdl_decomposition
 
     Notes
     -----
-    Eigenvectors are computed using the scipy interface 
-    to the corresponding LAPACK/ARPACK routines.    
+    Eigenvectors are computed using the scipy interface
+    to the corresponding LAPACK/ARPACK routines.
 
     If reversible=False, the returned eigenvectors :math:`v_i` are
     normalized such that
@@ -510,17 +510,17 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
         \langle v_i, v_i \rangle = 1
 
     This is the case for right eigenvectors :math:`r_i` as well as
-    for left eigenvectors :math:`l_i`. 
+    for left eigenvectors :math:`l_i`.
 
     If you desire orthonormal left and right eigenvectors please use the
     rdl_decomposition method.
 
     If reversible=True the the eigenvectors of the similar symmetric
-    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be used to compute the 
+    matrix `\sqrt(\mu_i / \mu_j) p_{ij}` will be used to compute the
     eigenvectors of T.
 
     The precomputed stationary distribution will only be used if
-    reversible=True.    
+    reversible=True.
 
     Examples
     --------
@@ -530,14 +530,14 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
 
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> R = eigenvalues(T)
-    
+
     Matrix with right eigenvectors as columns
-    
+
     >>> R
     array([[  5.77350269e-01,   7.07106781e-01,   9.90147543e-02],
            [  5.77350269e-01,  -5.50368425e-16,  -9.90147543e-01],
            [  5.77350269e-01,  -7.07106781e-01,   9.90147543e-02]])
-           
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
@@ -556,24 +556,24 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
 def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=None):
     r"""Compute the decomposition into eigenvalues, left and right
     eigenvectors.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray or sparse matrix
-        Transition matrix    
+        Transition matrix
     k : int (optional)
         Number of eigenvector/eigenvalue pairs
     norm: {'standard', 'reversible', 'auto'}, optional
         which normalization convention to use
 
         ============ =============================================
-        norm       
+        norm
         ============ =============================================
         'standard'   LR = Id, is a probability\
                      distribution, the stationary distribution\
                      of `T`. Right eigenvectors `R`\
                      have a 2-norm of 1
-        'reversible' `R` and `L` are related via ``L[0, :]*R``  
+        'reversible' `R` and `L` are related via ``L[0, :]*R``
         'auto'       reversible if T is reversible, else standard.
         ============ =============================================
 
@@ -581,58 +581,58 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=Non
         The number of Lanczos vectors generated, `ncv` must be greater than k;
         it is recommended that ncv > 2*k
     reversible : bool, optional
-        Indicate that transition matrix is reversible 
+        Indicate that transition matrix is reversible
     mu : (M,) ndarray, optional
-        Stationary distribution of T        
-    
+        Stationary distribution of T
+
     Returns
     -------
     R : (M, M) ndarray
-        The normalized ("unit length") right eigenvectors, such that the 
-        column ``R[:,i]`` is the right eigenvector corresponding to the eigenvalue 
+        The normalized ("unit length") right eigenvectors, such that the
+        column ``R[:,i]`` is the right eigenvector corresponding to the eigenvalue
         ``w[i]``, ``dot(T,R[:,i])``=``w[i]*R[:,i]``
     D : (M, M) ndarray
         A diagonal matrix containing the eigenvalues, each repeated
-        according to its multiplicity    
+        according to its multiplicity
     L : (M, M) ndarray
-        The normalized (with respect to `R`) left eigenvectors, such that the 
+        The normalized (with respect to `R`) left eigenvectors, such that the
         row ``L[i, :]`` is the left eigenvector corresponding to the eigenvalue
         ``w[i]``, ``dot(L[i, :], T)``=``w[i]*L[i, :]``
-        
+
     Examples
     --------
 
     >>> import numpy as np
     >>> from msmtools.analysis import rdl_decomposition
-    
+
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> R, D, L = rdl_decomposition(T)
-    
+
     Matrix with right eigenvectors as columns
-    
+
     >>> R
     array([[  1.00000000e+00,   7.07106781e-01,   9.90147543e-02],
            [  1.00000000e+00,  -5.50368425e-16,  -9.90147543e-01],
            [  1.00000000e+00,  -7.07106781e-01,   9.90147543e-02]])
-           
+
     Diagonal matrix with eigenvalues
-    
+
     >>> D
     array([[ 1.0+0.j,  0.0+0.j,  0.0+0.j],
            [ 0.0+0.j,  0.9+0.j,  0.0+0.j],
            [ 0.0+0.j,  0.0+0.j, -0.1+0.j]])
-           
+
     Matrix with left eigenvectors as rows
-    
+
     >>> L
     array([[  4.54545455e-01,   9.09090909e-02,   4.54545455e-01],
            [  7.07106781e-01,   2.80317573e-17,  -7.07106781e-01],
-           [  4.59068406e-01,  -9.18136813e-01,   4.59068406e-01]])    
-           
+           [  4.59068406e-01,  -9.18136813e-01,   4.59068406e-01]])
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
-        return sparse.decomposition.rdl_decomposition(T, k=k, norm=norm, ncv=ncv, 
+        return sparse.decomposition.rdl_decomposition(T, k=k, norm=norm, ncv=ncv,
                                                       reversible=reversible, mu=mu)
     else:
         return dense.decomposition.rdl_decomposition(T, k=k, norm=norm,
@@ -642,7 +642,7 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=Non
 def mfpt(T, target, origin=None, tau=1, mu=None):
     r"""Mean first passage times (from a set of starting states - optional)
     to a set of target states.
-    
+
     Parameters
     ----------
     T : ndarray or scipy.sparse matrix, shape=(n,n)
@@ -657,51 +657,51 @@ def mfpt(T, target, origin=None, tau=1, mu=None):
         constructed.
     mu : (n,) ndarray (optional)
         The stationary distribution of the transition matrix T.
-    
+
     Returns
     -------
     m_t : ndarray, shape=(n,) or shape(1,)
         Mean first passage time or vector of mean first passage times.
-    
+
     Notes
     -----
     The mean first passage time :math:`\mathbf{E}_x[T_Y]` is the expected
     hitting time of one state :math:`y` in :math:`Y` when starting in state :math:`x`.
-    
+
     For a fixed target state :math:`y` it is given by
-    
+
     .. math :: \mathbb{E}_x[T_y] = \left \{  \begin{array}{cc}
                                              0 & x=y \\
                                              1+\sum_{z} T_{x,z} \mathbb{E}_z[T_y] & x \neq y
                                              \end{array}  \right.
-    
+
     For a set of target states :math:`Y` it is given by
-    
+
     .. math :: \mathbb{E}_x[T_Y] = \left \{  \begin{array}{cc}
                                              0 & x \in Y \\
                                              1+\sum_{z} T_{x,z} \mathbb{E}_z[T_Y] & x \notin Y
                                              \end{array}  \right.
-    
+
     The mean first passage time between sets, :math:`\mathbf{E}_X[T_Y]`, is given by
-    
+
     .. math :: \mathbb{E}_X[T_Y] = \sum_{x \in X}
                 \frac{\mu_x \mathbb{E}_x[T_Y]}{\sum_{z \in X} \mu_z}
-    
+
     References
     ----------
     .. [1] Hoel, P G and S C Port and C J Stone. 1972. Introduction to
         Stochastic Processes.
-    
+
     Examples
     --------
     >>> import numpy as np
     >>> from msmtools.analysis import mfpt
-    
+
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> m_t = mfpt(T,0)
     >>> m_t
     array([  0.,  12.,  22.])
-    
+
     """
     # check inputs
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -726,10 +726,10 @@ def mfpt(T, target, origin=None, tau=1, mu=None):
 def hitting_probability(T, target):
     """
     Computes the hitting probabilities for all states to the target states.
-    
+
     The hitting probability of state i to the target set A is defined as the minimal,
     non-negative solution of:
-    
+
     .. math::
         h_i^A &= 1                    \:\:\:\:  i\in A \\
         h_i^A &= \sum_j p_{ij} h_i^A  \:\:\:\:  i \notin A
@@ -762,14 +762,14 @@ def hitting_probability(T, target):
 
 def committor(T, A, B, forward=True, mu=None):
     r"""Compute the committor between sets of microstates.
-    
+
     The committor assigns to each microstate a probability that being
     at this state, the set B will be hit next, rather than set A
     (forward committor), or that the set A has been hit previously
     rather than set B (backward committor). See [1] for a
-    detailed mathematical description. The present implementation 
+    detailed mathematical description. The present implementation
     uses the equations given in [2].
-    
+
     Parameters
     ----------
     T : (M, M) ndarray or scipy.sparse matrix
@@ -781,7 +781,7 @@ def committor(T, A, B, forward=True, mu=None):
     forward : bool
         If True compute the forward committor, else
         compute the backward committor.
-    
+
     Returns
     -------
     q : (M,) ndarray
@@ -791,7 +791,7 @@ def committor(T, A, B, forward=True, mu=None):
     -----
     Committor functions are used to characterize microstates in terms
     of their probability to being visited during a reaction/transition
-    between two disjoint regions of state space A, B. 
+    between two disjoint regions of state space A, B.
 
     **Forward committor**
 
@@ -824,7 +824,7 @@ def committor(T, A, B, forward=True, mu=None):
 
     .. math:: t_{S}=\sup\{t \geq 0 | X_t \notin S \}
 
-    the backward committor can be formally defined as 
+    the backward committor can be formally defined as
 
     .. math:: q^{(-)}_i=\mathbb{P}_{i}(t_{A}<t_{B}).
 
@@ -841,10 +841,10 @@ def committor(T, A, B, forward=True, mu=None):
     References
     ----------
     .. [1] P. Metzner, C. Schuette and E. Vanden-Eijnden.
-        Transition Path Theory for Markov Jump Processes. 
+        Transition Path Theory for Markov Jump Processes.
         Multiscale Model Simul 7: 1192-1219 (2009).
-    .. [2] F. Noe, C. Schuette, E. Vanden-Eijnden, L. Reich and T.Weikl 
-        Constructing the Full Ensemble of Folding Pathways from Short Off-Equilibrium Simulations. 
+    .. [2] F. Noe, C. Schuette, E. Vanden-Eijnden, L. Reich and T.Weikl
+        Constructing the Full Ensemble of Folding Pathways from Short Off-Equilibrium Simulations.
         Proc. Natl. Acad. Sci. USA, 106: 19011-19016 (2009).
 
     Examples
@@ -858,11 +858,11 @@ def committor(T, A, B, forward=True, mu=None):
     >>> u_plus = committor(T, A, B)
     >>> u_plus
     array([ 0. ,  0.5,  1. ])
-    
+
     >>> u_minus = committor(T, A, B, forward=False)
     >>> u_minus
     array([ 1.        ,  0.45454545,  0.        ])
-    
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     A = _types.ensure_int_vector(A)
@@ -894,8 +894,8 @@ def committor(T, A, B, forward=True, mu=None):
 ################################################################################
 
 def expected_counts(T, p0, N):
-    r"""Compute expected transition counts for Markov chain with n steps.    
-    
+    r"""Compute expected transition counts for Markov chain with n steps.
+
     Parameters
     ----------
     T : (M, M) ndarray or sparse matrix
@@ -904,7 +904,7 @@ def expected_counts(T, p0, N):
         Initial (probability) vector
     N : int
         Number of steps to take
-    
+
     Returns
     --------
     EC : (M, M) ndarray or sparse matrix
@@ -913,9 +913,9 @@ def expected_counts(T, p0, N):
     Notes
     -----
     Expected counts can be computed via the following expression
-    
+
     .. math::
-    
+
         \mathbb{E}[C^{(N)}]=\sum_{k=0}^{N-1} \text{diag}(p^{T} T^{k}) T
 
     Examples
@@ -932,7 +932,7 @@ def expected_counts(T, p0, N):
     array([[ 45.44616147,   5.0495735 ,   0.        ],
            [  4.50413223,   0.        ,   4.50413223],
            [  0.        ,   4.04960006,  36.44640052]])
-        
+
     """
     # check input
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -945,8 +945,8 @@ def expected_counts(T, p0, N):
 
 
 def expected_counts_stationary(T, N, mu=None):
-    r"""Expected transition counts for Markov chain in equilibrium.    
-    
+    r"""Expected transition counts for Markov chain in equilibrium.
+
     Parameters
     ----------
     T : (M, M) ndarray or sparse matrix
@@ -956,38 +956,38 @@ def expected_counts_stationary(T, N, mu=None):
     mu : (M,) ndarray (optional)
         Stationary distribution for T. If mu is not specified it will be
         computed from T.
-    
+
     Returns
     -------
     EC : (M, M) ndarray or sparse matrix
-        Expected value for transition counts after N steps.         
+        Expected value for transition counts after N steps.
 
     Notes
     -----
-    Since :math:`\mu` is stationary for :math:`T` we have 
-    
+    Since :math:`\mu` is stationary for :math:`T` we have
+
     .. math::
-    
+
         \mathbb{E}[C^{(N)}]=N D_{\mu}T.
 
     :math:`D_{\mu}` is a diagonal matrix. Elements on the diagonal are
     given by the stationary vector :math:`\mu`
-        
+
     Examples
     --------
 
     >>> import numpy as np
     >>> from msmtools.analysis import expected_counts_stationary
-    
+
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> N = 100
     >>> EC = expected_counts_stationary(T, N)
-    
+
     >>> EC
     array([[ 40.90909091,   4.54545455,   0.        ],
            [  4.54545455,   0.        ,   4.54545455],
-           [  0.        ,   4.54545455,  40.90909091]])       
-    
+           [  0.        ,   4.54545455,  40.90909091]])
+
     """
     # check input
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1013,14 +1013,14 @@ def fingerprint_correlation(T, obs1, obs2=None, tau=1, k=None, ncv=None):
     obs1 : (M,) ndarray
         Observable, represented as vector on state space
     obs2 : (M,) ndarray (optional)
-        Second observable, for cross-correlations    
+        Second observable, for cross-correlations
     k : int (optional)
         Number of time-scales and amplitudes to compute
     tau : int (optional)
         Lag time of given transition matrix, for correct time-scales
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
     Returns
     -------
@@ -1038,11 +1038,11 @@ def fingerprint_correlation(T, obs1, obs2=None, tau=1, k=None, ncv=None):
     .. [1] Noe, F, S Doose, I Daidone, M Loellmann, M Sauer, J D
         Chodera and J Smith. 2010. Dynamical fingerprints for probing
         individual relaxation processes in biomolecular dynamics with
-        simulations and kinetic experiments. PNAS 108 (12): 4822-4827.    
+        simulations and kinetic experiments. PNAS 108 (12): 4822-4827.
 
     Notes
     -----
-    Fingerprints are a combination of time-scale and amplitude spectrum for 
+    Fingerprints are a combination of time-scale and amplitude spectrum for
     a equilibrium correlation or a non-equilibrium relaxation experiment.
 
     **Auto-correlation**
@@ -1054,7 +1054,7 @@ def fingerprint_correlation(T, obs1, obs2=None, tau=1, k=None, ncv=None):
 
     :math:`a(x,0)=a(x)` is the observable at time :math:`t=0`.  It can
     be propagated forward in time using the t-step transition matrix
-    :math:`p^{t}(x, y)`. 
+    :math:`p^{t}(x, y)`.
 
     The propagated observable at time :math:`t` is :math:`a(x,
     t)=\sum_y p^t(x, y)a(y, 0)`.
@@ -1068,13 +1068,13 @@ def fingerprint_correlation(T, obs1, obs2=None, tau=1, k=None, ncv=None):
 
     .. math:: \gamma_i=\langle a, r_i\rangle_{\mu} \langle l_i, a \rangle.
 
-    And the fingerprint time scales :math:`t_i` are given by 
+    And the fingerprint time scales :math:`t_i` are given by
 
     .. math:: t_i=-\frac{\tau}{\log \lvert \lambda_i \rvert}.
 
     **Cross-correlation**
 
-    The cross-correlation of two observables :math:`a(x)`, :math:`b(x)` is similarly given 
+    The cross-correlation of two observables :math:`a(x)`, :math:`b(x)` is similarly given
 
     .. math:: \mathbb{E}_{\mu}[a(x,0)b(x,t)]=\sum_x \mu(x) a(x, 0) b(x, t)
 
@@ -1084,7 +1084,7 @@ def fingerprint_correlation(T, obs1, obs2=None, tau=1, k=None, ncv=None):
 
     Examples
     --------
-    
+
     >>> import numpy as np
     >>> from msmtools.analysis import fingerprint_correlation
 
@@ -1094,10 +1094,10 @@ def fingerprint_correlation(T, obs1, obs2=None, tau=1, k=None, ncv=None):
 
     >>> ts
     array([        inf,  9.49122158,  0.43429448])
-    
+
     >>> amp
     array([ 0.20661157,  0.22727273,  0.02066116])
-    
+
     """
     # check if square matrix and remember size
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1127,14 +1127,14 @@ def fingerprint_relaxation(T, p0, obs, tau=1, k=None, ncv=None):
     obs1 : (M,) ndarray
         Observable, represented as vector on state space
     obs2 : (M,) ndarray (optional)
-        Second observable, for cross-correlations    
+        Second observable, for cross-correlations
     k : int (optional)
         Number of time-scales and amplitudes to compute
     tau : int (optional)
         Lag time of given transition matrix, for correct time-scales
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
     Returns
     -------
@@ -1152,11 +1152,11 @@ def fingerprint_relaxation(T, p0, obs, tau=1, k=None, ncv=None):
     .. [1] Noe, F, S Doose, I Daidone, M Loellmann, M Sauer, J D
         Chodera and J Smith. 2010. Dynamical fingerprints for probing
         individual relaxation processes in biomolecular dynamics with
-        simulations and kinetic experiments. PNAS 108 (12): 4822-4827.    
-        
+        simulations and kinetic experiments. PNAS 108 (12): 4822-4827.
+
     Notes
     -----
-    Fingerprints are a combination of time-scale and amplitude spectrum for 
+    Fingerprints are a combination of time-scale and amplitude spectrum for
     a equilibrium correlation or a non-equilibrium relaxation experiment.
 
     **Relaxation**
@@ -1170,7 +1170,7 @@ def fingerprint_relaxation(T, p0, obs, tau=1, k=None, ncv=None):
 
     .. math:: \gamma_i=\langle w_0, r_i\rangle \langle l_i, a \rangle.
 
-    And the fingerprint time scales :math:`t_i` are given by 
+    And the fingerprint time scales :math:`t_i` are given by
 
     .. math:: t_i=-\frac{\tau}{\log \lvert \lambda_i \rvert}.
 
@@ -1189,8 +1189,8 @@ def fingerprint_relaxation(T, p0, obs, tau=1, k=None, ncv=None):
     array([        inf,  9.49122158,  0.43429448])
 
     >>> amp
-    array([ 0.45454545,  0.5       ,  0.04545455])    
-        
+    array([ 0.45454545,  0.5       ,  0.04545455])
+
     """
     # check if square matrix and remember size
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1219,7 +1219,7 @@ def expectation(T, a, mu=None):
     mu : (M,) ndarray (optional)
         The stationary distribution of T.  If given, the stationary
         distribution will not be recalculated (saving lots of time)
-    
+
     Returns
     -------
     val: float
@@ -1228,11 +1228,11 @@ def expectation(T, a, mu=None):
     Notes
     -----
     The equilibrium expectation value of an observable a is defined as follows
-    
+
     .. math::
 
         \mathbb{E}_{\mu}[a] = \sum_i \mu_i a_i
-       
+
     :math:`\mu=(\mu_i)` is the stationary vector of the transition matrix :math:`T`.
 
     Examples
@@ -1244,8 +1244,8 @@ def expectation(T, a, mu=None):
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> a = np.array([1.0, 0.0, 1.0])
     >>> m_a = expectation(T, a)
-    0.90909090909090917       
-    
+    0.90909090909090917
+
     """
     # check if square matrix and remember size
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1260,7 +1260,7 @@ def expectation(T, a, mu=None):
 
 def correlation(T, obs1, obs2=None, times=(1), maxtime=None, k=None, ncv=None, return_times=False):
     r"""Time-correlation for equilibrium experiment.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray or scipy.sparse matrix
@@ -1277,7 +1277,7 @@ def correlation(T, obs1, obs2=None, times=(1), maxtime=None, k=None, ncv=None, r
         Number of eigenvalues and eigenvectors to use for computation
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
     Returns
     -------
@@ -1291,11 +1291,11 @@ def correlation(T, obs1, obs2=None, times=(1), maxtime=None, k=None, ncv=None, r
     .. [1] Noe, F, S Doose, I Daidone, M Loellmann, M Sauer, J D
         Chodera and J Smith. 2010. Dynamical fingerprints for probing
         individual relaxation processes in biomolecular dynamics with
-        simulations and kinetic experiments. PNAS 108 (12): 4822-4827.    
+        simulations and kinetic experiments. PNAS 108 (12): 4822-4827.
 
     Notes
     -----
-        
+
     **Auto-correlation**
 
     The auto-correlation of an observable :math:`a(x)` for a system in
@@ -1305,7 +1305,7 @@ def correlation(T, obs1, obs2=None, times=(1), maxtime=None, k=None, ncv=None, r
 
     :math:`a(x,0)=a(x)` is the observable at time :math:`t=0`.  It can
     be propagated forward in time using the t-step transition matrix
-    :math:`p^{t}(x, y)`. 
+    :math:`p^{t}(x, y)`.
 
     The propagated observable at time :math:`t` is :math:`a(x,
     t)=\sum_y p^t(x, y)a(y, 0)`.
@@ -1324,7 +1324,7 @@ def correlation(T, obs1, obs2=None, times=(1), maxtime=None, k=None, ncv=None, r
 
     Examples
     --------
-    
+
     >>> import numpy as np
     >>> from msmtools.analysis import correlation
 
@@ -1335,7 +1335,7 @@ def correlation(T, obs1, obs2=None, times=(1), maxtime=None, k=None, ncv=None, r
     >>> corr = correlation(T, a, times=times)
     >>> corr
     array([ 0.40909091,  0.34081364,  0.28585667,  0.23424263])
-    
+
     """
     # check if square matrix and remember size
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1373,7 +1373,7 @@ def relaxation(T, p0, obs, times=(1), k=None, ncv=None):
         Number of eigenvalues and eigenvectors to use for computation
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
     Returns
     -------
@@ -1411,7 +1411,7 @@ def relaxation(T, p0, obs, times=(1), k=None, ncv=None):
     >>> rel = relaxation(P, p0, times=times)
     >>> rel
     array([ 1.        ,  0.8407    ,  0.71979377,  0.60624287])
-    
+
     """
     # check if square matrix and remember size
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1605,9 +1605,9 @@ def pcca_distributions(T, m):
 
 def coarsegrain(P, m):
     """Coarse-grains transition matrix P to n sets using PCCA++ _[1]
-    
+
     Coarse-grains transition matrix P such that the dominant eigenvalues are preserved, using:
-    
+
     ..math:
         \tilde{P} = M^T P M (M^T M)^{-1}
 
@@ -1655,7 +1655,7 @@ def _showSparseConversionWarning():
 
 def eigenvalue_sensitivity(T, k):
     r"""Sensitivity matrix of a specified eigenvalue.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray
@@ -1667,7 +1667,7 @@ def eigenvalue_sensitivity(T, k):
     -------
     S : (M, M) ndarray
         Sensitivity matrix for k-th eigenvalue.
-    
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
@@ -1679,7 +1679,7 @@ def eigenvalue_sensitivity(T, k):
 
 def timescale_sensitivity(T, k):
     r"""Sensitivity matrix of a specified time-scale.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray
@@ -1691,7 +1691,7 @@ def timescale_sensitivity(T, k):
     -------
     S : (M, M) ndarray
         Sensitivity matrix for the k-th time-scale.
-        
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
@@ -1703,15 +1703,15 @@ def timescale_sensitivity(T, k):
 
 def eigenvector_sensitivity(T, k, j, right=True):
     r"""Sensitivity matrix of a selected eigenvector element.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray
         Transition matrix (stochastic matrix).
     k : int
-        Eigenvector index 
+        Eigenvector index
     j : int
-        Element index 
+        Element index
     right : bool
         If True compute for right eigenvector, otherwise compute for left eigenvector.
 
@@ -1719,7 +1719,7 @@ def eigenvector_sensitivity(T, k, j, right=True):
     -------
     S : (M, M) ndarray
         Sensitivity matrix for the j-th element of the k-th eigenvector.
-    
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
@@ -1732,7 +1732,7 @@ def eigenvector_sensitivity(T, k, j, right=True):
 @shortcut('statdist_sensitivity')
 def stationary_distribution_sensitivity(T, j):
     r"""Sensitivity matrix of a stationary distribution element.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray
@@ -1740,14 +1740,14 @@ def stationary_distribution_sensitivity(T, j):
     j : int
         Index of stationary distribution element
         for which sensitivity matrix is computed.
-        
+
 
     Returns
     -------
     S : (M, M) ndarray
         Sensitivity matrix for the specified element
         of the stationary distribution.
-    
+
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     if _issparse(T):
@@ -1759,21 +1759,21 @@ def stationary_distribution_sensitivity(T, j):
 
 def mfpt_sensitivity(T, target, i):
     r"""Sensitivity matrix of the mean first-passage time from specified state.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray
-        Transition matrix 
+        Transition matrix
     target : int or list
         Target state or set for mfpt computation
     i : int
         Compute the sensitivity for state `i`
-        
+
     Returns
     -------
     S : (M, M) ndarray
         Sensitivity matrix for specified state
-    
+
     """
     # check input
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1788,10 +1788,10 @@ def mfpt_sensitivity(T, target, i):
 
 def committor_sensitivity(T, A, B, i, forward=True):
     r"""Sensitivity matrix of a specified committor entry.
-    
+
     Parameters
     ----------
-    
+
     T : (M, M) ndarray
         Transition matrix
     A : array_like
@@ -1803,12 +1803,12 @@ def committor_sensitivity(T, A, B, i, forward=True):
     forward : bool (optional)
         Compute the forward committor. If forward
         is False compute the backward committor.
-    
+
     Returns
-    -------    
+    -------
     S : (M, M) ndarray
         Sensitivity matrix of the specified committor entry.
-    
+
     """
     # check inputs
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -1838,7 +1838,7 @@ def expectation_sensitivity(T, a):
     -------
     S : (M, M) ndarray
         Sensitivity matrix of the expectation value.
-    
+
     """
     # check input
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')

@@ -39,7 +39,7 @@ from six.moves import range
 # TODO:make faster. So far not effectively programmed
 # Martin: done, but untested, since there is no testcase...
 def forward_committor_sensitivity(T, A, B, index):
-    """ 
+    """
     calculate the sensitivity matrix for index of the forward committor from A to B given transition matrix T.
     Parameters
     ----------
@@ -50,7 +50,7 @@ def forward_committor_sensitivity(T, A, B, index):
     B : array like
         List of integer state labels for set B
     index : entry of the committor for which the sensitivity is to be computed
-        
+
     Returns
     -------
     x : ndarray, shape=(n, n)
@@ -97,7 +97,7 @@ def forward_committor_sensitivity(T, A, B, index):
 
 
 def backward_committor_sensitivity(T, A, B, index):
-    """ 
+    """
     calculate the sensitivity matrix for index of the backward committor from A to B given transition matrix T.
     Parameters
     ----------
@@ -108,7 +108,7 @@ def backward_committor_sensitivity(T, A, B, index):
     B : array like
         List of integer state labels for set B
     index : entry of the committor for which the sensitivity is to be computed
-        
+
     Returns
     -------
     x : ndarray, shape=(n, n)
@@ -162,7 +162,7 @@ def backward_committor_sensitivity(T, A, B, index):
 
 
 def eigenvalue_sensitivity(T, k):
-    """ 
+    """
     calculate the sensitivity matrix for eigenvalue k given transition matrix T.
     Parameters
     ----------
@@ -170,7 +170,7 @@ def eigenvalue_sensitivity(T, k):
         Transition matrix
     k : int
         eigenvalue index for eigenvalues order descending
-        
+
     Returns
     -------
     x : ndarray, shape=(n, n)
@@ -191,7 +191,7 @@ def eigenvalue_sensitivity(T, k):
 
 
 def timescale_sensitivity(T, k):
-    """ 
+    """
     calculate the sensitivity matrix for timescale k given transition matrix T.
     Parameters
     ----------
@@ -199,7 +199,7 @@ def timescale_sensitivity(T, k):
         Transition matrix
     k : int
         timescale index for timescales of descending order (k = 0 for the infinite one)
-        
+
     Returns
     -------
     x : ndarray, shape=(n, n)
@@ -238,7 +238,7 @@ def timescale_sensitivity(T, k):
 # TODO: If we choose k = 0 and right = False we might throw a warning!?!
 
 def eigenvector_sensitivity(T, k, j, right=True):
-    """ 
+    """
     calculate the sensitivity matrix for entry j of left or right eigenvector k given transition matrix T.
     Parameters
     ----------
@@ -250,18 +250,18 @@ def eigenvector_sensitivity(T, k, j, right=True):
         entry of eigenvector k for which the sensitivity is to be computed
     right : boolean (default: True)
         If set to True (default) the right eigenvectors are considered, otherwise the left ones
-        
+
     Returns
     -------
     x : ndarray, shape=(n, n)
         Sensitivity matrix for entry index around transition matrix T. Reversibility is not assumed.
-    
+
     Remarks
     -------
     Eigenvectors can naturally be scaled and so will their sensitivity depend on their size.
     For that reason we need to agree on a normalization for which the sensitivity is computed.
     Here we use the natural norm(vector) = 1 condition which is different from the results, e.g.
-    the rdl_decomposition returns. 
+    the rdl_decomposition returns.
     This is especially important for the stationary distribution, which is the first left eigenvector.
     For this reason this function return a different sensitivity for the first left eigenvector
     than the function stationary_distribution_sensitivity and this function should not be used in this
@@ -315,12 +315,12 @@ def stationary_distribution_sensitivity(T, j):
         Transition matrix
     j : int
         entry of stationary distribution for which the sensitivity is to be computed
-        
+
     Returns
     -------
     x : ndarray, shape=(n, n)
         Sensitivity matrix for entry index around transition matrix T. Reversibility is not assumed.
-    
+
     Remark
     ------
     Note, that this function uses a different normalization convention for the sensitivity compared to
@@ -351,7 +351,7 @@ def stationary_distribution_sensitivity(T, j):
 
 
 def mfpt_sensitivity(T, target, j):
-    """ 
+    """
     calculate the sensitivity matrix for entry j of the mean first passage time (MFPT) given transition matrix T.
     Parameters
     ----------
@@ -361,7 +361,7 @@ def mfpt_sensitivity(T, target, j):
         target state to which the MFPT is computed
     j : int
         entry of the mfpt vector for which the sensitivity is to be computed
-        
+
     Returns
     -------
     x : ndarray, shape=(n, n)
@@ -405,7 +405,7 @@ def expectation_sensitivity(T, a):
     -------
     S : (M, M) ndarray
         Sensitivity matrix of the expectation value.
-    
+
     """
     M = T.shape[0]
     S = numpy.zeros((M, M))

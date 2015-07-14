@@ -114,7 +114,7 @@ def has_connection(graph, A, B):
     hc : bool
        True if the graph contains a path connecting A and B, otherwise
        False.
-       
+
     """
     for istart in A:
         nodes = csgraph.breadth_first_order(graph, istart, directed=True, return_predecessors=False)
@@ -163,7 +163,7 @@ def pathway(F, A, B):
     -------
     w : list
         The dominant reaction-pathway
-        
+
     """
     b1, b2, F = find_bottleneck(F, A, B)
     if np.any(A == b1):
@@ -194,12 +194,12 @@ def capacity(F, path):
         The flux network (matrix of netflux values)
     path : list
         Reaction path
-        
+
     Returns
     -------
     c : float
         Capacity (min. current of path)
-       
+
     """
     F = F.todok()
     L = len(path)
@@ -221,12 +221,12 @@ def remove_path(F, path):
         The flux network (matrix of netflux values)
     path : list
         Reaction path
-        
+
     Returns
     -------
     F : (M, M) scipy.sparse matrix
         The updated flux network
-        
+
     """
     c = capacity(F, path)
     F = F.todok()
@@ -253,7 +253,7 @@ def pathways(F, A, B, fraction=1.0, maxiter=1000):
         Fraction of total flux to assemble in pathway decomposition
     maxiter : int, optional
         Maximum number of pathways for decomposition
-        
+
     Returns
     -------
     paths : list
@@ -264,9 +264,9 @@ def pathways(F, A, B, fraction=1.0, maxiter=1000):
     References
     ----------
     .. [1] P. Metzner, C. Schuette and E. Vanden-Eijnden.
-        Transition Path Theory for Markov Jump Processes. 
-        Multiscale Model Simul 7: 1192-1219 (2009)    
-                
+        Transition Path Theory for Markov Jump Processes.
+        Multiscale Model Simul 7: 1192-1219 (2009)
+
     """
     F, a, b = add_endstates(F, A, B)
     A = [a, ]
@@ -326,7 +326,7 @@ def add_endstates(F, A, B):
         The new single source a_new = M
     b_new : int
         The new single sink b_new = M+1
-    
+
     """
 
     """Outgoing currents from A"""
@@ -369,10 +369,9 @@ def add_endstates(F, A, B):
 
 
 
-    
 
 
-    
 
 
-    
+
+

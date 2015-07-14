@@ -61,11 +61,11 @@ def time_correlation_by_diagonalization(P, pi, obs1, obs2=None, time=1, rdl=None
 
 def time_correlation_direct_by_mtx_vec_prod(P, mu, obs1, obs2=None, time=1, start_values=None, return_P_k_obs=False):
     r"""Compute time-correlation of obs1, or time-cross-correlation with obs2.
-    
-    The time-correlation at time=k is computed by the matrix-vector expression: 
+
+    The time-correlation at time=k is computed by the matrix-vector expression:
     cor(k) = obs1' diag(pi) P^k obs2
-    
-    
+
+
     Parameters
     ----------
     P : ndarray, shape=(n, n) or scipy.sparse matrix
@@ -85,7 +85,7 @@ def time_correlation_direct_by_mtx_vec_prod(P, mu, obs1, obs2=None, time=1, star
     return_P_k_obs : bool
         if True, the dot product <P^time, obs2> will be returned for further
         calculations.
-    
+
     Returns
     -------
     cor(k) : float
@@ -133,11 +133,11 @@ def time_correlation_direct_by_mtx_vec_prod(P, mu, obs1, obs2=None, time=1, star
 
 def time_correlations_direct(P, pi, obs1, obs2=None, times=[1]):
     r"""Compute time-correlations of obs1, or time-cross-correlation with obs2.
-    
-    The time-correlation at time=k is computed by the matrix-vector expression: 
+
+    The time-correlation at time=k is computed by the matrix-vector expression:
     cor(k) = obs1' diag(pi) P^k obs2
-    
-    
+
+
     Parameters
     ----------
     P : ndarray, shape=(n, n) or scipy.sparse matrix
@@ -150,11 +150,11 @@ def time_correlations_direct(P, pi, obs1, obs2=None, times=[1]):
     pi : ndarray, shape=(n)
         stationary distribution vector. Will be computed if not given
     times : array-like, shape(n_t)
-        Vector of time points at which the (auto)correlation will be evaluated 
-    
+        Vector of time points at which the (auto)correlation will be evaluated
+
     Returns
     -------
-    
+
     """
     n_t = len(times)
     times = np.sort(times)  # sort it to use caching of previously computed correlations
@@ -187,9 +187,9 @@ def time_correlations_direct(P, pi, obs1, obs2=None, times=[1]):
 
 def time_relaxation_direct_by_mtx_vec_prod(P, p0, obs, time=1, start_values=None, return_pP_k=False):
     r"""Compute time-relaxations of obs with respect of given initial distribution.
-    
+
     relaxation(k) = p0 P^k obs
-    
+
     Parameters
     ----------
     P : ndarray, shape=(n, n) or scipy.sparse matrix
@@ -200,11 +200,11 @@ def time_relaxation_direct_by_mtx_vec_prod(P, p0, obs, time=1, start_values=None
         Vector representing observable on discrete states.
     time : int or array like
         time point at which the (auto)correlation will be evaluated.
-    
-    start_values = (time, 
+
+    start_values = (time,
     Returns
     -------
-    relaxation : float 
+    relaxation : float
     """
     # input checks
     if not type(time) == int:
@@ -261,9 +261,9 @@ def time_relaxation_direct_by_diagonalization(P, p0, obs, time, rdl=None):
 
 def time_relaxations_direct(P, p0, obs, times=[1]):
     r"""Compute time-relaxations of obs with respect of given initial distribution.
-    
+
     relaxation(k) = p0 P^k obs
-    
+
     Parameters
     ----------
     P : ndarray, shape=(n, n) or scipy.sparse matrix
@@ -271,10 +271,10 @@ def time_relaxations_direct(P, p0, obs, times=[1]):
     p0 : ndarray, shape=(n)
         initial distribution
     obs : ndarray, shape=(n)
-        Vector representing observable on discrete states. 
+        Vector representing observable on discrete states.
     times : array-like, shape(n_t)
-        Vector of time points at which the (auto)correlation will be evaluated 
-    
+        Vector of time points at which the (auto)correlation will be evaluated
+
     Returns
     -------
     relaxations : ndarray, shape(n_t)

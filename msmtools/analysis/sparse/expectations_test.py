@@ -43,7 +43,7 @@ from . import expectations
 
 
 def random_orthonormal_sparse_vectors(d, k):
-    r"""Generate a random set of k orthonormal sparse vectors 
+    r"""Generate a random set of k orthonormal sparse vectors
 
     The algorithm draws random indices, {i_1,...,i_k}, from the set
     of all possible indices, {0,...,d-1}, without replacement.

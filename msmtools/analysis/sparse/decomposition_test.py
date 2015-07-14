@@ -197,7 +197,7 @@ class TestDecomposition(unittest.TestCase):
         assert_allclose(vals[np.newaxis, :] * Rn, P.dot(Rn))
 
         Ln = eigenvectors(P, right=False, k=self.k, ncv=self.ncv, reversible=True, mu=mu)
-        assert_allclose(P.transpose().dot(Ln), vals[np.newaxis, :] * Ln)        
+        assert_allclose(P.transpose().dot(Ln), vals[np.newaxis, :] * Ln)
 
     def test_rdl_decomposition(self):
         P = self.bdc.transition_matrix_sparse()
@@ -322,7 +322,7 @@ class TestDecomposition(unittest.TestCase):
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
 
-        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible', 
+        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible',
                                        k=self.k, ncv=self.ncv)
         Xn = np.dot(Ln, Rn)
         """Right-eigenvectors"""
@@ -383,7 +383,7 @@ class TestDecomposition(unittest.TestCase):
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
 
-        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible', 
+        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible',
                                        k=self.k, ncv=self.ncv, mu=mu)
         Xn = np.dot(Ln, Rn)
         """Right-eigenvectors"""
@@ -450,7 +450,7 @@ class TestDecomposition(unittest.TestCase):
 
         """k is not None, mu is not None, ncv is not None"""
         tsn = timescales(P, k=self.k, ncv=self.ncv, reversible=True, mu=mu)
-        assert_allclose(ts[1:self.k], tsn[1:])        
+        assert_allclose(ts[1:self.k], tsn[1:])
 
         """tau=7"""
 
@@ -462,8 +462,8 @@ class TestDecomposition(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-    
-    
-    
-    
-    
+
+
+
+
+

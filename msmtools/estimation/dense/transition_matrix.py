@@ -39,20 +39,20 @@ import msmtools.util.exceptions
 def transition_matrix_non_reversible(C):
     r"""
     Estimates a nonreversible transition matrix from count matrix C
-    
+
     T_ij = c_ij / c_i where c_i = sum_j c_ij
-     
+
     Parameters
     ----------
     C: ndarray, shape (n,n)
         count matrix
-    
+
     Returns
     -------
     T: Estimated transition matrix
-    
+
     """
-    # multiply by 1.0 to make sure we're not doing integer division 
+    # multiply by 1.0 to make sure we're not doing integer division
     rowsums = 1.0 * np.sum(C, axis=1)
     if np.min(rowsums) <= 0:
         raise ValueError(
@@ -75,7 +75,7 @@ def __initX(C):
 
 def __relative_error(x, y, norm=None):
     """
-    computes the norm of the vector with elementwise relative errors 
+    computes the norm of the vector with elementwise relative errors
     between x and y, defined by (x_i - y_i) / (x_i + y_i)
 
     x : ndarray (n)
@@ -88,7 +88,7 @@ def __relative_error(x, y, norm=None):
     """
     d = (x - y)
     s = (x + y)
-    # to avoid dividing by zero, always set to 0 
+    # to avoid dividing by zero, always set to 0
     nz = np.nonzero(d)
     # relative error vector
     erel = d[nz] / s[nz]
@@ -100,12 +100,12 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
                                           return_statdist=False, return_conv=False):
     """
     iterative method for estimating a maximum likelihood reversible transition matrix
-    
+
     The iteration equation implemented here is:
         t_ij = (c_ij + c_ji) / ((c_i / x_i) + (c_j / x_j))
     Please note that there is a better (=faster) iteration that has been described in
     Prinz et al, J. Chem. Phys. 134, p. 174105 (2011). We should implement that too.
-    
+
     Parameters
     ----------
     C : ndarray (n,n)
@@ -134,10 +134,10 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
     (pi) : ndarray (n)
         stationary distribution. Only returned if return_statdist = True
     (lhist) : ndarray (k)
-        likelihood history. Has the length of the number of iterations needed. 
+        likelihood history. Has the length of the number of iterations needed.
         Only returned if return_conv = True
     (pi_changes) : ndarray (k)
-        history of likelihood history. Has the length of the number of iterations needed. 
+        history of likelihood history. Has the length of the number of iterations needed.
         Only returned if return_conv = True
     """
     from msmtools.estimation import is_connected
@@ -159,7 +159,7 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
     xsum = np.sum(X, axis=1)  # row sums x
     D = np.zeros((n, n))  # helper matrix
     T = np.zeros((n, n))  # transition matrix
-    # if convergence history requested, initialize variables 
+    # if convergence history requested, initialize variables
     if (return_conv):
         diffs = np.zeros(maxiter)
         # likelihood
@@ -207,9 +207,9 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
 def transition_matrix_reversible_fixpi(Z, mu, maxerr=1e-10, maxiter=10000, return_iterations=False):
     r"""
     maximum likelihood transition matrix with fixed stationary distribution
-    
+
     developed by Fabian Paul and Frank Noe
-    
+
     Parameters
     ----------
     Z: ndarray, shape (n,n)
@@ -223,11 +223,11 @@ def transition_matrix_reversible_fixpi(Z, mu, maxerr=1e-10, maxiter=10000, retur
         Will exit when reaching maxiter iterations without reaching convergence.
     return_iterations: bool (False)
         set true in order to return (T, it), where T is the transition matrix and it is the number of iterations needed
-        
+
     Returns
     -------
     T, the transition matrix. When return_iterations=True, (T,it) is returned with it the number of iterations needed
-    
+
     """
     it = 0
     n = len(mu)
@@ -270,7 +270,7 @@ def transition_matrix_reversible_fixpi(Z, mu, maxerr=1e-10, maxiter=10000, retur
     if (not converged) and (it >= maxiter):
         warnings.warn('NOT CONVERGED: 2-norm of Langrange multiplier vector is still ' +
                          str(err) + ' > ' + str(maxerr) + ' after ' + str(it) +
-                         ' iterations. Increase maxiter or decrease maxerr', 
+                         ' iterations. Increase maxiter or decrease maxerr',
                       msmtools.util.exceptions.NotConvergedWarning)
     # compute T from Langrangian multipliers
     T = np.divide(A, l[:, np.newaxis])

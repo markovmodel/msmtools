@@ -278,7 +278,7 @@ class TestDecompositionDense(unittest.TestCase):
         """Orthonormality"""
         assert_allclose(Xn, np.eye(self.dim))
         """Probability vector"""
-        assert_allclose(np.sum(Ln[0, :]), 1.0)    
+        assert_allclose(np.sum(Ln[0, :]), 1.0)
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
 
@@ -543,7 +543,7 @@ class TestDecompositionSparse(unittest.TestCase):
         assert_allclose(vals[np.newaxis, :] * Rn, P.dot(Rn))
 
         Ln = eigenvectors(P, right=False, k=self.k, ncv=self.ncv, reversible=True, mu=mu).T
-        assert_allclose(P.transpose().dot(Ln), vals[np.newaxis, :] * Ln)       
+        assert_allclose(P.transpose().dot(Ln), vals[np.newaxis, :] * Ln)
 
     def test_rdl_decomposition(self):
         P = self.bdc.transition_matrix_sparse()
@@ -668,7 +668,7 @@ class TestDecompositionSparse(unittest.TestCase):
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
 
-        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible', 
+        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible',
                                        k=self.k, ncv=self.ncv)
         Xn = np.dot(Ln, Rn)
         """Right-eigenvectors"""
@@ -729,7 +729,7 @@ class TestDecompositionSparse(unittest.TestCase):
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
 
-        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible', 
+        Rn, Dn, Ln = rdl_decomposition(P, reversible=True, norm='reversible',
                                        k=self.k, ncv=self.ncv, mu=mu)
         Xn = np.dot(Ln, Rn)
         """Right-eigenvectors"""
@@ -796,7 +796,7 @@ class TestDecompositionSparse(unittest.TestCase):
 
         """k is not None, mu is not None, ncv is not None"""
         tsn = timescales(P, k=self.k, ncv=self.ncv, reversible=True, mu=mu)
-        assert_allclose(ts[1:self.k], tsn[1:])        
+        assert_allclose(ts[1:self.k], tsn[1:])
 
         """tau=7"""
 

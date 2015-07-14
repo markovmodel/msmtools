@@ -40,39 +40,39 @@ from six.moves import range
 def _pcca_connected_isa(evec, n_clusters):
     """
     PCCA+ spectral clustering method using the inner simplex algorithm.
-    
+
     Clusters the first n_cluster eigenvectors of a transition matrix in order to cluster the states.
     This function assumes that the state space is fully connected, i.e. the transition matrix whose
     eigenvectors are used is supposed to have only one eigenvalue 1, and the corresponding first
     eigenvector (evec[:,0]) must be constant.
-    
+
     Parameters
     ----------
     eigenvectors : ndarray
         A matrix with the sorted eigenvectors in the columns. The stationary eigenvector should
         be first, then the one to the slowest relaxation process, etc.
-    
+
     n_clusters : int
         Number of clusters to group to.
-        
+
     Returns
     -------
     (chi, rot_mat)
-    
+
     chi : ndarray (n x m)
         A matrix containing the probability or membership of each state to be assigned to each cluster.
         The rows sum to 1.
-        
+
     rot_mat : ndarray (m x m)
         A rotation matrix that rotates the dominant eigenvectors to yield the PCCA memberships, i.e.:
         chi = np.dot(evec, rot_matrix
-    
+
     References
     ----------
     [1] P. Deuflhard and M. Weber, Robust Perron cluster analysis in conformation dynamics.
         in: Linear Algebra Appl. 398C M. Dellnitz and S. Kirkland and M. Neumann and C. Schuette (Editors)
         Elsevier, New York, 2005, pp. 161-184
-    
+
     """
     (n, m) = evec.shape
 
@@ -138,19 +138,19 @@ def _pcca_connected_isa(evec, n_clusters):
 def _opt_soft(eigvectors, rot_matrix, n_clusters):
     """
     Optimizes the PCCA+ rotation matrix such that the memberships are exclusively nonnegative.
-        
+
     Parameters
     ----------
     eigenvectors : ndarray
         A matrix with the sorted eigenvectors in the columns. The stationary eigenvector should
         be first, then the one to the slowest relaxation process, etc.
-    
+
     rot_mat : ndarray (m x m)
-        nonoptimized rotation matrix 
-    
+        nonoptimized rotation matrix
+
     n_clusters : int
         Number of clusters to group to.
-        
+
     Returns
     -------
     rot_mat : ndarray (m x m)
@@ -159,7 +159,7 @@ def _opt_soft(eigvectors, rot_matrix, n_clusters):
 
     References
     ----------
-    [1] S. Roeblitz and M. Weber, Fuzzy spectral clustering by PCCA+: 
+    [1] S. Roeblitz and M. Weber, Fuzzy spectral clustering by PCCA+:
         application to Markov state models and data classification.
         Adv Data Anal Classif 7, 147-179 (2013).
 
@@ -201,7 +201,7 @@ def _opt_soft(eigvectors, rot_matrix, n_clusters):
 def _fill_matrix(rot_crop_matrix, eigvectors):
     """
     Helper function for opt_soft
-    
+
     """
 
     (x, y) = rot_crop_matrix.shape
@@ -229,36 +229,36 @@ def _fill_matrix(rot_crop_matrix, eigvectors):
 def _pcca_connected(P, n, return_rot=False):
     """
     PCCA+ spectral clustering method with optimized memberships [1]_
-    
+
     Clusters the first n_cluster eigenvectors of a transition matrix in order to cluster the states.
     This function assumes that the transition matrix is fully connected.
-    
+
     Parameters
     ----------
     P : ndarray (n,n)
         Transition matrix.
-    
+
     n : int
         Number of clusters to group to.
-        
+
     Returns
     -------
     chi by default, or (chi,rot) if return_rot = True
-    
+
     chi : ndarray (n x m)
         A matrix containing the probability or membership of each state to be assigned to each cluster.
         The rows sum to 1.
-        
+
     rot_mat : ndarray (m x m)
         A rotation matrix that rotates the dominant eigenvectors to yield the PCCA memberships, i.e.:
         chi = np.dot(evec, rot_matrix
 
     References
     ----------
-    [1] S. Roeblitz and M. Weber, Fuzzy spectral clustering by PCCA+: 
+    [1] S. Roeblitz and M. Weber, Fuzzy spectral clustering by PCCA+:
         application to Markov state models and data classification.
         Adv Data Anal Classif 7, 147-179 (2013).
-        
+
     """
 
     # test connectivity
@@ -307,7 +307,7 @@ def _pcca_connected(P, n, return_rot=False):
 
     #print "initial chi = \n",chi
 
-    # optimize the rotation matrix with PCCA++. 
+    # optimize the rotation matrix with PCCA++.
     rot_matrix = _opt_soft(evecs, rot_matrix, n)
 
     # These memberships should be nonnegative
@@ -329,34 +329,34 @@ def _pcca_connected(P, n, return_rot=False):
 def pcca(P, m):
     """
     PCCA+ spectral clustering method with optimized memberships [1]_
-    
+
     Clusters the first m eigenvectors of a transition matrix in order to cluster the states.
     This function does not assume that the transition matrix is fully connected. Disconnected sets
     will automatically define the first metastable states, with perfect membership assignments.
-    
+
     Parameters
     ----------
     P : ndarray (n,n)
         Transition matrix.
-    
+
     m : int
         Number of clusters to group to.
-        
+
     Returns
     -------
     chi by default, or (chi,rot) if return_rot = True
-    
+
     chi : ndarray (n x m)
         A matrix containing the probability or membership of each state to be assigned to each cluster.
         The rows sum to 1.
-        
+
     References
     ----------
-    [1] S. Roeblitz and M. Weber, Fuzzy spectral clustering by PCCA+: 
+    [1] S. Roeblitz and M. Weber, Fuzzy spectral clustering by PCCA+:
         application to Markov state models and data classification.
         Adv Data Anal Classif 7, 147-179 (2013).
     [2] F. Noe, multiset PCCA and HMMs, in preparation.
-        
+
     """
     # imports
     from msmtools.estimation import connected_sets
@@ -439,7 +439,7 @@ def pcca(P, m):
     # finally assign all transition states
     # print "chi\n", chi
     # print "transition states: ",transition_states
-    # print "closed states: ", closed_states    
+    # print "closed states: ", closed_states
     if (transition_states.size > 0):
         # make all closed states absorbing, so we can see which closed state we hit first
         Pabs = P.copy()
@@ -459,9 +459,9 @@ def pcca(P, m):
 def coarsegrain(P, n):
     """
     Coarse-grains transition matrix P to n sets using PCCA
-    
+
     Coarse-grains transition matrix P such that the dominant eigenvalues are preserved, using:
-    
+
     ..math:
         \tilde{P} = M^T P M (M^T M)^{-1}
 

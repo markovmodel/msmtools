@@ -39,7 +39,7 @@ import scipy.sparse
 
 
 def count_matrix_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, failfast=False):
-    r"""Generate a count matrix from a given list of discrete trajectories.    
+    r"""Generate a count matrix from a given list of discrete trajectories.
 
     Parameters
     ----------
@@ -48,7 +48,7 @@ def count_matrix_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, fail
     lag : int
         Lagtime in trajectory steps
     sliding : bool, optional
-        If true the sliding window approach 
+        If true the sliding window approach
         is used for transition counting.
     sparse : bool (optional)
         Whether to return a dense or a sparse matrix
@@ -62,7 +62,7 @@ def count_matrix_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, fail
     -------
     C : scipy.sparse.csr_matrix
         The countmatrix at given lag in coordinate list format.
-       
+
     """
 
     """Determine maximum state index, nmax, over all trajectories"""
@@ -86,7 +86,7 @@ def count_matrix_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, fail
     # else:
     #     for dtraj in dtrajs:
     #         nmax=max(nmax, max(dtraj[0:-lag:lag].max(), dtraj[lag::lag].max()))
-    # nstates=nmax+1        
+    # nstates=nmax+1
 
     """If nstates<4000 use bincount else use coo"""
     if nstates < 4000:
@@ -106,7 +106,7 @@ def count_matrix(dtraj, lag, sliding=True, sparse=True, nstates=None):
     lag : int
         Lagtime in trajectory steps
     sliding : bool, optional
-        If true the sliding window approach 
+        If true the sliding window approach
         is used for transition counting.
     sparse : bool (optional)
         Whether to return a dense or a sparse matrix
@@ -152,8 +152,8 @@ def count_matrix(dtraj, lag, sliding=True, sparse=True, nstates=None):
 def count_matrix_coo(dtraj, lag, sliding=True, sparse=True, nstates=None):
     r"""Generate a count matrix from a given list of integers.
 
-    The generated count matrix is a sparse matrix in coordinate 
-    list (COO) format. 
+    The generated count matrix is a sparse matrix in coordinate
+    list (COO) format.
 
     Parameters
     ----------
@@ -162,7 +162,7 @@ def count_matrix_coo(dtraj, lag, sliding=True, sparse=True, nstates=None):
     lag : int
         Lagtime in trajectory steps
     sliding : bool, optional
-        If true the sliding window approach 
+        If true the sliding window approach
         is used for transition counting
     sparse : bool (optional)
         Whether to return a dense or a sparse matrix
@@ -173,7 +173,7 @@ def count_matrix_coo(dtraj, lag, sliding=True, sparse=True, nstates=None):
     -------
     C : scipy.sparse.csr_matrix
         The countmatrix at given lag in coordinate list format.
-    
+
     """
     dtraj = np.asarray(dtraj)
     M = len(dtraj)
@@ -210,8 +210,8 @@ def count_matrix_coo(dtraj, lag, sliding=True, sparse=True, nstates=None):
 def count_matrix_coo_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, failfast=False):
     r"""Generate a count matrix from a given list of discrete trajectories.
 
-    The generated count matrix is a sparse matrix in coordinate 
-    list (COO) format. 
+    The generated count matrix is a sparse matrix in coordinate
+    list (COO) format.
 
     Parameters
     ----------
@@ -220,7 +220,7 @@ def count_matrix_coo_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, 
     lag : int
         Lagtime in trajectory steps
     sliding : bool, optional
-        If true the sliding window approach 
+        If true the sliding window approach
         is used for transition counting.
     sparse : bool (optional)
         Whether to return a dense or a sparse matrix.
@@ -232,7 +232,7 @@ def count_matrix_coo_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, 
     -------
     C : scipy.sparse.csr_matrix
         The countmatrix at given lag in coordinate list format.
-    
+
     """
 
     """Determine maximum state index, nmax, over all trajectories"""
@@ -276,21 +276,21 @@ def count_matrix_coo_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, 
 def make_square_coo_matrix(A):
     r"""Reshape a COO sparse matrix to a square matrix.
 
-    Transform a given sparse matrix in coordinate list (COO) format 
-    of shape=(m, n) into a square matrix of shape=(N, N) with 
+    Transform a given sparse matrix in coordinate list (COO) format
+    of shape=(m, n) into a square matrix of shape=(N, N) with
     N=max(m, n). The transformed matrix is also stored in coordinate
     list (COO) format.
-    
+
     Parameters
     ----------
     A : scipy.sparse.coo_matrix
         Sparse matrix in coordinate list format
-    
+
     Returns
     -------
     A_sq : scipy.sparse.coo_matrix
         Square sparse matrix in coordinate list format.
-    
+
     """
     A = A.tocoo()
     N = max(A.shape)
@@ -300,7 +300,7 @@ def make_square_coo_matrix(A):
 
 def add_coo_matrix(A, B):
     """
-    Add two sparse matrices in coordinate list (COO) format 
+    Add two sparse matrices in coordinate list (COO) format
     with possibly incosistent shapes. If A is (k,l) shaped and
     B has shape (m, n) than C=A+B has shape (max(k, m), max(l, n)).
 
@@ -314,7 +314,7 @@ def add_coo_matrix(A, B):
     Returns :
     ---------
     C : scipy.sparse.coo_matrix
-        Sparse matrix in coordinate list format 
+        Sparse matrix in coordinate list format
 
     """
     A = A.tocoo()
@@ -340,7 +340,7 @@ def count_matrix_bincount(dtraj, lag, sliding=True, sparse=True, nstates=None):
     lag : int
         Lagtime in trajectory steps
     sliding : bool, optional
-        If true the sliding window approach 
+        If true the sliding window approach
         is used for transition counting.
     sparse : bool (optional)
         Whether to return a dense or a sparse matrix.
@@ -355,10 +355,10 @@ def count_matrix_bincount(dtraj, lag, sliding=True, sparse=True, nstates=None):
 
     Notes
     -----
-    For Markov chains with less than 4000 states the use of 
+    For Markov chains with less than 4000 states the use of
     np.bincount and dense arrays seems to be faster than using
     scipy.sparse.coo_matrix to generate the count matrix.
-    
+
     """
     dtraj = np.asarray(dtraj)
     M = len(dtraj)
@@ -393,7 +393,7 @@ def count_matrix_bincount(dtraj, lag, sliding=True, sparse=True, nstates=None):
 
 def count_matrix_bincount_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, failfast=False):
     r"""Generate a count matrix from a given list of discrete trajectories.
-    
+
     Parameters
     ----------
     dtrajs : list of array_like
@@ -401,7 +401,7 @@ def count_matrix_bincount_mult(dtrajs, lag, sliding=True, sparse=True, nstates=N
     lag : int
         Lagtime in trajectory steps
     sliding : bool, optional
-        If true the sliding window approach 
+        If true the sliding window approach
         is used for transition counting.
     nstates : int (optional)
         The dimension of the count-matrix, nstates=nmax+1, where
@@ -414,7 +414,7 @@ def count_matrix_bincount_mult(dtrajs, lag, sliding=True, sparse=True, nstates=N
     -------
     C : scipy.sparse.csr_matrix
         The countmatrix at given lag in coordinate list format.
-        
+
     """
 
     """Determine maximum state index, nmax, over all trajectories"""
@@ -435,7 +435,7 @@ def count_matrix_bincount_mult(dtrajs, lag, sliding=True, sparse=True, nstates=N
     #     else:
     #         for dtraj in dtrajs:
     #             nmax=max(nmax, max(dtraj[0:-lag:lag].max(), dtraj[lag::lag].max()))
-    #     nstates=nmax+1        
+    #     nstates=nmax+1
 
     C = np.zeros((nstates, nstates))
     """Estimate count matrix for each discrete trajectory and add to C"""
@@ -457,4 +457,4 @@ def count_matrix_bincount_mult(dtrajs, lag, sliding=True, sparse=True, nstates=N
     if sparse:
         return scipy.sparse.csr_matrix(C)
     else:
-        return C                   
+        return C
