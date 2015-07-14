@@ -75,7 +75,7 @@ def is_rate_matrix(K, tol):
         Matrix to check
     tol : float
         tolerance to check with
-        
+
     Returns
     -------
     Truth value : bool
@@ -108,7 +108,7 @@ def is_reversible(T, mu=None, tol=1e-15):
     r"""
     checks whether T is reversible in terms of given stationary distribution.
     If no distribution is given, it will be calculated out of T.
-    
+
     performs follwing check:
     :math:`\pi_i P_{ij} = \pi_j P_{ji}
     Parameters
@@ -119,7 +119,7 @@ def is_reversible(T, mu=None, tol=1e-15):
         stationary distribution
     tol : float
         tolerance to check with
-        
+
     Returns
     -------
     Truth value : bool
@@ -147,19 +147,19 @@ def is_connected(T, directed=True):
 
     Return true, if the input matrix is completely connected,
     effectively checking if the number of connected components equals one.
-    
+
     Parameters
     ----------
-    T : scipy.sparse matrix 
+    T : scipy.sparse matrix
         Transition matrix
     directed : bool, optional
        Whether to compute connected components for a directed  or
-       undirected graph. Default is True.       
+       undirected graph. Default is True.
 
     Returns
     -------
     connected : boolean, returning true only if T is connected.
-        
+
 
     """
     nc = connected_components(T, directed=directed, connection='strong', \
@@ -170,14 +170,14 @@ def is_connected(T, directed=True):
 def is_ergodic(T, tol):
     """
     checks if T is 'ergodic'
-    
+
     Parameters
     ----------
     T : scipy.sparse matrix
         Transition matrix
     tol : float
         tolerance
-        
+
     Returns
     -------
     Truth value : bool

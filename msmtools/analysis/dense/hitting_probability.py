@@ -37,14 +37,14 @@ from six.moves import range
 def hitting_probability(P, target):
     """
     Computes the hitting probabilities for all states to the target states.
-    
-    The hitting probability of state i to set A is defined as the minimal, 
+
+    The hitting probability of state i to set A is defined as the minimal,
     non-negative solution of:
-    
+
     .. math::
         h_i^A &= 1                    \:\:\:\:  i\in A \\
         h_i^A &= \sum_j p_{ij} h_i^A  \:\:\:\:  i \notin A
-    
+
     Returns
     =======
     h : ndarray(n)

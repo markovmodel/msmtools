@@ -25,7 +25,7 @@
 
 r"""Unit test for the ReactiveFlux object
 
-.. moduleauthor:: F.Noe <frank  DOT noe AT fu-berlin DOT de> 
+.. moduleauthor:: F.Noe <frank  DOT noe AT fu-berlin DOT de>
 
 """
 from __future__ import absolute_import

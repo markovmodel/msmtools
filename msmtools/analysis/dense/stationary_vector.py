@@ -82,7 +82,7 @@ def stationary_distribution_from_backward_iteration(P, eps=1e-15):
         Transition matrix
     eps : float (optional)
         Perturbation parameter for the true eigenvalue.
-        
+
     Returns
     -------
     pi : (M,) ndarray
@@ -98,9 +98,9 @@ def stationary_distribution_from_backward_iteration(P, eps=1e-15):
 
 
 def stationary_distribution_from_eigenvector(T):
-    r"""Compute stationary distribution of stochastic matrix T. 
+    r"""Compute stationary distribution of stochastic matrix T.
 
-    The stationary distribution is the left eigenvector corresponding to the 
+    The stationary distribution is the left eigenvector corresponding to the
     non-degenerate eigenvalue :math: `\lambda=1`.
 
     Input:

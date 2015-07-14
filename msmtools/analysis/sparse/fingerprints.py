@@ -43,11 +43,11 @@ from six.moves import range
 
 def fingerprint_correlation(P, obs1, obs2=None, tau=1, k=None, ncv=None):
     r"""Compute dynamical fingerprint crosscorrelation.
-    
+
     The dynamical fingerprint autocorrelation is the timescale
     amplitude spectrum of the autocorrelation of the given observables
     under the action of the dynamics P
-    
+
     Parameters
     ----------
     P : ndarray, shape=(n, n) or scipy.sparse matrix
@@ -55,35 +55,35 @@ def fingerprint_correlation(P, obs1, obs2=None, tau=1, k=None, ncv=None):
     obs1 : ndarray, shape=(n,)
         Vector representing observable 1 on discrete states
     obs2 : ndarray, shape=(n,)
-        Vector representing observable 2 on discrete states. 
+        Vector representing observable 2 on discrete states.
         If none, obs2=obs1, i.e. the autocorrelation is used
-    tau : lag time of the the transition matrix. Used for 
+    tau : lag time of the the transition matrix. Used for
         computing the timescales returned
     k : int (optional)
         Number of amplitudes
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
-    
+
     Returns
     -------
     timescales : (N,) ndarray
         Time-scales of the transition matrix
     amplitudes : (N,) ndarray
         Amplitudes for the correlation experiment
-    
+
     """
     return fingerprint(P, obs1, obs2=obs2, tau=tau, k=k, ncv=ncv)
 
 
 def fingerprint_relaxation(P, p0, obs, tau=1, k=None, ncv=None):
     r"""Compute dynamical fingerprint crosscorrelation.
-    
+
     The dynamical fingerprint autocorrelation is the timescale
-    amplitude spectrum of the autocorrelation of the given observables 
+    amplitude spectrum of the autocorrelation of the given observables
     under the action of the dynamics P
-    
+
     Parameters
     ----------
     P : ndarray, shape=(n, n) or scipy.sparse matrix
@@ -91,23 +91,23 @@ def fingerprint_relaxation(P, p0, obs, tau=1, k=None, ncv=None):
     p0 : ndarray, shape=(n)
         starting distribution
     obs : ndarray, shape=(n)
-        Vector representing observable 2 on discrete states. 
+        Vector representing observable 2 on discrete states.
         If none, obs2=obs1, i.e. the autocorrelation is used
-    tau : lag time of the the transition matrix. Used for 
+    tau : lag time of the the transition matrix. Used for
         computing the timescales returned
     k : int (optional)
         Number of amplitudes
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
-    
+        it is recommended that ncv > 2*k
+
     Returns
     -------
     timescales : (N,) ndarray
         Time-scales of the transition matrix
     amplitudes : (N,) ndarray
         Amplitudes for the relaxation experiment
-    
+
     """
     one_vec = np.ones(P.shape[0])
     return fingerprint(P, one_vec, obs2=obs, p0=p0, tau=tau, k=k, ncv=ncv)
@@ -135,7 +135,7 @@ def fingerprint(P, obs1, obs2=None, p0=None, tau=1, k=None, ncv=None):
         Number of time-scales and amplitudes to compute
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
 
     Returns
@@ -144,7 +144,7 @@ def fingerprint(P, obs1, obs2=None, p0=None, tau=1, k=None, ncv=None):
         Time-scales of the transition matrix
     amplitudes : (N,) ndarray
         Amplitudes for the given observable(s)
-        
+
     """
     if obs2 is None:
         obs2 = obs1
@@ -171,7 +171,7 @@ def fingerprint(P, obs1, obs2=None, p0=None, tau=1, k=None, ncv=None):
 
 def correlation(P, obs1, obs2=None, times=[1], k=None, ncv=None):
     r"""Time-correlation for equilibrium experiment.
-    
+
     Parameters
     ----------
     P : (M, M) ndarray
@@ -186,13 +186,13 @@ def correlation(P, obs1, obs2=None, times=[1], k=None, ncv=None):
         Number of eigenvalues and amplitudes to use for computation
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
     Returns
     -------
     correlations : ndarray
         Correlation values at given times
-        
+
     """
     M = P.shape[0]
     T = np.asarray(times).max()
@@ -204,7 +204,7 @@ def correlation(P, obs1, obs2=None, times=[1], k=None, ncv=None):
 
 def correlation_decomp(P, obs1, obs2=None, times=[1], k=None, ncv=None):
     r"""Time-correlation for equilibrium experiment - via decomposition.
-    
+
     Parameters
     ----------
     P : (M, M) ndarray
@@ -219,13 +219,13 @@ def correlation_decomp(P, obs1, obs2=None, times=[1], k=None, ncv=None):
         Number of eigenvalues and amplitudes to use for computation
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
     Returns
     -------
     correlations : ndarray
         Correlation values at given times
-        
+
     """
     if obs2 is None:
         obs2 = obs1
@@ -264,7 +264,7 @@ def correlation_matvec(P, obs1, obs2=None, times=[1]):
     -------
     correlations : ndarray
         Correlation values at given times
-        
+
     """
     if obs2 is None:
         obs2 = obs1
@@ -326,14 +326,14 @@ def relaxation(P, p0, obs, times=[1], k=None, ncv=None):
         Number of eigenvalues and amplitudes to use for computation
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
 
     Returns
     -------
     res : ndarray
         Array of expectation value at given times
-        
+
     """
     M = P.shape[0]
     T = np.asarray(times).max()
@@ -364,13 +364,13 @@ def relaxation_decomp(P, p0, obs, times=[1], k=None, ncv=None):
         Number of eigenvalues and amplitudes to use for computation
     ncv : int (optional)
         The number of Lanczos vectors generated, `ncv` must be greater than k;
-        it is recommended that ncv > 2*k       
+        it is recommended that ncv > 2*k
 
     Returns
     -------
     res : ndarray
         Array of expectation value at given times
-        
+
     """
     R, D, L = rdl_decomposition(P, k=k, ncv=ncv)
     """Extract eigenvalues"""
@@ -409,7 +409,7 @@ def relaxation_matvec(P, p0, obs, times=[1]):
     -------
     res : ndarray
         Array of expectation value at given times
-        
+
     """
     times = np.asarray(times)
     """Sort in increasing order"""
@@ -453,12 +453,12 @@ def propagate(A, x, N):
         Vector to propagate
     N : int
         Number of steps to propagate
-        
+
     Returns
     -------
     y : (M, ) ndarray or scipy.sparse matrix
         Propagated vector
-    
+
     """
     y = 1.0 * x
     for i in range(N):

@@ -56,7 +56,7 @@ def forward_committor(T, A, B):
     Returns
     -------
     u : (M, ) ndarray
-        Vector of forward committor probabilities    
+        Vector of forward committor probabilities
 
     Notes
     -----
@@ -117,12 +117,12 @@ def backward_committor(T, A, B, mu=None):
     B : array_like
         List of integer state labels for set B
     mu : (M, ) ndarray (optional)
-        Stationary vector        
+        Stationary vector
 
     Returns
     -------
     u : (M, ) ndarray
-        Vector of forward committor probabilities    
+        Vector of forward committor probabilities
 
     Notes
     -----
@@ -136,7 +136,7 @@ def backward_committor(T, A, B, mu=None):
                                   u_{i}=0    for i \in B        (III)
 
     with adjoint of the generator matrix K=(D_pi(P-I))'.
-                          
+
     """
     X = set(range(T.shape[0]))
     A = set(A)

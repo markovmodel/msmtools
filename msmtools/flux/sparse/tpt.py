@@ -76,7 +76,7 @@ def remove_negative_entries(A):
 
 def flux_matrix(T, pi, qminus, qplus, netflux=True):
     r"""Compute the flux.
-    
+
     Parameters
     ----------
     T : (M, M) scipy.sparse matrix
@@ -88,14 +88,14 @@ def flux_matrix(T, pi, qminus, qplus, netflux=True):
     qplus : (M,) ndarray
         Forward committor
     netflux : boolean
-        True: net flux matrix will be computed  
+        True: net flux matrix will be computed
         False: gross flux matrix will be computed
-    
+
     Returns
     -------
     flux : (M, M) scipy.sparse matrix
         Matrix of flux values between pairs of states.
-    
+
     """
     D1 = diags((pi * qminus,), (0,))
     D2 = diags((qplus,), (0,))
@@ -114,20 +114,20 @@ def flux_matrix(T, pi, qminus, qplus, netflux=True):
 
 def to_netflux(flux):
     r"""Compute the netflux.
-    
+
     f_ij^{+}=max{0, f_ij-f_ji}
     for all pairs i,j
-    
+
     Parameters
     ----------
     flux : (M, M) scipy.sparse matrix
         Matrix of flux values between pairs of states.
-    
+
     Returns
     -------
     netflux : (M, M) scipy.sparse matrix
         Matrix of netflux values between pairs of states.
-    
+
     """
     netflux = flux - flux.T
 
@@ -138,19 +138,19 @@ def to_netflux(flux):
 
 def coarsegrain(F, sets):
     r"""Coarse-grains the flux to the given sets
-    
+
     $fc_{i,j} = \sum_{i \in I,j \in J} f_{i,j}$
     Note that if you coarse-grain a net flux, it does not necessarily have a net
-    flux property anymore. If want to make sure you get a netflux, 
+    flux property anymore. If want to make sure you get a netflux,
     use to_netflux(coarsegrain(F,sets)).
-    
+
     Parameters
     ----------
     F : (n, n) ndarray
         Matrix of flux values between pairs of states.
     sets : list of array-like of ints
         The sets of states onto which the flux is coarse-grained.
-    
+
     """
     nnew = len(sets)
     Fin = F.tocsr()
@@ -171,19 +171,19 @@ def coarsegrain(F, sets):
 
 def total_flux(flux, A):
     r"""Compute the total flux between reactant and product.
-    
+
     Parameters
     ----------
     flux : (M, M) scipy.sparse matrix
         Matrix of flux values between pairs of states.
     A : array_like
         List of integer state labels for set A (reactant)
-    
+
     Returns
     -------
     F : float
         The total flux between reactant and product
-    
+
     """
     X = set(np.arange(flux.shape[0]))  # total state space
     A = set(A)

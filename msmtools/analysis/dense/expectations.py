@@ -40,10 +40,10 @@ from six.moves import range
 
 
 def expected_counts(p0, T, n):
-    r"""Compute expected transition counts for Markov chain after n steps. 
-    
+    r"""Compute expected transition counts for Markov chain after n steps.
+
     Expected counts are computed according to ..math::
-    
+
     E[C_{ij}^{(n)}]=\sum_{k=0}^{n-1} (p_0^T T^{k})_{i} p_{ij}
 
     For N<=M, the sum is computed via successive summation of the
@@ -60,12 +60,12 @@ def expected_counts(p0, T, n):
         Transition matrix of the chain.
     n : int
         Number of steps to take from initial state.
-        
+
     Returns
     --------
     EC : (M, M) ndarray
-        Expected value for transition counts after n steps. 
-    
+        Expected value for transition counts after n steps.
+
     """
     M = T.shape[0]
     if n <= M:
@@ -75,14 +75,14 @@ def expected_counts(p0, T, n):
 
 
 def expected_counts_stationary(T, n, mu=None):
-    r"""Expected transition counts for Markov chain in equilibrium. 
-    
-    Since mu is stationary for T we have 
-    
+    r"""Expected transition counts for Markov chain in equilibrium.
+
+    Since mu is stationary for T we have
+
     .. math::
-    
+
         E(C^{(N)})=N diag(mu)*T.
-    
+
     Parameters
     ----------
     T : (M, M) ndarray
@@ -92,12 +92,12 @@ def expected_counts_stationary(T, n, mu=None):
     mu : (M,) ndarray (optional)
         Stationary distribution for T. If mu is not specified it will be
         computed via diagonalization of T.
-    
+
     Returns
     -------
     EC : numpy array, shape=(n,n)
-        Expected value for transition counts after a propagation of n steps. 
-    
+        Expected value for transition counts after a propagation of n steps.
+
     """
     if n <= 0:
         EC = np.zeros(T.shape)
@@ -112,23 +112,23 @@ def expected_counts_stationary(T, n, mu=None):
 def geometric_series(q, n):
     """
     Compute finite geometric series.
-    
+
                                 \frac{1-q^{n+1}}{1-q}   q \neq 1
         \sum_{k=0}^{n} q^{k}=
                                  n+1                     q  = 1
-                                 
+
     Parameters
     ----------
     q : array-like
         The common ratio of the geometric series.
     n : int
         The number of terms in the finite series.
-        
+
     Returns
     -------
     s : float or ndarray
         The value of the finite series.
-        
+
     """
     q = np.asarray(q)
     if n < 0:
@@ -159,12 +159,12 @@ def ec_matrix_vector(p0, T, n):
     steps.
 
     Expected counts are computed according to ..math::
-    
-    E[C_{ij}^{(n)}]=\sum_{k=0}^{n-1} (p_0^t T^{k})_{i} p_{ij}   
+
+    E[C_{ij}^{(n)}]=\sum_{k=0}^{n-1} (p_0^t T^{k})_{i} p_{ij}
 
     The sum is computed via successive summation of the following
     matrix vector products, p_1^t=p_0^t T,...,p_n^t=P_{n-1}^t T.
-    
+
     Such a direct approach can become prohibetively expensive for
     large n.  In this case the sum can be computed more efficiently
     using an eigenvalue decomposition of T and applying the closed
@@ -179,12 +179,12 @@ def ec_matrix_vector(p0, T, n):
         Transition matrix of the chain.
     n : int
         Number of steps to take from initial state.
-        
+
     Returns
     --------
     EC : (M, M) ndarray
-        Expected value for transition counts after N steps. 
-    
+        Expected value for transition counts after N steps.
+
     """
     if (n <= 0):
         EC = np.zeros(T.shape)
@@ -209,8 +209,8 @@ def ec_geometric_series(p0, T, n):
     steps.
 
     Expected counts are computed according to ..math::
-    
-    E[C_{ij}^{(n)}]=\sum_{k=0}^{n-1} (p_0^t T^{k})_{i} p_{ij}   
+
+    E[C_{ij}^{(n)}]=\sum_{k=0}^{n-1} (p_0^t T^{k})_{i} p_{ij}
 
     The sum is computed using the eigenvalue decomposition of T and
     applying the expression for a finite geometric series to each of
@@ -220,7 +220,7 @@ def ec_geometric_series(p0, T, n):
     much more expensive than a direct computation. In this case it is
     beneficial to compute the expected counts using successively
     computed matrix vector products p_1^t=p_0^t T, ... as increments.
-    
+
     Parameters
     ----------
     p0 : (M,) ndarray
@@ -229,12 +229,12 @@ def ec_geometric_series(p0, T, n):
         Transition matrix of the chain.
     n : int
         Number of steps to take from initial state.
-        
+
     Returns
     --------
     EC : (M, M) ndarray
-        Expected value for transition counts after N steps. 
-    
+        Expected value for transition counts after N steps.
+
     """
     if (n <= 0):
         EC = np.zeros(T.shape)
@@ -252,4 +252,4 @@ def ec_geometric_series(p0, T, n):
         return values"""
         EC = EC.real
         return EC
-        
+

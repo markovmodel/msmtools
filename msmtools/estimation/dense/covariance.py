@@ -40,8 +40,8 @@ def tmatrix_cov(C, row=None):
 
     Normally the covariance tensor cov(p_ij, p_kl) would carry four indices
     (i,j,k,l). In the non-reversible case rows are independent so that
-    cov(p_ij, p_kl)=0 for i not equal to k. Therefore the function will only 
-    return cov(p_ij, p_ik).    
+    cov(p_ij, p_kl)=0 for i not equal to k. Therefore the function will only
+    return cov(p_ij, p_ik).
 
     Parameters
     ----------
@@ -87,12 +87,12 @@ def dirichlet_covariance(alpha):
     ----------
     alpha : (M, ) ndarray
         Parameters of Dirichlet distribution
-    
+
     Returns
     -------
     cov : (M, M) ndarray
         Covariance matrix
-        
+
     """
     alpha0 = alpha.sum()
     norm = alpha0 ** 2 * (alpha0 + 1.0)
@@ -190,17 +190,17 @@ def error_perturbation(C, S):
     S : (M, M) ndarray or (K, M, M) ndarray
         Sensitivity matrix (for scalar observable) or sensitivity
         tensor for vector observable
-        
+
     Returns
     -------
     X : float or (K, K) ndarray
         error-perturbation (for scalar observables) or covariance matrix
         (for vector-valued observable)
-        
+
     """
     if len(S.shape) == 2:  # Scalar observable
         return error_perturbation_single(C, S)
     elif len(S.shape) == 3:  # Vector observable
         return error_perturbation_cov(C, S)
     else:
-        raise ValueError("Sensitivity matrix S has to be a 2d or 3d array")    
+        raise ValueError("Sensitivity matrix S has to be a 2d or 3d array")

@@ -57,7 +57,7 @@ def expected_counts(p0, T, N):
     Returns
     --------
     EC : (M, M) sparse matrix
-        Expected value for transition counts after N steps. 
+        Expected value for transition counts after N steps.
 
     """
     if (N <= 0):
@@ -81,9 +81,9 @@ def expected_counts(p0, T, N):
 
 
 def expected_counts_stationary(T, n, mu=None):
-    r"""Expected transition counts for Markov chain in equilibrium. 
+    r"""Expected transition counts for Markov chain in equilibrium.
 
-    Since mu is stationary for T we have 
+    Since mu is stationary for T we have
 
     .. math::
 

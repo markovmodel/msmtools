@@ -42,7 +42,7 @@ def is_transition_matrix(T, tol=1e-10):
     Returns
     -------
     Truth value : bool
-        True, if all elements are in interval [0, 1] 
+        True, if all elements are in interval [0, 1]
             and each row of T sums up to 1.
         False, otherwise
     """

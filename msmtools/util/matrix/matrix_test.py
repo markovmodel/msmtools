@@ -197,18 +197,18 @@ class TestReadMatrixSparse(unittest.TestCase):
 class TestWriteMatrixSparse(unittest.TestCase):
     def is_integer(self, x):
         """Check if elements of an array can be represented by integers.
-        
-        Parameters 
+
+        Parameters
         ----------
         x : ndarray
             Array to check.
-        
+
         Returns
         -------
         is_int : ndarray of bool
             is_int[i] is True if x[i] can be represented
             as int otherwise is_int[i] is False.
-        
+
         """
         is_int = np.equal(np.mod(x, 1), 0)
         return is_int
@@ -380,18 +380,18 @@ class TestLoadMatrixSparse(unittest.TestCase):
 class TestSaveMatrixSparse(unittest.TestCase):
     def is_integer(self, x):
         """Check if elements of an array can be represented by integers.
-        
-        Parameters 
+
+        Parameters
         ----------
         x : ndarray
             Array to check.
-        
+
         Returns
         -------
         is_int : ndarray of bool
             is_int[i] is True if x[i] can be represented
             as int otherwise is_int[i] is False.
-        
+
         """
         is_int = np.equal(np.mod(x, 1), 0)
         return is_int

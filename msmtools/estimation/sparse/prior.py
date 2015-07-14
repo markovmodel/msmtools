@@ -37,23 +37,23 @@ from scipy.sparse import coo_matrix
 
 def prior_neighbor(C, alpha=0.001):
     r"""Neighbor prior of strength alpha for the given count matrix.
-    
-    Prior is defined by 
+
+    Prior is defined by
         b_ij = alpha  if Z_ij+Z_ji > 0
         b_ij = 0      else
-    
+
     Parameters
     ----------
     C : (M, M) scipy.sparse matrix
         Count matrix
     alpha : float (optional)
         Value of prior counts
-    
+
     Returns
     -------
     B : (M, M) scipy.sparse matrix
-        Prior count matrix    
-        
+        Prior count matrix
+
     """
     C_sym = C + C.transpose()
     C_sym = C_sym.tocoo()
@@ -72,19 +72,19 @@ def prior_const(C, alpha=0.001):
     Prior is defined via
 
         b_ij=alpha for all i,j
-    
+
     Parameters
     ----------
     C : (M, M) ndarray or scipy.sparse matrix
         Count matrix
     alpha : float (optional)
-        Value of prior counts    
-    
+        Value of prior counts
+
     Returns
     -------
-    B : (M, M) ndarray 
-        Prior count matrix    
-        
+    B : (M, M) ndarray
+        Prior count matrix
+
     """
     B = alpha * np.ones(C.shape)
     return B
@@ -92,9 +92,9 @@ def prior_const(C, alpha=0.001):
 
 def prior_rev(C, alpha=-1.0):
     r"""Prior counts for sampling of reversible transition
-    matrices.  
+    matrices.
 
-    Prior is defined as 
+    Prior is defined as
 
     b_ij= alpha if i<=j
     b_ij=0         else
@@ -111,12 +111,12 @@ def prior_rev(C, alpha=-1.0):
         Count matrix
     alpha : float (optional)
         Value of prior counts
-       
+
     Returns
     -------
     B : (M, M) ndarray
-        Matrix of prior counts        
-    
+        Matrix of prior counts
+
     """
     ind = np.triu_indices(C.shape[0])
     B = np.zeros(C.shape)

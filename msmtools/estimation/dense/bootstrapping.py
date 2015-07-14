@@ -43,7 +43,7 @@ from six.moves import range
 def number_of_states(dtrajs):
     r"""
     Determine the number of states from a set of discrete trajectories
-    
+
     Parameters
     ----------
     dtrajs : list of int-arrays
@@ -60,7 +60,7 @@ def number_of_states(dtrajs):
 def determine_lengths(dtrajs):
     r"""
     Determines the lengths of all trajectories
-    
+
     Parameters
     ----------
     dtrajs : list of int-arrays
@@ -137,7 +137,7 @@ def bootstrap_counts_singletraj(dtraj, lagtime, n):
 def bootstrap_counts(dtrajs, lagtime, corrlength=None):
     """
     Generates a randomly resampled count matrix given the input coordinates.
-    
+
     See API function for full documentation.
     """
     # if we have just one trajectory, put it into a one-element list:

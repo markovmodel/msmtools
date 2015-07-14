@@ -158,7 +158,7 @@ class TestDecomposition(unittest.TestCase):
         di = np.diag_indices(self.k)
         Xn[di] = 0.0
         assert_allclose(Xn,0)
-        
+
 
     def test_rdl_decomposition(self):
         P = self.bdc.transition_matrix()
@@ -304,7 +304,7 @@ class TestDecomposition(unittest.TestCase):
         """Orthonormality"""
         assert_allclose(Xn, np.eye(self.dim))
         """Probability vector"""
-        assert_allclose(np.sum(Ln[0, :]), 1.0)    
+        assert_allclose(np.sum(Ln[0, :]), 1.0)
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
 
@@ -321,7 +321,7 @@ class TestDecomposition(unittest.TestCase):
         assert_allclose(np.sum(Ln[0, :]), 1.0)
         """Reversibility"""
         assert_allclose(Ln.transpose(), mu[:, np.newaxis] * Rn)
-            
+
 
     def test_timescales(self):
         P = self.bdc.transition_matrix()
@@ -378,4 +378,4 @@ class TestTimescales(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-        
+

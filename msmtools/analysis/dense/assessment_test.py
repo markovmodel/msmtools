@@ -41,7 +41,7 @@ def create_rate_matrix():
          [3, -5, 2, 0],
          [0, 3, -5, 2],
          [0, 0, 3, -3]]
-    
+
     return np.asmatrix(a)
 
 
@@ -52,14 +52,14 @@ class RateMatrixTest(unittest.TestCase):
 
     def testIsRateMatrix(self):
         self.assert_(assessment.is_rate_matrix(self.A), 'A should be a rate matrix')
-        
+
         # manipulate matrix so it isn't a rate matrix any more
         self.A[0][0] = 3
         self.assertFalse(assessment.is_rate_matrix(self.A), 'matrix is not a rate matrix')
-        
+
 
 class ReversibleTest(unittest.TestCase):
-    
+
     def setUp(self):
         p = np.zeros(10)
         q = np.zeros(10)
@@ -71,7 +71,7 @@ class ReversibleTest(unittest.TestCase):
         self.bdc = BirthDeathChain(q, p)
         self.T = self.bdc.transition_matrix()
         self.mu = self.bdc.stationary_distribution()
-    
+
     def testIsReversible(self):
         # create a reversible matrix
         self.assertTrue(assessment.is_reversible(self.T, self.mu), "T should be reversible")

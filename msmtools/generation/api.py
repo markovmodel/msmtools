@@ -43,7 +43,7 @@ __all__ = ['transition_matrix_metropolis_1d',
 class MarkovChainSampler(object):
     """
     Class for generation of trajectories from a transition matrix P.
-    If many trajectories will be sampled from P, using this class is much more 
+    If many trajectories will be sampled from P, using this class is much more
     efficient than individual calls to generate_traj because that avoid costly
     multiple construction of random variable objects.
 

@@ -55,9 +55,9 @@ class BirthDeathChain():
 
         Parameters
         ----------
-        q : array_like 
+        q : array_like
             Anhilation probabilities for transition from i to i-1
-        p : array-like 
+        p : array-like
             Creation probabilities for transition from i to i+1
 
         """
@@ -116,16 +116,16 @@ class BirthDeathChain():
             u_x=P_x(T_b<T_a)
 
         T_i is the first arrival time of the chain to state i,
-        
+
             T_i = inf( t>0 | X_t=i )
 
         Parameters
         ----------
         a : int
-            State index 
+            State index
         b : int
             State index
-            
+
         Returns
         -------
         u : (M,) ndarray
@@ -166,16 +166,16 @@ class BirthDeathChain():
             w_x=P_x(t_a<t_b)
 
         t_i is the last exit time of the chain from state i,
-        
+
             t_i = inf( t>0 | X(-t)=i )
 
         Parameters
         ----------
         a : int
-            State index 
+            State index
         b : int
             State index
-            
+
         Returns
         -------
         w : (M,) ndarray
@@ -187,11 +187,11 @@ class BirthDeathChain():
 
             P(t_a<t_b)=P(T_a<T_b)=1-P(T_b<T_a),
 
-        therefore we can express the backward 
+        therefore we can express the backward
         comittor probabilities in terms of the forward
         committor probabilities,
 
-            w=1-u        
+            w=1-u
 
         """
         return 1.0 - self.committor_forward(a, b)
@@ -203,7 +203,7 @@ class BirthDeathChain():
         Parameters
         ----------
         a : int
-            State index 
+            State index
         b : int
             State index
 
@@ -211,7 +211,7 @@ class BirthDeathChain():
         -------
         flux : (M, M) ndarray
             Matrix of flux values between pairs of states.
-            
+
         """
         # if b<=a:
         # raise ValueError("State index b has to be strictly larger than state index a")
@@ -232,7 +232,7 @@ class BirthDeathChain():
         Parameters
         ----------
         a : int
-            State index 
+            State index
         b : int
             State index
 
@@ -240,7 +240,7 @@ class BirthDeathChain():
         -------
         netflux : (M, M) ndarray
             Matrix of flux values between pairs of states.
-            
+
         """
         flux = self.flux(a, b)
         netflux = flux - np.transpose(flux)
@@ -249,13 +249,13 @@ class BirthDeathChain():
         return netflux
 
     def totalflux(self, a, b):
-        r"""The tiotal flux for the reaction 
+        r"""The tiotal flux for the reaction
         A=[0,...,a] => B=[b,...,M].
 
         Parameters
         ----------
         a : int
-            State index 
+            State index
         b : int
             State index
 
@@ -263,7 +263,7 @@ class BirthDeathChain():
         -------
         F : float
             The total flux between reactant and product
-            
+
         """
         flux = self.flux(a, b)
         A = list(range(a + 1))

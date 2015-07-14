@@ -42,16 +42,16 @@ def connected_sets(C, directed=True):
 
     Parameters
     ----------
-    C : scipy.sparse matrix or numpy ndarray 
+    C : scipy.sparse matrix or numpy ndarray
         square matrix specifying edge weights.
     directed : bool, optional
        Whether to compute connected components for a directed  or
-       undirected graph. Default is True.       
+       undirected graph. Default is True.
 
     Returns
     -------
     cc : list of arrays of integers
-        Each entry is an array containing all vertices (states) in 
+        Each entry is an array containing all vertices (states) in
         the corresponding connected component.
 
     """
@@ -99,7 +99,7 @@ def largest_connected_set(C, directed=True):
 
     Parameters
     ----------
-    C : scipy.sparse matrix or numpy ndarray 
+    C : scipy.sparse matrix or numpy ndarray
         Count matrix specifying edge weights.
 
     Returns
@@ -120,21 +120,21 @@ def largest_connected_submatrix(C, directed=True, lcc=None):
     connected component are used to generate a completely connected
     subgraph. The weight matrix of the subgraph is the desired
     completely connected count matrix.
-    
+
     Parameters
     ----------
-    C : scipy.sparse matrix or numpy ndarray 
+    C : scipy.sparse matrix or numpy ndarray
         Count matrix specifying edge weights
     directed : bool, optional
        Whether to compute connected components for a directed or
        undirected graph. Default is True
     lcc : (M,) ndarray, optional
        The largest connected set
-       
+
     Returns
     -------
     C_cc : scipy.sparse matrix
-        Count matrix of largest completely 
+        Count matrix of largest completely
         connected set of vertices (states)
 
     """
@@ -162,19 +162,19 @@ def largest_connected_submatrix(C, directed=True, lcc=None):
 def is_connected(C, directed=True):
     r"""Return true, if the input count matrix is completely connected.
     Effectively checking if the number of connected components equals one.
-    
+
     Parameters
     ----------
     C : scipy.sparse matrix or numpy ndarray
         Count matrix specifying edge weights.
     directed : bool, optional
        Whether to compute connected components for a directed  or
-       undirected graph. Default is True.       
+       undirected graph. Default is True.
 
     Returns
     -------
     connected : boolean, returning true only if C is connected.
-        
+
 
     """
     nc = csgraph.connected_components(C, directed=directed, connection='strong', \

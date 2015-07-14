@@ -115,7 +115,7 @@ class TestCorrelations(unittest.TestCase):
 
     def test_time_relaxation_stat(self):
         """
-            start with stationary distribution, so increasing time should 
+            start with stationary distribution, so increasing time should
             not change relaxation any more.
         """
         obs = np.zeros(10)
