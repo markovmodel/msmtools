@@ -35,7 +35,7 @@ Low-level functions for estimation and analysis of transition matrices and io.
 .. toctree::
    :maxdepth: 1
 
-   io
+   dtraj
    generation
    estimation
    analysis
@@ -47,7 +47,7 @@ Low-level functions for estimation and analysis of transition matrices and io.
 from . import analysis
 from . import estimation
 from . import generation
-from . import io
+from . import dtraj
 from . import flux
 
 from ._version import get_versions

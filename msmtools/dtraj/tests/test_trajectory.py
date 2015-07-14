@@ -1,4 +1,3 @@
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -36,7 +35,7 @@ import numpy as np
 from os.path import abspath, join
 from os import pardir
 
-from msmtools.io import read_discrete_trajectory, write_discrete_trajectory, \
+from msmtools.dtraj import read_discrete_trajectory, write_discrete_trajectory, \
     load_discrete_trajectory, save_discrete_trajectory
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'

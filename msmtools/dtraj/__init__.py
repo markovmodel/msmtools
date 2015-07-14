@@ -1,4 +1,3 @@
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -25,11 +24,11 @@
 
 r"""
 
-==================================================================
-io - Input and output for MSM related files (:mod:`msmtools.io`)
-==================================================================
+===============================================================
+dtraj - Discrete trajectories functions (:mod:`msmtools.dtraj`)
+===============================================================
 
-.. currentmodule:: msmtools.io
+.. currentmodule:: msmtools.dtraj
 
 Discrete trajectory io
 ======================
@@ -45,17 +44,6 @@ Discrete trajectory io
    load_dtraj
    save_discrete_trajectory -  write microstate trajectory to binary file
    save_dtraj
-
-Dense and sparse matrix io
-==========================
-
-.. autosummary::
-   :toctree: generated/
-
-   read_matrix - read matrix from ascii file
-   write_matrix - write matrix to ascii file
-   load_matrix - read matrix from binary file
-   save_matrix - write matrix to binary file   
 
 """
 
