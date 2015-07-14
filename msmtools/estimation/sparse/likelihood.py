@@ -24,6 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """This module implements the transition matrix functionality"""
+from __future__ import absolute_import
 
 import numpy as np
 import scipy

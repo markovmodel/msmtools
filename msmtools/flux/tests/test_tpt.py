@@ -28,6 +28,7 @@ r"""Unit test for the TPT-functions of the analysis API
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import unittest
 import numpy as np

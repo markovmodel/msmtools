@@ -29,9 +29,12 @@
 modified from ZIBMolPy which can also be found on Github:
 https://github.com/CMD-at-ZIB/ZIBMolPy/blob/master/ZIBMolPy_package/ZIBMolPy/algorithms.py
 '''
+from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 import math
+from six.moves import range
 
 
 def _pcca_connected_isa(evec, n_clusters):
@@ -88,7 +91,7 @@ def _pcca_connected_isa(evec, n_clusters):
                          + "Probably the eigenvectors are incorrectly sorted. Cannot do PCCA.")
 
     # local copy of the eigenvectors
-    c = evec[:, range(n_clusters)]
+    c = evec[:, list(range(n_clusters))]
 
     ortho_sys = np.copy(c)
     max_dist = 0.0

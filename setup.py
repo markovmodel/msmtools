@@ -46,8 +46,8 @@ License :: OSI Approved :: BSD License
 Natural Language :: English
 Operating System :: MacOS :: MacOS X
 Operating System :: POSIX
-Programming Language :: Python :: 2.6
 Programming Language :: Python :: 2.7
+Programming Language :: Python :: 3
 Topic :: Scientific/Engineering :: Bio-Informatics
 Topic :: Scientific/Engineering :: Chemistry
 Topic :: Scientific/Engineering :: Mathematics
@@ -59,14 +59,14 @@ try:
     from setuptools import setup, Extension, find_packages
     from pkg_resources import VersionConflict
 except ImportError as ie:
-    print getSetuptoolsError()
+    print(getSetuptoolsError())
     sys.exit(23)
 # this should catch pkg_resources.DistributionNotFound, which is not
 # importable now.
 except:
-    print "Your version of setuptools is too old. We require at least %s\n" \
-          % __requires__
-    print getSetuptoolsError()
+    print("Your version of setuptools is too old. We require at least %s\n" \
+          % __requires__)
+    print(getSetuptoolsError())
     sys.exit(24)
 
 ###############################################################################
@@ -174,7 +174,7 @@ def get_cmdclass():
 
             try:
                 from Cython.Build import cythonize
-                print "cythonizing sources"
+                print("cythonizing sources")
                 cythonize(extensions())
             except ImportError:
                 warnings.warn('sdist cythonize failed')
@@ -210,6 +210,7 @@ metadata = dict(
     # runtime dependencies
     install_requires=['numpy>=1.6.0',
                       'scipy>=0.11',
+                      'six',
                       ],
 
     zip_safe=False,
@@ -250,8 +251,8 @@ else:
 try:
     setup(**metadata)
 except VersionConflict as ve:
-    print ve
-    print "You need to manually upgrade your 'setuptools' installation!"
+    print(ve)
+    print("You need to manually upgrade your 'setuptools' installation!")
     " Please use these instructions to perform an upgrade and/or consult\n"
     " https://pypi.python.org/pypi/setuptools#installation-instructions"
-    print getSetuptoolsError()
+    print(getSetuptoolsError())

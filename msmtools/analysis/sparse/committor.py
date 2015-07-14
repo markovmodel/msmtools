@@ -29,12 +29,14 @@ backward comittors using sparse linear algebra.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import numpy as np
 
 from scipy.sparse import eye, coo_matrix, diags
 from scipy.sparse.linalg import spsolve
 
-from decomposition import stationary_distribution_from_backward_iteration as statdist
+from .decomposition import stationary_distribution_from_backward_iteration as statdist
+from six.moves import range
 
 
 def forward_committor(T, A, B):

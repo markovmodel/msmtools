@@ -26,6 +26,7 @@ Created on 28.10.2013
 
 @author: marscher
 '''
+from __future__ import absolute_import
 import numpy as np
 from numpy.testing import assert_allclose as assert_allclose_np
 

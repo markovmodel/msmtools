@@ -29,6 +29,7 @@ r"""
 =================
 
 """
+from __future__ import absolute_import
 from msmtools.util.annotators import shortcut
 from msmtools.dtraj import discrete_trajectory
 

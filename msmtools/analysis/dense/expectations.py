@@ -29,11 +29,14 @@ expectation values for a given transition matrix.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 
-from decomposition import rdl_decomposition
-from stationary_vector import stationary_distribution_from_backward_iteration as statdist
+from .decomposition import rdl_decomposition
+from .decomposition import stationary_distribution_from_backward_iteration as statdist
+from six.moves import range
 
 
 def expected_counts(p0, T, n):
@@ -191,7 +194,7 @@ def ec_matrix_vector(p0, T, n):
         p_k = 1.0 * p0
         """Sum of vectors after (k=0) propagations"""
         p_sum = 1.0 * p_k
-        for k in xrange(n - 1):
+        for k in range(n - 1):
             """Propagate one step p_{k} -> p_{k+1}"""
             p_k = np.dot(p_k, T)
             """Update sum"""

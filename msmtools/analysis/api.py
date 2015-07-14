@@ -30,8 +30,8 @@ r"""
 =======================
 
 """
+from __future__ import absolute_import
 
-__docformat__ = "restructuredtext en"
 
 import warnings
 
@@ -44,27 +44,11 @@ from msmtools.util.annotators import shortcut
 # type-checking
 from msmtools.util import types as _types
 
-import dense.assessment
-import dense.committor
-import dense.fingerprints
-import dense.stationary_vector
-import dense.decomposition
-import dense.expectations
-import dense.pcca
-from dense.pcca import PCCA
-import dense.sensitivity
-import dense.mean_first_passage_time
-import dense.hitting_probability
+from . import dense
+from . import sparse
 
-import sparse.assessment
-import sparse.decomposition
-import sparse.stationary_vector
-import sparse.expectations
-import sparse.committor
-import sparse.fingerprints
-import sparse.mean_first_passage_time
-
-__author__ = "Benjamin Trendelkamp-Schroer, Martin Scherer, Jan-Hendrik Prinz, Frank Noe"
+__docformat__ = "restructuredtext en"
+__authors__ = __author__ = "Benjamin Trendelkamp-Schroer, Martin Scherer, Jan-Hendrik Prinz, Frank Noe"
 __copyright__ = "Copyright 2014, Computational Molecular Biology Group, FU-Berlin"
 __credits__ = ["Benjamin Trendelkamp-Schroer", "Martin Scherer", "Jan-Hendrik Prinz", "Frank Noe"]
 __license__ = "FreeBSD"

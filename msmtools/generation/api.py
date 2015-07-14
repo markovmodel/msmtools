@@ -27,11 +27,13 @@ Created on Jan 8, 2014
 
 @author: noe
 '''
+from __future__ import absolute_import
 
 import math
 import numpy as np
 import scipy.stats
 import msmtools.util.types as types
+from six.moves import range
 
 __all__ = ['transition_matrix_metropolis_1d',
            'generate_traj',
@@ -74,7 +76,7 @@ class MarkovChainSampler(object):
 
         # generate discrete random value generators for each line
         self.rgs = np.ndarray((self.n), dtype=object)
-        for i in xrange(self.n):
+        for i in range(self.n):
             nz = np.nonzero(self.P[i])
             self.rgs[i] = scipy.stats.rv_discrete(values=(nz, self.P[i, nz]))
 
@@ -102,7 +104,7 @@ class MarkovChainSampler(object):
                 import msmtools.analysis as msmana
 
                 mu = msmana.stationary_distribution(self.P)
-                self.mudist = scipy.stats.rv_discrete(values=(range(self.n), mu ))
+                self.mudist = scipy.stats.rv_discrete(values=(list(range(self.n)), mu ))
             # sample starting point from mu
             start = self.mudist.rvs()
 
@@ -120,7 +122,7 @@ class MarkovChainSampler(object):
         if stopat[traj[0]]:
             return traj[:1]
         # else run until end or stopping state
-        for t in xrange(1, N):
+        for t in range(1, N):
             traj[t] = self.rgs[traj[t - 1]].rvs()
             if stopat[traj[t]]:
                 return traj[:t+1]
@@ -144,7 +146,7 @@ class MarkovChainSampler(object):
             once a state of the stop set is reached
 
         """
-        trajs = [self.trajectory(N, start=start, stop=stop) for _ in xrange(M)]
+        trajs = [self.trajectory(N, start=start, stop=stop) for _ in range(M)]
         return trajs
 
 
@@ -241,7 +243,7 @@ def transition_matrix_metropolis_1d(E, d=1.0):
     P = np.zeros((n, n))
     # set offdiagonals
     P[0, 1] = 0.5 * d * min(1.0, math.exp(-(E[1] - E[0])))
-    for i in xrange(1, n - 1):
+    for i in range(1, n - 1):
         P[i, i - 1] = 0.5 * d * min(1.0, math.exp(-(E[i - 1] - E[i])))
         P[i, i + 1] = 0.5 * d * min(1.0, math.exp(-(E[i + 1] - E[i])))
     P[n - 1, n - 2] = 0.5 * d * min(1.0, math.exp(-(E[n - 2] - E[n - 1])))

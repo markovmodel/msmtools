@@ -24,6 +24,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """This module implements the transition matrix functionality"""
+from __future__ import absolute_import
+from __future__ import division
 
 import numpy
 import scipy.sparse

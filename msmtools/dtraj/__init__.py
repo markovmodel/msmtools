@@ -1,3 +1,4 @@
+
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -46,5 +47,5 @@ Discrete trajectory io
    save_dtraj
 
 """
-
+from __future__ import absolute_import
 from .api import *

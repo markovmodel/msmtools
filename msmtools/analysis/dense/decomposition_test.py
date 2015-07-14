@@ -27,6 +27,8 @@ r"""This module provides unit tests for the decomposition module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+from __future__ import division
 
 import unittest
 import warnings
@@ -37,10 +39,10 @@ from msmtools.util.numeric import assert_allclose
 from scipy.linalg import eig, eigvals
 
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
-from birth_death_chain import BirthDeathChain
+from .birth_death_chain import BirthDeathChain
 
-from decomposition import eigenvalues, eigenvectors, rdl_decomposition
-from decomposition import timescales
+from .decomposition import eigenvalues, eigenvectors, rdl_decomposition
+from .decomposition import timescales
 
 
 class TestDecomposition(unittest.TestCase):

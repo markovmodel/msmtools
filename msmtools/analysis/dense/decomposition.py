@@ -31,6 +31,8 @@ Dense matrices are represented by numpy.ndarrays throughout this module.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 import numbers
@@ -39,9 +41,10 @@ import warnings
 from scipy.linalg import eig, eigh, eigvals, eigvalsh, solve, lu_factor, lu_solve
 
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
+from six.moves import range
 
-from stationary_vector import stationary_distribution_from_backward_iteration
-from assessment import is_reversible
+from .stationary_vector import stationary_distribution_from_backward_iteration
+from .assessment import is_reversible
 
 def eigenvalues(T, k=None, reversible=False, mu=None):
     r"""Compute eigenvalues of given transition matrix.   

@@ -22,11 +22,11 @@
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+from __future__ import absolute_import
 import numpy as np
 
 # import decomposition
-from stationary_vector import stationary_distribution_from_backward_iteration
+from .stationary_vector import stationary_distribution_from_backward_iteration
 
 def is_transition_matrix(T, tol=1e-10):
     """

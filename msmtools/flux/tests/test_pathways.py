@@ -28,6 +28,7 @@
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 
 import warnings
 import unittest
@@ -36,6 +37,7 @@ from scipy.sparse import csr_matrix
 
 from msmtools.util.numeric import assert_allclose
 from msmtools.flux import pathways
+from six.moves import range
 
 
 class TestPathways(unittest.TestCase):

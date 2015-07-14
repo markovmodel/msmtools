@@ -28,13 +28,14 @@ r"""Unit tests for matrix io implementations
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import os
 import unittest
 
 import numpy as np
 import scipy.sparse
 
-import matrix
+from . import matrix
 
 ################################################################################
 # util
@@ -44,6 +45,16 @@ from os.path import abspath, join
 from os import pardir
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
+
+# this a workaround for a numpy bug in file io (http://github.com/numpy/numpy#5655)
+def my_loadtxt(*args, **kw):
+    if 'dtype' in kw and (kw['dtype'] == 'complex' or kw['dtype'] is np.complex):
+        return np.genfromtxt(*args, **kw)
+    else:
+        return unpatched_loadtxt(*args, **kw)
+
+unpatched_loadtxt = np.loadtxt
+np.loadtxt = my_loadtxt
 
 
 class TestIsSparseFile(unittest.TestCase):
@@ -106,7 +117,7 @@ class TestReadMatrixDense(unittest.TestCase):
 
         self.A_int = np.loadtxt(self.filename_int, dtype=np.int)
         self.A_float = np.loadtxt(self.filename_float, dtype=np.float)
-        self.A_complex = np.loadtxt(self.filename_complex, dtype=np.complex)
+        self.A_complex = np.genfromtxt(self.filename_complex, dtype=np.complex)
 
     def tearDown(self):
         pass

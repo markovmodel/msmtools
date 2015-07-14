@@ -1,11 +1,14 @@
+from __future__ import absolute_import, division
+
 import unittest
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-from stationary_vector import stationary_distribution_from_eigenvector
-from stationary_vector import stationary_distribution_from_backward_iteration
+from .stationary_vector import stationary_distribution_from_eigenvector
+from .stationary_vector import stationary_distribution_from_backward_iteration
 
-from birth_death_chain import BirthDeathChain
+from .birth_death_chain import BirthDeathChain
+
 
 class TestStationaryVector(unittest.TestCase):
     def setUp(self):

@@ -29,13 +29,15 @@ r"""Unit tests for the mean first passage time module
 .. moduleauthor:: C.Wehmeyer <christoph DOT wehmeyer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+from __future__ import division
 import unittest
 
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 import scipy.sparse
 
-from mean_first_passage_time import mfpt, mfpt_between_sets
+from .mean_first_passage_time import mfpt, mfpt_between_sets
 
 
 class TestMfpt(unittest.TestCase):

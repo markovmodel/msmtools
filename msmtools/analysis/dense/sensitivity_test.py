@@ -33,12 +33,13 @@ This module provides unit tests for the sensitivity module
 Most tests consist of the comparison of some (randomly selected) sensitivity matrices 
 against numerical differentiation results.
 '''
+from __future__ import absolute_import
 
 import unittest
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-from sensitivity import timescale_sensitivity, eigenvalue_sensitivity, mfpt_sensitivity, \
+from .sensitivity import timescale_sensitivity, eigenvalue_sensitivity, mfpt_sensitivity, \
     forward_committor_sensitivity, backward_committor_sensitivity, eigenvector_sensitivity, \
     stationary_distribution_sensitivity, expectation_sensitivity
 

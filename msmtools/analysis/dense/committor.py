@@ -29,11 +29,13 @@ backward comittors using dense linear algebra.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import, division
+from six.moves import range
 
 import numpy as np
 from scipy.linalg import solve
 
-from stationary_vector import stationary_distribution_from_backward_iteration as statdist
+from .stationary_vector import stationary_distribution_from_backward_iteration as statdist
 
 
 def forward_committor(T, A, B):
@@ -68,7 +70,7 @@ def forward_committor(T, A, B):
                       u_{i}=1    for i \in B        (III)
 
     with generator matrix L=(P-I).
-                          
+
     """
     X = set(range(T.shape[0]))
     A = set(A)

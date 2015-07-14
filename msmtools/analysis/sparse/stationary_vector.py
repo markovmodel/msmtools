@@ -30,13 +30,14 @@ Matrices are represented by scipy.sparse matrices throughout this module.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import, division
+
 import numpy as np
 import scipy.sparse.linalg
 
 from scipy.sparse import eye
 from scipy.sparse.linalg import factorized
 
-import warnings
 
 def backward_iteration(A, mu, x0, tol=1e-15, maxiter=100):
     r"""Find eigenvector to approximate eigenvalue via backward iteration.

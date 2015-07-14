@@ -28,12 +28,13 @@ r"""Unit test, dense implementation of hitting probabilities
 .. moduleauthor:: F.Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
 import unittest
 
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-from hitting_probability import hitting_probability
+from .hitting_probability import hitting_probability
 
 
 class TestHitting(unittest.TestCase):

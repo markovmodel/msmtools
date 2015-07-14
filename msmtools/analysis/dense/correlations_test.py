@@ -28,13 +28,16 @@ Created on Jun 3, 2014
 
 @author: marscher
 '''
+from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import division
 import unittest
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-from committor_test import BirthDeathChain
+from .committor_test import BirthDeathChain
 
-import correlations
+from . import correlations
 
 
 class TestCorrelations(unittest.TestCase):
@@ -77,7 +80,7 @@ class TestCorrelations(unittest.TestCase):
         obs1 = np.zeros(10)
         obs1[0] = 1
         time = 100
-        print correlations.time_correlation_direct_by_mtx_vec_prod(self.T, self.mu, obs1, time=time)
+        print(correlations.time_correlation_direct_by_mtx_vec_prod(self.T, self.mu, obs1, time=time))
 
     @unittest.SkipTest
     def test_time_corr2(self):
@@ -86,7 +89,7 @@ class TestCorrelations(unittest.TestCase):
         obs2 = np.zeros(10)
         obs2[8] = 1
         time = 2
-        print correlations.time_correlation_direct_by_mtx_vec_prod(self.T, self.mu, obs1, obs2, time=time)
+        print(correlations.time_correlation_direct_by_mtx_vec_prod(self.T, self.mu, obs1, obs2, time=time))
 
     def test_time_correlations(self):
         """

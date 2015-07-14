@@ -24,6 +24,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """This module provides unit tests for the assessment module"""
+from __future__ import absolute_import
+from __future__ import division
 import unittest
 
 import numpy as np
@@ -32,7 +34,8 @@ import numpy as np
 import scipy.sparse
 from scipy.sparse.dia import dia_matrix
 
-import assessment
+from . import assessment
+from six.moves import range
 
 
 def normalize_rows(A):
