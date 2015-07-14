@@ -1,4 +1,3 @@
-__author__ = 'noe'
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -22,15 +21,23 @@ __author__ = 'noe'
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 r"""This module implements effective transition counts
 
 .. moduleauthor:: F. Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import, division
 
+from six.moves import range
 import numpy as np
 import scipy.sparse
+
+from msmtools.util.statistics import statistical_inefficiency
+from msmtools.estimation.sparse.count_matrix import count_matrix_mult
+from msmtools.dtraj.discrete_trajectory import number_of_states
+
+__author__ = 'noe'
+
 
 def _split_sequences_singletraj(dtraj, nstates, lag):
     """ splits the discrete trajectory into conditional sequences by starting state
@@ -71,7 +78,6 @@ def _split_sequences_multitraj(dtrajs, lag):
         lag time
 
     """
-    from pyemma.util.discrete_trajectories import number_of_states
     n = number_of_states(dtrajs)
     res = []
     for i in range(n):
@@ -95,7 +101,6 @@ def _indicator_multitraj(ss, i, j):
 
 def _transition_indexes(dtrajs, lag):
     """ for each state, returns a list of target states to which a transition is observed at lag tau """
-    from count_matrix import count_matrix_mult
     C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
     res = []
     for i in range(C.shape[0]):
@@ -139,14 +144,12 @@ def statistical_inefficiencies(dtrajs, lag, C=None):
 
     See also
     --------
-    pyemma.util.statistics.statistical_inefficiency
+    msmtools.util.statistics.statistical_inefficiency
         used to compute the statistical inefficiency for conditional trajectories
 
     """
-    from pyemma.util.statistics import statistical_inefficiency
     # count matrix
     if C is None:
-        from count_matrix import count_matrix_mult
         C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
     # split sequences
     splitseq = _split_sequences_multitraj(dtrajs, lag)
@@ -197,7 +200,6 @@ def effective_count_matrix(dtrajs, lag):
 
     """
     # observed C
-    from count_matrix import count_matrix_mult
     C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
     # statistical inefficiencies
     si = statistical_inefficiencies(dtrajs, lag, C=C)
