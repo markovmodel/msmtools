@@ -30,6 +30,7 @@ from __future__ import absolute_import
 
 from . import count_matrix
 from . import connectivity
+from . import effective_counts
 from . import likelihood
 from . import transition_matrix
 from . import prior
