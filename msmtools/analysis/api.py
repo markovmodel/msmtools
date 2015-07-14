@@ -1,4 +1,3 @@
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -22,7 +21,6 @@
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 r"""
 
 =======================
@@ -1451,7 +1449,7 @@ def _pcca_object(T, m):
         _showSparseConversionWarning()
         T = T.toarray()
     T = _types.ensure_ndarray(T, ndim=2, uniform=True, kind='numeric')
-    return PCCA(T, m)
+    return dense.pcca.PCCA(T, m)
 
 
 def pcca(T, m):
