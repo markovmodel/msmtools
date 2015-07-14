@@ -32,6 +32,7 @@ Matrices are represented by scipy.sparse matrices throughout this module.
 
 """
 from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 import scipy.sparse.linalg

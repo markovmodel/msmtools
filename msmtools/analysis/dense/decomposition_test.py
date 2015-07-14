@@ -28,6 +28,7 @@ r"""This module provides unit tests for the decomposition module
 
 """
 from __future__ import absolute_import
+from __future__ import division
 
 import unittest
 import warnings

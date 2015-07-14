@@ -29,6 +29,7 @@ Created on Jul 23, 2014
 @author: noe
 '''
 from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 import scipy

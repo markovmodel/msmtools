@@ -32,6 +32,7 @@ This module provides the unittest for the pcca module
 
 '''
 from __future__ import absolute_import
+from __future__ import division
 import unittest
 import numpy as np
 

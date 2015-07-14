@@ -30,6 +30,7 @@ Created on Jun 3, 2014
 '''
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import division
 import unittest
 import numpy as np
 from msmtools.util.numeric import assert_allclose

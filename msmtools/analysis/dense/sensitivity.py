@@ -29,10 +29,11 @@ Created on 22.11.2013
 @author: Jan-Hendrik Prinz
 '''
 from __future__ import absolute_import
-from six.moves import range
+from __future__ import division
 
 import numpy
 from .stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
+from six.moves import range
 
 
 # TODO:make faster. So far not effectively programmed
@@ -89,7 +90,7 @@ def forward_committor_sensitivity(T, A, B, index):
     UinvVec = numpy.linalg.solve(U.T, target)
     Siab = numpy.zeros((n, n))
 
-    for i in xrange(m):
+    for i in range(m):
         Siab[notAB[i]] = - UinvVec[i] * q_forward
 
     return Siab

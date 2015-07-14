@@ -29,6 +29,7 @@ r"""Birth death chain for testing
 
 """
 from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 

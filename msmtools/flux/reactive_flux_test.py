@@ -29,6 +29,7 @@ r"""Unit test for the ReactiveFlux object
 
 """
 from __future__ import absolute_import
+from __future__ import division
 import unittest
 import numpy as np
 from msmtools.util.numeric import assert_allclose

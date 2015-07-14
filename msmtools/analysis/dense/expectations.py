@@ -30,6 +30,7 @@ expectation values for a given transition matrix.
 
 """
 from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 

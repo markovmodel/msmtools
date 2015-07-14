@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import division
 from six.moves import range
 
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University

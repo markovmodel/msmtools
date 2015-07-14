@@ -29,6 +29,7 @@ r"""Unit tests for the covariance module
 
 """
 from __future__ import absolute_import
+from __future__ import division
 import unittest
 
 import numpy as np

@@ -30,6 +30,7 @@ r"""Unit tests for the mean first passage time module
 
 """
 from __future__ import absolute_import
+from __future__ import division
 import unittest
 
 import numpy as np

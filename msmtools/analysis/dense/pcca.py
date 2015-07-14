@@ -30,6 +30,7 @@ modified from ZIBMolPy which can also be found on Github:
 https://github.com/CMD-at-ZIB/ZIBMolPy/blob/master/ZIBMolPy_package/ZIBMolPy/algorithms.py
 '''
 from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 import math

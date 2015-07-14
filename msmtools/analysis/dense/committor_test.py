@@ -29,6 +29,7 @@ r"""Unit tests for the committor module
 
 """
 from __future__ import absolute_import
+from __future__ import division
 
 import unittest
 import numpy as np

@@ -29,6 +29,7 @@ r"""This module implements the transition matrix covariance function
 
 """
 from __future__ import absolute_import
+from __future__ import division
 
 import numpy as np
 from six.moves import range

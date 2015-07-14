@@ -29,6 +29,7 @@ r"""Unit test for decomposition functions in api.py
 
 """
 from __future__ import absolute_import
+from __future__ import division
 import unittest
 import warnings
 

@@ -29,6 +29,7 @@ r"""Decomposition of a netflux network into its dominant reaction pathways
 
 """
 from __future__ import absolute_import
+from __future__ import division
 import warnings
 import numpy as np
 import scipy.sparse.csgraph as csgraph
