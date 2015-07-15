@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from six.moves import range
-
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Free University
 # Berlin, 14195 Berlin, Germany.
 # All rights reserved.
@@ -25,45 +22,41 @@ from six.moves import range
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__author__ = 'noe'
-import unittest
-import warnings
+r"""Transition matrix sampling for non-reversible stochastic matrices.
+
+.. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
+
+"""
+from __future__ import absolute_import
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
-import scipy.sparse
 
-from msmtools.estimation import sample_tmatrix, tmatrix_sampler
-from msmtools.analysis import is_transition_matrix
+from msmtools.analysis import statdist
 
-"""Unit tests for the transition_matrix module"""
+def update_nrev(alpha, P):
+    N = alpha.shape[0]
+    for i in range(N):
+        P[i, :] = np.random.dirichlet(alpha[i, :])   
 
+class SamplerNonRev:
+    def __init__(self, Z):
+        """Posterior counts"""
+        self.Z = 1.0*Z
+        """Alpha parameters for dirichlet sampling"""
+        self.alpha = Z + 1.0
+        """Initial state from single sample"""
+        self.P = np.zeros_like(Z)
+        self.update()
+        
+    def update(self, N=1):
+        update_nrev(self.alpha, self.P)
 
-class TestTransitionMatrixSampling(unittest.TestCase):
-    def setUp(self):
-        self.C = np.array([[7,1],
-                           [2,2]])
-
-    def test_sample_nonrev_1(self):
-        P = sample_tmatrix(self.C)
-        assert np.all(P.shape == self.C.shape)
-        assert is_transition_matrix(P)
-
-        # same with boject
-        sampler = tmatrix_sampler(self.C)
-        P = sampler.sample()
-        assert np.all(P.shape == self.C.shape)
-        assert is_transition_matrix(P)
-
-    def test_sample_nonrev_10(self):
-        sampler = tmatrix_sampler(self.C)
-        Ps = sampler.sample(nsamples=10)
-        assert len(Ps) == 10
-        for i in range(10):
-            assert np.all(Ps[i].shape == self.C.shape)
-            assert is_transition_matrix(Ps[i])
-
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def sample(self, N=1, return_statdist=False):
+        self.update(N=N)
+        if return_statdist:
+            pi = statidist(self.P)
+            return self.P, pi
+        else:
+            return self.P
+        
+    
