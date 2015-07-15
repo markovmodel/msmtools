@@ -57,7 +57,7 @@ class TestTransitionMatrixSampling(unittest.TestCase):
 
     def test_sample_nonrev_10(self):
         sampler = tmatrix_sampler(self.C)
-        Ps = sampler.sample(nsample = 10)
+        Ps = sampler.sample(nsamples=10)
         assert len(Ps) == 10
         for i in range(10):
             assert np.all(Ps[i].shape == self.C.shape)
