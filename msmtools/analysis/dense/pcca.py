@@ -83,12 +83,10 @@ def _pcca_connected_isa(evec, n_clusters):
 
     # check if the first, and only the first eigenvector is constant
     diffs = np.abs(np.max(evec, axis=0) - np.min(evec, axis=0))
-    if not np.isclose(diffs[0], 0):
-        raise ValueError("First eigenvector is not constant. This indicates that the transition matrix"
-                         + "is not connected or the eigenvectors are incorrectly sorted. Cannot do PCCA.")
-    if np.isclose(min(diffs[1:]), 0):
-        raise ValueError("An Eigenvector after the first one is constant. "
-                         + "Probably the eigenvectors are incorrectly sorted. Cannot do PCCA.")
+    assert diffs[0] < 1e-6, "First eigenvector is not constant. This indicates that the transition matrix " \
+                            "is not connected or the eigenvectors are incorrectly sorted. Cannot do PCCA."
+    assert diffs[1] > 1e-6, "An eigenvector after the first one is constant. " \
+                            "Probably the eigenvectors are incorrectly sorted. Cannot do PCCA."
 
     # local copy of the eigenvectors
     c = evec[:, list(range(n_clusters))]
