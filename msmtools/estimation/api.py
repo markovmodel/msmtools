@@ -1114,7 +1114,6 @@ def _showSparseConversionWarning():
     warnings.warn('Converting input to dense, since method is '
                   'currently only implemented for dense matrices.', UserWarning)
 
-
 def sample_tmatrix(C, nsample=1, reversible=False, mu=None, T0=None, return_statdist=False):
     r"""samples transition matrices from the posterior distribution
 
@@ -1151,35 +1150,19 @@ def sample_tmatrix(C, nsample=1, reversible=False, mu=None, T0=None, return_stat
 
     .. math:: \mathbb{P}(T|C) \propto \prod_{i=1}^{M} \left( \prod_{j=1}^{M} p_{ij}^{c_{ij}} \right)
 
+    See also
+    --------
+    tmatrix_sampler
+
     """
     if issparse(C):
         _showSparseConversionWarning()
         C = C.toarray()
 
-    if mu is not None:
-        raise NotImplementedError('Transition matrix sampling with fixed stationary dist. is currently not implemented')
+    sampler = tmatrix_sampler(C, reversible=reversible, mu=mu, T0=T0)
+    return sampler.sample(nsamples=nsample, return_statdist=return_statdist)
 
-    from .dense.tmatrix_sampler import sample_nonrev
-    from .dense.tmatrix_sampler import sample_rev
-
-    if reversible:
-        return sample_rev(C, nsample=nsample, return_statdist=return_statdist)
-    else:
-        Ps = sample_nonrev(C, nsample=nsample)
-        if return_statdist:
-            import msmtools.analysis as msmana
-            if nsample == 1:
-                return Ps, msmana.stationary_distribution(Ps)
-            else:
-                mus = np.empty((nsample), dtype=object)
-                for i in range(nsample):
-                    mus[i] = msmana.stationary_distribution(Ps[i])
-                return Ps, mus
-        else:
-            return Ps
-
-
-def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1):
+def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1, prior='sparse'):
     r"""Generate transition matrix sampler object.
 
     Parameters
@@ -1196,7 +1179,7 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1):
         Starting point of the MC chain of the sampling algorithm.
         Has to obey the required constraints.
     nstep = 1 : int
-        number of Gibbs sampling steps per sample. Only for reversible sampling
+        number of Gibbs sampling steps per sample, nstep>1 only for reversible sampling.
 
     Returns
     -------
@@ -1219,31 +1202,26 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1):
     vector :math:`(\mu_i)` such that :math:`\mu_i t_{ij} = \mu_j
     t_{ji}` holds for all :math:`i,j`.
 
+    **Reversible sampling with fixed stationary vector**
+    
+    Using a MCMC sampler outlined in .. [2] it is ensured that samples
+    from the posterior fulfill detailed balance with respect to a given
+    probability vector :math:`(\mu_i)`.
+
     References
     ----------
     .. [1] Noe, F. 2008. Probability distributions of molecular observables
         computed from Markov state models. J Chem Phys 128: 244103.
 
-    """
-    # TODO: re-include fixed-pi documention when implemented
-    #
-    # **Reversible sampling with fixed stationary vector**
-    #
-    # Using a MCMC sampler outlined in .. [2] it is ensured that samples
-    # from the posterior fulfill detailed balance with respect to a given
-    # probability vector :math:`(\mu_i)`.
-    #
-    # .. [2] Trendelkamp-Schroer, B and F Noe. 2013. Efficient Bayesian estimation
-    #     of Markov model transition matrices with given stationary distribution.
-    #     J Chem Phys 138: 164113.
+    .. [2] Trendelkamp-Schroer, F., Wu, H., Paul, F., and Noe, F. 2015. 
+       J Chem Phys (submitted)
 
+    """
     if issparse(C):
         _showSparseConversionWarning()
         C = C.toarray()
 
-    if reversible:
-        from .dense.tmatrix_sampler import TransitionMatrixSamplerRev
-        return TransitionMatrixSamplerRev(C=C, T_init=T0, nstep=nstep)
-    else:
-        from .dense.tmatrix_sampler import TransitionMatrixSamplerNonrev
-        return TransitionMatrixSamplerNonrev(C=C)
+    from .dense.tmatrix_sampler import TransitionMatrixSampler
+    sampler = TransitionMatrixSampler(C, reversible=reversible, mu=mu, P0=T0, nsteps=nstep,
+                                      prior=prior)
+    return sampler
