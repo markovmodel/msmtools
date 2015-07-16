@@ -351,9 +351,14 @@ def stationary_distribution(T):
                          "and handle them separately")
     # we're good to go...
     if _issparse(T):
-        return sparse.stationary_vector.stationary_distribution_from_backward_iteration(T)
+        mu = sparse.stationary_vector.stationary_distribution_from_backward_iteration(T)
+        if _np.any(mu <= 0):  # numerical problem, fall back to more robust algorithm.
+            mu = sparse.stationary_vector.stationary_distribution_from_eigenvector(T)
     else:
-        return dense.stationary_vector.stationary_distribution_from_backward_iteration(T)
+        mu = dense.stationary_vector.stationary_distribution_from_backward_iteration(T)
+        if _np.any(mu <= 0):  # numerical problem, fall back to more robust algorithm.
+            mu = dense.stationary_vector.stationary_distribution_from_eigenvector(T)
+    return mu
 
 
 def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):

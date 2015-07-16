@@ -182,9 +182,7 @@ class SamplerRevPi:
     
     def update(self, N=1):
         for i in range(N):
-            """Do 6 updates to decorrelate"""
-            for j in range(6):
-                self.xsampler.update_revpi(self.X, self.C, self.b)
+            self.xsampler.update_revpi(self.X, self.C, self.b)
 
     # def update(self, N=1):
     #     self.xsampler.update_revpi_sparse(self.X, self.C, self.b, self.I, self.J)
