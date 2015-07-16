@@ -1162,7 +1162,7 @@ def sample_tmatrix(C, nsample=1, reversible=False, mu=None, T0=None, return_stat
     sampler = tmatrix_sampler(C, reversible=reversible, mu=mu, T0=T0)
     return sampler.sample(nsamples=nsample, return_statdist=return_statdist)
 
-def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1, prior='sparse'):
+def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='sparse'):
     r"""Generate transition matrix sampler object.
 
     Parameters
@@ -1174,12 +1174,18 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1, prior='spars
         restricted to those obeying a detailed balance condition,
         else draw from the whole ensemble of stochastic matrices.
     mu : array_like
-        A fixed stationary distribution. Transition matrices with that stationary distribution will be sampled
+        A fixed stationary distribution. Transition matrices with that
+        stationary distribution will be sampled
     T0 : ndarray, shape=(n, n) or scipy.sparse matrix
         Starting point of the MC chain of the sampling algorithm.
         Has to obey the required constraints.
-    nstep = 1 : int
-        number of Gibbs sampling steps per sample, nstep>1 only for reversible sampling.
+    nstep = 1 : int, default=None
+        number of full Gibbs sampling sweeps per sample. This option is meant
+        to ensure approximately uncorrelated samples for every call to
+        sample(). If None, the number of steps will be automatically determined
+        based on the other options and  the matrix size. nstep>1 will only be
+        used for reversible sampling, because nonreversible sampling generates
+        statistically independent transition matrices every step.
 
     Returns
     -------
@@ -1210,11 +1216,11 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1, prior='spars
 
     References
     ----------
-    .. [1] Noe, F. 2008. Probability distributions of molecular observables
-        computed from Markov state models. J Chem Phys 128: 244103.
+    .. [1] Noe, F. Probability distributions of molecular observables
+        computed from Markov state models. J Chem Phys 128: 244103 (2008)
 
-    .. [2] Trendelkamp-Schroer, F., Wu, H., Paul, F., and Noe, F. 2015. 
-       J Chem Phys (submitted)
+    .. [2] Trendelkamp-Schroer, B., H. Wu, F. Paul and F. Noe: Estimation and
+        uncertainty of reversible Markov models. J. Chem. Phys. (submitted)
 
     """
     if issparse(C):
@@ -1222,6 +1228,6 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nstep=1, prior='spars
         C = C.toarray()
 
     from .dense.tmatrix_sampler import TransitionMatrixSampler
-    sampler = TransitionMatrixSampler(C, reversible=reversible, mu=mu, P0=T0, nsteps=nstep,
-                                      prior=prior)
+    sampler = TransitionMatrixSampler(C, reversible=reversible, mu=mu, P0=T0,
+                                      nsteps=nsteps, prior=prior)
     return sampler

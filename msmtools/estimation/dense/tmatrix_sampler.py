@@ -37,6 +37,7 @@ from given data
 from __future__ import absolute_import
 from __future__ import division
 
+import math
 import numpy as np
 
 from . sampler_nrev import SamplerNonRev
@@ -52,37 +53,43 @@ class TransitionMatrixSampler:
 
         self.C = C
 
-        """Number of Gibbs sampling sweeps per returned sample"""
-        self.nsteps = nsteps
-
+        # distinguish the sampling cases and initialize accordingly
         if reversible:
             if mu is None:
+                if nsteps is None:
+                    # use sqrt(n) as a rough guess for the decorrelation time
+                    nsteps = math.sqrt(np.shape(C)[0])
                 self.sampler = SamplerRev(C, P0=P0)
             else:
+                if nsteps is None:
+                    nsteps = 6  # because we have observed autocorrelation times of about 3.
                 self.sampler = SamplerRevPi(C, mu, P0=P0)
         else:
             if mu is None:
+                nsteps = 1  # just force to 1, because this is independent sampling
                 self.sampler = SamplerNonRev(C-1.0)
             else:
                 msg = """Non reversible sampling with fixed stationary vector not implemented"""
                 raise ValueError(msg)
 
+        # remember number of steps to decorrelate between samples
+        self.nsteps = nsteps
+
+
     def sample(self, nsamples=1, return_statdist=False):
-        nsteps = self.nsteps
         if nsamples==1:
-            return self.sampler.sample(N=nsteps, return_statdist=return_statdist)
+            return self.sampler.sample(N=self.nsteps, return_statdist=return_statdist)
         else:
             N = self.C.shape[0]
             P_samples = np.zeros((nsamples, N, N))
             if return_statdist:
                 pi_samples = np.zeros((nsamples, N))
                 for i in range(nsamples):
-                    P_samples[i, :, :], pi_samples[i, :] = self.sampler.sample(N=nsteps,
-                                                                          return_statdist=True)
+                    P_samples[i, :, :], pi_samples[i, :] = self.sampler.sample(N=self.nsteps, return_statdist=True)
                 return P_samples, pi_samples
             else:
                 for i in range(nsamples):
-                    P_samples[i, :, :] = self.sampler.sample(N=nsteps, return_statdist=False)
+                    P_samples[i, :, :] = self.sampler.sample(N=self.nsteps, return_statdist=False)
                 return P_samples
             
                 

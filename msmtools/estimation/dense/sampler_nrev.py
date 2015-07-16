@@ -31,7 +31,7 @@ from __future__ import absolute_import
 
 import numpy as np
 
-from msmtools.analysis import statdist
+from msmtools.analysis import stationary_distribution
 
 def update_nrev(alpha, P):
     N = alpha.shape[0]
@@ -54,7 +54,7 @@ class SamplerNonRev:
     def sample(self, N=1, return_statdist=False):
         self.update(N=N)
         if return_statdist:
-            pi = statidist(self.P)
+            pi = stationary_distribution(self.P)
             return self.P, pi
         else:
             return self.P
