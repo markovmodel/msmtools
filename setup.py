@@ -115,6 +115,22 @@ def extensions():
         Extension('msmtools.estimation.sparse.mle_trev',
                   sources=['msmtools/estimation/sparse/mle_trev.pyx',
                            'msmtools/estimation/sparse/_mle_trev.c'])
+
+    sampler_rev = \
+        Extension('msmtools.estimation.dense.sampler_rev',
+                  sources=['msmtools/estimation/dense/sampler_rev.pyx',
+                           'msmtools/estimation/dense/sample_rev.c',
+                           'msmtools/estimation/dense/_rnglib.c',
+                           'msmtools/estimation/dense/_ranlib.c',])
+
+    sampler_revpi = \
+        Extension('msmtools.estimation.dense.sampler_revpi',
+                  sources=['msmtools/estimation/dense/sampler_revpi.pyx',
+                           'msmtools/estimation/dense/sample_revpi.c',
+                           'msmtools/estimation/dense/_rnglib.c',
+                           'msmtools/estimation/dense/_ranlib.c',])
+                           
+
     if sys.platform.startswith('win'):
         lib_prefix = 'lib'
     else:
@@ -123,6 +139,8 @@ def extensions():
     exts += [mle_trev_given_pi_dense_module,
              mle_trev_given_pi_sparse_module,
              mle_trev_sparse_module,
+             sampler_rev,
+             sampler_revpi,
             ]
     if USE_CYTHON: # if we have cython available now, cythonize module
         exts = cythonize(exts)
