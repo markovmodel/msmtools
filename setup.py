@@ -103,18 +103,21 @@ def extensions():
         Extension('msmtools.estimation.dense.mle_trev_given_pi',
                   sources=['msmtools/estimation/dense/mle_trev_given_pi.pyx',
                            'msmtools/estimation/dense/_mle_trev_given_pi.c'],
+                  depends=['msmtools/util/sigint_handler.h'],
                   include_dirs=['msmtools/estimation/dense'])
 
     mle_trev_given_pi_sparse_module = \
         Extension('msmtools.estimation.sparse.mle_trev_given_pi',
                   sources=['msmtools/estimation/sparse/mle_trev_given_pi.pyx',
                            'msmtools/estimation/sparse/_mle_trev_given_pi.c'],
+                  depends=['msmtools/util/sigint_handler.h'],
                   include_dirs=['msmtools/estimation/dense'])
 
     mle_trev_sparse_module = \
         Extension('msmtools.estimation.sparse.mle_trev',
                   sources=['msmtools/estimation/sparse/mle_trev.pyx',
-                           'msmtools/estimation/sparse/_mle_trev.c'])
+                           'msmtools/estimation/sparse/_mle_trev.c'],
+                  depends=['msmtools/util/sigint_handler.h'])
 
     sampler_rev = \
         Extension('msmtools.estimation.dense.sampler_rev',
