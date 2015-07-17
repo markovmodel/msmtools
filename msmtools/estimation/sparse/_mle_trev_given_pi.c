@@ -118,8 +118,6 @@ int _mle_trev_given_pi_sparse(
     iteration += 1;
     d_sq = distsq(len_mu,lam,lam_new);
   } while(d_sq > maxerr*maxerr && iteration < maxiter);
-  
-  if(iteration==maxiter) { err=5; goto error; } 
 
   /* calculate T */
   for(t=0; t<len_CCt; t++) {
@@ -132,12 +130,14 @@ int _mle_trev_given_pi_sparse(
       }
   }
 
-  if(lam) free(lam);
-  if(lam_new) free(lam_new);
+  if(iteration==maxiter) { err=5; goto error; } 
+
+  free(lam);
+  free(lam_new);
   return 0;
-  
+
 error:
-  if(lam) free(lam);
-  if(lam_new) free(lam_new);
+  free(lam);
+  free(lam_new);
   return -err;
 }

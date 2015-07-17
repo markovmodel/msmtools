@@ -103,8 +103,6 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
     iteration += 1;
     d_sq = distsq(n,lam,lam_new);
   } while(d_sq > maxerr*maxerr && iteration < maxiter);
-  
-  if(iteration==maxiter) { err=5; goto error; } 
 
   /* calculate T */
   for(i=0; i<n; i++) {
@@ -119,12 +117,14 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
     if(norm>1.0) T(i,i) = 0.0; else T(i,i) = 1.0-norm;
   }
 
-  if(lam) free(lam);
-  if(lam_new) free(lam_new);
+  if(iteration==maxiter) { err=5; goto error; } 
+
+  free(lam);
+  free(lam_new);
   return 0;
   
 error:
-  if(lam) free(lam);
-  if(lam_new) free(lam_new);
+  free(lam);
+  free(lam_new);
   return -err;
 }
