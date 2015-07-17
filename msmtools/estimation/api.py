@@ -1114,7 +1114,7 @@ def _showSparseConversionWarning():
     warnings.warn('Converting input to dense, since method is '
                   'currently only implemented for dense matrices.', UserWarning)
 
-def sample_tmatrix(C, nsample=1, reversible=False, mu=None, T0=None, return_statdist=False):
+def sample_tmatrix(C, nsample=1, nsteps=None, reversible=False, mu=None, T0=None, return_statdist=False):
     r"""samples transition matrices from the posterior distribution
 
     Parameters
@@ -1123,6 +1123,14 @@ def sample_tmatrix(C, nsample=1, reversible=False, mu=None, T0=None, return_stat
         Count matrix
     nsample : int
         number of samples to be drawn
+    nstep : int, default=None
+        number of full Gibbs sampling sweeps internally done for each sample
+        returned. This option is meant to ensure approximately uncorrelated
+        samples for every call to sample(). If None, the number of steps will
+        be automatically determined based on the other options and  the matrix
+        size. nstep>1 will only be used for reversible sampling, because
+        nonreversible sampling generates statistically independent transition
+        matrices every step.
     reversible : bool
         If true sample from the ensemble of transition matrices
         restricted to those obeying a detailed balance condition,
@@ -1159,7 +1167,7 @@ def sample_tmatrix(C, nsample=1, reversible=False, mu=None, T0=None, return_stat
         _showSparseConversionWarning()
         C = C.toarray()
 
-    sampler = tmatrix_sampler(C, reversible=reversible, mu=mu, T0=T0)
+    sampler = tmatrix_sampler(C, reversible=reversible, mu=mu, T0=T0, nsteps=nsteps)
     return sampler.sample(nsamples=nsample, return_statdist=return_statdist)
 
 def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='sparse'):
@@ -1179,7 +1187,7 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
     T0 : ndarray, shape=(n, n) or scipy.sparse matrix
         Starting point of the MC chain of the sampling algorithm.
         Has to obey the required constraints.
-    nstep = 1 : int, default=None
+    nstep : int, default=None
         number of full Gibbs sampling sweeps per sample. This option is meant
         to ensure approximately uncorrelated samples for every call to
         sample(). If None, the number of steps will be automatically determined
