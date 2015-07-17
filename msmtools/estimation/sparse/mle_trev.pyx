@@ -21,7 +21,7 @@ def mle_trev(C, double maxerr = 1.0E-12, int maxiter = 1000000):
   assert maxiter > 0, 'maxiter must be positive'
   assert C.shape[0] == C.shape[1], 'C must be a square matrix.'
   assert msmtools.estimation.is_connected(C, directed=True), 'C must be strongly connected'
-  
+
   C_sum_py = C.sum(axis=1).A1
   cdef numpy.ndarray[double, ndim=1, mode="c"] C_sum = C_sum_py.astype(numpy.float64, order='C', copy=False)
 
@@ -32,10 +32,10 @@ def mle_trev(C, double maxerr = 1.0E-12, int maxiter = 1000000):
   cdef numpy.ndarray[double, ndim=1, mode="c"] CCt_data =  CCt_coo.data.astype(numpy.float64, order='C', copy=False)
   cdef numpy.ndarray[int, ndim=1, mode="c"] i_indices = CCt_coo.row.astype(numpy.intc, order='C', copy=True)
   cdef numpy.ndarray[int, ndim=1, mode="c"] j_indices = CCt_coo.col.astype(numpy.intc, order='C', copy=True)
-  
+
   # prepare data array of T in coo format
   cdef numpy.ndarray[double, ndim=1, mode="c"] T_data = numpy.zeros(n_data, dtype=numpy.float64, order='C')
-  
+
   err = _mle_trev_sparse(
         <double*> numpy.PyArray_DATA(T_data),
         <double*> numpy.PyArray_DATA(CCt_data),
@@ -46,7 +46,7 @@ def mle_trev(C, double maxerr = 1.0E-12, int maxiter = 1000000):
         CCt.shape[0],
         maxerr,
         maxiter)
-  
+
   if err == -1:
     raise Exception('Out of memory.')
   elif err == -2:
