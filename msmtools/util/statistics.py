@@ -173,7 +173,7 @@ def _maxlength(X):
             N = len(x)
     return N
 
-def statistical_inefficiency(X, truncate_acf=True):
+def statistical_inefficiency(X, truncate_acf=True, mact=1.0):
     """ Estimates the statistical inefficiency from univariate time series X
 
     The statistical inefficiency [1]_ is a measure of the correlatedness of samples in a signal.
@@ -237,6 +237,6 @@ def statistical_inefficiency(X, truncate_acf=True):
         elif lag > 0:  # start integrating at lag 1 (effect of lag 0 is contained in the 0.5 below
             corrsum += acf * (1.0 - (float(lag)/float(N)))
     # compute damped correlation time
-    corrtime = 0.5 + corrsum / x2m
+    corrtime = 0.5 + mact * corrsum / x2m
     # return statistical inefficiency
     return 1.0 / (2 * corrtime)

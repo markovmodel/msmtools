@@ -108,7 +108,7 @@ def _transition_indexes(dtrajs, lag):
         res.append(J)
     return res
 
-def statistical_inefficiencies(dtrajs, lag, C=None):
+def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0):
     """ Computes statistical inefficiencies of sliding-window transition counts at given lag
 
     Consider a discrete trajectory :math`{ x_t }` with :math:`x_t \in {1, ..., n}`. For each starting state :math:`i`,
@@ -134,6 +134,9 @@ def statistical_inefficiencies(dtrajs, lag, C=None):
         lag time
     C : scipy sparse matrix (n, n) or None
         sliding window count matrix, if already available
+    truncate_acf : bool, optional, default=True
+        When the normalized autocorrelation function passes through 0, it is truncated in order to avoid integrating
+        random noise
 
     Returns
     -------
@@ -160,11 +163,11 @@ def statistical_inefficiencies(dtrajs, lag, C=None):
         i = I[k]
         j = J[k]
         X = _indicator_multitraj(splitseq, i, j)
-        res[i, j] = statistical_inefficiency(X, truncate_acf=True)
+        res[i, j] = statistical_inefficiency(X, truncate_acf=truncate_acf, mact=mact)
 
     return res
 
-def effective_count_matrix(dtrajs, lag):
+def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1.0):
     """ Computes the statistically effective transition count matrix
 
     Given a list of discrete trajectories, compute the effective number of statistically uncorrelated transition
@@ -188,11 +191,33 @@ def effective_count_matrix(dtrajs, lag):
         discrete trajectories
     lag : int
         lag time
+    average : str, default='row'
+        Use either of 'row', 'all', 'none', with the following consequences:
+        'none': the statistical inefficiency is applied separately to each
+            transition count (not recommended)
+        'row': the statistical inefficiency is averaged (weighted) by row
+            (recommended).
+        'all': the statistical inefficiency is averaged (weighted) over all
+            transition counts (not recommended).
+    truncate_acf : bool, optional, default=True
+        Mode of estimating the autocorrelation time of transition counts.
+        True: When the normalized autocorrelation function passes through 0,
+        it is truncated in order to avoid integrating random noise. This
+        tends to lead to a slight underestimate of the autocorrelation time
+    mact : float, default=2.0
+        multiplier for the autocorrelation time. We tend to underestimate the
+        autocorrelation time (and thus overestimate effective counts)
+        because the autocorrelation function is truncated when it passes
+        through 0 in order to avoid numerical instabilities.
+        This is a purely heuristic factor trying to compensate this effect.
+        This parameter might be removed in the future when a more robust
+        estimation method of the autocorrelation time is used.
 
     See also
     --------
     statistical_inefficiencies
-        is used for computing the statistical inefficiences of sliding window transition counts
+        is used for computing the statistical inefficiences of sliding window
+        transition counts
 
     References
     ----------
@@ -202,12 +227,19 @@ def effective_count_matrix(dtrajs, lag):
     # observed C
     C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
     # statistical inefficiencies
-    si = statistical_inefficiencies(dtrajs, lag, C=C)
+    si = statistical_inefficiencies(dtrajs, lag, C=C, truncate_acf=truncate_acf, mact=mact)
     # effective element-wise counts
     Ceff = C.multiply(si)
-    # reduction factor by row
-    factor = np.array(Ceff.sum(axis=1) / np.maximum(1.0, C.sum(axis=1)))
-    # row-based effective counts
-    Ceff = scipy.sparse.csr_matrix(C.multiply(factor))
-    # effective counts
+    # averaging
+    if average.lower() == 'row':
+        # reduction factor by row
+        factor = np.array(Ceff.sum(axis=1) / np.maximum(1.0, C.sum(axis=1)))
+        # row-based effective counts
+        Ceff = scipy.sparse.csr_matrix(C.multiply(factor))
+    elif average.lower() == 'all':
+        # reduction factor by all
+        factor = Ceff.sum() / C.sum()
+        Ceff = scipy.sparse.csr_matrix(C.multiply(factor))
+    # else: by element, we're done.
+
     return Ceff
