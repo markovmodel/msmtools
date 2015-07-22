@@ -51,14 +51,14 @@ cdef extern from "_rnglib.h":
     void initialize()
     void set_initial_seed(int g1, int g2)
 
-cdef class VSampler:
+cdef class VSampler(object):
 
-    def __init__(self):        
+    def __init__(self):
         """Seed the generator upon init"""
         initialize()
         set_initial_seed(np.random.randint(1, 2147483563),
                          np.random.randint(1, 2147483399))
-       
+
     # def update(self, C, sumC, X, nstep):
     #     n = C.shape[0]
     #     pC    = <double*> np.PyArray_DATA(C)
@@ -88,7 +88,7 @@ cdef class VSampler:
         _update_sparse(pC, psumC, pX, psumX, pI, pJ, n, n_idx, nstep)
 
 
-class SamplerRev:
+class SamplerRev(object):
     
     def __init__(self, C, P0=None):
         from msmtools.estimation import tmatrix

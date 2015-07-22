@@ -26,20 +26,28 @@
 /* * moduleauthor:: B. Trendelkamp-Schroer 
  * <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>  
  */
-
+#include <stdlib.h>
 #include <stddef.h>
 #include <math.h>
+#include <float.h>
 
 #include "_ranlib.h"
 #include "sample_revpi.h"
 
-inline int 
-is_positive(const double x)
+int is_positive(double x)
 {
-  return (x>1.0E-15) && (!isinf(x)) && (!isnan(x));
+    double eps = 1e-15;
+#if _MSC_VER && !__INTEL_COMPILER
+    if(x >=eps && ! (!_finite(x) && !_isnan(x)))
+#else
+    if (x >= eps && !isinf(x) && !isnan(x))
+#endif
+		return 1;
+    else
+    	return 0;
 }
 
-inline double 
+double
 f(double v, double s, double a1, double a2, double a3)
 {
   double r;
@@ -162,8 +170,11 @@ sample_quad(double xkl, double xkk, double xll,
 		      
 		      // Metropolis step
 		      U = genunf(0.0, 1.0);
-
+#if _MSC_VER && !__INTEL_COMPILER
+		      if(log(U) < __min(0.0, q))
+#else
 		      if(log(U) < fmin(0.0, q))
+#endif
 			{
 			  return s2*w/(1.0+w);
 			}
@@ -226,8 +237,12 @@ sample_quad_rw(double xkl, double xkk, double xll,
 	    {
 	      q = qacc_rw(w, v, s, a1, a2, a3);	      
 	      //Metropolis step
-	      U = genunf(0.0, 1.0);	     	      
+	      U = genunf(0.0, 1.0);
+#if _MSC_VER && !__INTEL_COMPILER
+	      if (log(U) < __min(0.0, q))
+#else
 	      if(log(U) < fmin(0.0, q))
+#endif
 		{
 		  return s2*w/(1.0+w);
 		}
