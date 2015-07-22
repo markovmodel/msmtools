@@ -28,6 +28,7 @@
 #include <math.h>
 #undef NDEBUG
 #include <assert.h>
+#include "../../util/sigint_handler.h"
 #include "_mle_trev.h"
 
 #ifdef _MSC_VER
@@ -57,13 +58,15 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const
   double CCt_ij;
   double x_norm;
 
+  sigint_on();
+
   err = 0;
 
   x = (double*)malloc(len_CCt*sizeof(double));
   x_new= (double*)malloc(len_CCt*sizeof(double));
   sum_x= (double*)malloc(dim*sizeof(double));
   if(!(x && x_new && sum_x)) { err=1; goto error; }
-  
+   
   /* ckeck sum_C */
   for(i = 0; i<dim; i++) if(sum_C[i]==0) { err=3; goto error; }
   
@@ -105,7 +108,7 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const
 
     iteration += 1;
     d_sq = distsq(len_CCt,x,x_new);
-  } while(d_sq > maxerr*maxerr && iteration < maxiter);
+  } while(d_sq > maxerr*maxerr && iteration < maxiter && !interrupted);
   
   /* calculate T */
   for(t=0; t<len_CCt; t++) {
@@ -119,11 +122,13 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const
   free(x);
   free(x_new);
   free(sum_x);
+  sigint_off();
   return 0;
 
 error:
   free(x);
   free(x_new);
   free(sum_x);
+  sigint_off();
   return -err;
 }

@@ -38,6 +38,7 @@ int isnan(double var)
 
 #undef NDEBUG
 #include <assert.h>
+#include "../../util/sigint_handler.h"
 #include "_mle_trev_given_pi.h"
 
 static double distsq(const int n, const double *const a, const double *const b)
@@ -59,6 +60,8 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
   double d_sq, norm, C_ij;
   int i, j, err, iteration;
   double *lam, *lam_new, *temp;
+  
+  sigint_on();
   
   lam= (double*)malloc(n*sizeof(double));
   lam_new= (double*)malloc(n*sizeof(double));
@@ -102,9 +105,7 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
     if(err!=0) goto error;
     iteration += 1;
     d_sq = distsq(n,lam,lam_new);
-  } while(d_sq > maxerr*maxerr && iteration < maxiter);
-  
-  if(iteration==maxiter) { err=5; goto error; } 
+  } while(d_sq > maxerr*maxerr && iteration < maxiter && !interrupted);
 
   /* calculate T */
   for(i=0; i<n; i++) {
@@ -119,12 +120,16 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
     if(norm>1.0) T(i,i) = 0.0; else T(i,i) = 1.0-norm;
   }
 
-  if(lam) free(lam);
-  if(lam_new) free(lam_new);
+  if(iteration==maxiter) { err=5; goto error; } 
+
+  free(lam);
+  free(lam_new);
+  sigint_off();
   return 0;
   
 error:
-  if(lam) free(lam);
-  if(lam_new) free(lam_new);
+  free(lam);
+  free(lam_new);
+  sigint_off();
   return -err;
 }

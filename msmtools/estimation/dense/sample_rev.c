@@ -25,16 +25,16 @@
 
 /* * moduleauthor:: F. Noe <frank DOT noe AT fu-berlin DOT de>
  */
+#include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
-#include <stdbool.h>
+#include <float.h>
+
 #include "_ranlib.h"
 #include "sample_rev.h"
 
+#define _square(x) x*x
 
-double _square(double x)
-{
-    return x * x;
-}
 
 /**
     Helper function, tests if x is numerically positive
@@ -42,26 +42,30 @@ double _square(double x)
     :param x:
     :return:
 */
-bool _is_positive(double x)
+int _is_positive(double x)
 {
     double eps = 1e-8;
+#if _MSC_VER && !__INTEL_COMPILER
+    if(x >=eps && ! (!_finite(x) && !_isnan(x)))
+#else
     if (x >= eps && !isinf(x) && !isnan(x))
-    {
-        return true;
-    }
+#endif
+		return 1;
     else
-    {
-        return false;
-    }
+    	return 0;
 }
 
-bool _accept_step(double log_prob_old, double log_prob_new)
+int _accept_step(double log_prob_old, double log_prob_new)
 {
     if (log_prob_new > log_prob_old)  // this is faster
-        return true;
+        return 1;
+#ifdef _MSC_VER && !__INTEL_COMPILER
+    if (genunf(0,1) < exp( __min( log_prob_new-log_prob_old, 0 ) ))
+#else
     if (genunf(0,1) < exp( fmin( log_prob_new-log_prob_old, 0 ) ))
-        return true;
-    return false;
+#endif
+        return 1;
+    return 0;
 }
 
 /*
@@ -295,8 +299,9 @@ void _update(double* C, double* sumC, double* X, int n, int n_step)
 void _generate_row_indexes(int* I, int n, int n_idx, int* row_indexes)
 {
     int k;
+    int current_row;
     row_indexes[0] = 0;  // starts with row 0
-    int current_row = 0;
+    current_row = 0;
     for (k=0; k<n_idx; k++)
     {
         // still at same row? do nothing
@@ -315,7 +320,7 @@ void _generate_row_indexes(int* I, int n, int n_idx, int* row_indexes)
 
 
 /**
-Gibbs sampler for reversible transiton matrix
+Gibbs sampler for reversible transition matrix
 Output: sample_mem, sample_mem[i]=eval_fun(i-th sample of transition matrix)
 
 Parameters:

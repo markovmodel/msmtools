@@ -44,12 +44,12 @@ from . sampler_nrev import SamplerNonRev
 from . sampler_rev import SamplerRev
 from . sampler_revpi import SamplerRevPi
 
-class TransitionMatrixSampler:
-    
+class TransitionMatrixSampler(object):
+
     def __init__(self, C, reversible=False, mu=None, P0=None, nsteps=1, prior='sparse'):
-        
+
         if not prior == 'sparse':
-            raise ValueError("Only Sparse prior is currenty implemented")        
+            raise ValueError("Only Sparse prior is currenty implemented")
 
         self.C = C
 
@@ -75,7 +75,6 @@ class TransitionMatrixSampler:
         # remember number of steps to decorrelate between samples
         self.nsteps = nsteps
 
-
     def sample(self, nsamples=1, return_statdist=False):
         if nsamples==1:
             return self.sampler.sample(N=self.nsteps, return_statdist=return_statdist)
@@ -91,9 +90,3 @@ class TransitionMatrixSampler:
                 for i in range(nsamples):
                     P_samples[i, :, :] = self.sampler.sample(N=self.nsteps, return_statdist=False)
                 return P_samples
-            
-                
-            
-    
-    
-

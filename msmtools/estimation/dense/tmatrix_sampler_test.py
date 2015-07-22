@@ -33,11 +33,11 @@ import unittest
 import numpy as np
 
 from msmtools.estimation import tmatrix
-from . tmatrix_sampler import TransitionMatrixSampler
+from msmtools.estimation.dense.tmatrix_sampler import TransitionMatrixSampler
 
 
 class TestSamplerNonReversible(unittest.TestCase):
-    
+
     def setUp(self):
         """Store state of the rng"""
         self.state = np.random.mtrand.get_state()
@@ -63,19 +63,20 @@ class TestSamplerNonReversible(unittest.TestCase):
 
     def test_mean(self):
         """Create sampler object"""
-        sampler = TransitionMatrixSampler(self.C, reversible=False)        
-        
+        sampler = TransitionMatrixSampler(self.C, reversible=False)
+
         """Compute sample mean"""
         mean = np.zeros_like(self.C)
         for i in range(self.N):
             mean += sampler.sample()
-        mean *= 1.0/self.N        
-        
+        mean *= 1.0/self.N
+
         """Check if sample mean and true mean fall into the 2\sigma intervall"""
         self.assertTrue(np.all( np.abs(mean - self.mean) <= 2.0*np.sqrt(self.var/self.N) ))
 
+
 class TestSamplerReversible(unittest.TestCase):
-    
+
     def setUp(self):
         self.C = 1.0*np.array([[7048, 6, 0], [6, 2, 3], [0, 3, 2933]])
         self.P_mle = tmatrix(self.C, reversible=True)
