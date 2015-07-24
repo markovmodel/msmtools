@@ -32,38 +32,16 @@
 
 #include "_ranlib.h"
 #include "sample_rev.h"
+#include "util.h"
 
 #define _square(x) x*x
 
-
-/**
-    Helper function, tests if x is numerically positive
-
-    :param x:
-    :return:
-*/
-int _is_positive(double x)
-{
-    double eps = 1e-8;
-#if _MSC_VER && !__INTEL_COMPILER
-    if(x >=eps && ! (!_finite(x) && !_isnan(x)))
-#else
-    if (x >= eps && !isinf(x) && !isnan(x))
-#endif
-		return 1;
-    else
-    	return 0;
-}
 
 int _accept_step(double log_prob_old, double log_prob_new)
 {
     if (log_prob_new > log_prob_old)  // this is faster
         return 1;
-#ifdef _MSC_VER && !__INTEL_COMPILER
-    if (genunf(0,1) < exp( __min( log_prob_new-log_prob_old, 0 ) ))
-#else
-    if (genunf(0,1) < exp( fmin( log_prob_new-log_prob_old, 0 ) ))
-#endif
+    if (genunf(0,1) < exp( my_fmin( log_prob_new-log_prob_old, 0 ) ))
         return 1;
     return 0;
 }
@@ -103,11 +81,11 @@ double _update_step(double v0, double v1, double v2, double c0, double c1, doubl
     // about 1.5 sec: gamma and normf generation
     // about 1 sec: logs+exps in else blocks
 
-    if (_is_positive(k) && _is_positive(theta))
+    if (is_positive(k) && is_positive(theta))
     {
         v0_new = gengam(1.0/theta,k);
         log_v0_new = log(v0_new);
-        if (_is_positive(v0_new))
+        if (is_positive(v0_new))
         {
             if (v0 == 0)
             {
@@ -121,7 +99,7 @@ double _update_step(double v0, double v1, double v2, double c0, double c1, doubl
                 log_prob_old = (c0-1) * log_v0 - c1 * log(v0+v1) - c2 * log(v0+v2);
                 log_prob_old -= (k-1) * log_v0 - v0/theta;
                 if (_accept_step(log_prob_old, log_prob_new))
-                //if (genunf(0,1) < exp( fmin( log_prob_new-log_prob_old, 0 ) ))
+                //if (genunf(0,1) < exp( my_fmin( log_prob_new-log_prob_old, 0 ) ))
                 {
                     v0 = v0_new;
                     log_v0 = log_v0_new;
@@ -132,7 +110,7 @@ double _update_step(double v0, double v1, double v2, double c0, double c1, doubl
 
     v0_new = v0 * exp( random_walk_stepsize * snorm() );
     log_v0_new = log(v0_new);
-    if (_is_positive(v0_new))
+    if (is_positive(v0_new))
     {
         if (v0 == 0)
         {
@@ -144,7 +122,7 @@ double _update_step(double v0, double v1, double v2, double c0, double c1, doubl
             log_prob_new = c0 * log_v0_new - c1 * log(v0_new + v1) - c2 * log(v0_new + v2);
             log_prob_old = c0 * log_v0 - c1 * log(v0 + v1) - c2 * log(v0 + v2);
             if (_accept_step(log_prob_old, log_prob_new))
-            //if (genunf(0,1) < exp( fmin( log_prob_new-log_prob_old, 0 ) ))
+            //if (genunf(0,1) < exp( my_fmin( log_prob_new-log_prob_old, 0 ) ))
             {
                 v0 = v0_new;
                 log_v0 = log_v0_new;
@@ -262,11 +240,11 @@ void _update(double* C, double* sumC, double* X, int n, int n_step)
                 {
                     if (i == j)
                     {
-                        if (_is_positive(C[i*n+i]) && _is_positive(sumC[i] - C[i*n+i]))
+                        if (is_positive(C[i*n+i]) && is_positive(sumC[i] - C[i*n+i]))
                         {
                             tmp1 = genbet(C[i*n+i], sumC[i] - C[i*n+i]);
                             tmp2 = tmp1 / (1-tmp1) * (_sum_row(X, n, i) - X[i*n+i]);
-                            if (_is_positive(tmp2))
+                            if (is_positive(tmp2))
                             {
                                 X[i*n+i] = tmp2;
                             }
@@ -363,11 +341,11 @@ void _update_sparse(double* C, double* sumC, double* X, double* sumX, int* I, in
             j = J[k];
             if (i == j)
             {
-                if (_is_positive(C[i*n+i]) && _is_positive(sumC[i] - C[i*n+i]))
+                if (is_positive(C[i*n+i]) && is_positive(sumC[i] - C[i*n+i]))
                 {
                     tmp1 = genbet(C[i*n+i], sumC[i] - C[i*n+i]);
                     tmp2 = tmp1 / (1-tmp1) * (sumX[i] - X[i*n+i]);
-                    if (_is_positive(tmp2))
+                    if (is_positive(tmp2))
                     {
                         sumX[i] += tmp2 - X[i*n+i];  // update sumX
                         X[i*n+i] = tmp2;
