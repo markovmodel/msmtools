@@ -223,7 +223,7 @@ def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
 
 
 @shortcut('effective_cmatrix')
-def effective_count_matrix(dtrajs, lag):
+def effective_count_matrix(dtrajs, lag, average='row', mact=1.0):
     """ Computes the statistically effective transition count matrix
 
     Given a list of discrete trajectories, compute the effective number of statistically uncorrelated transition
@@ -247,6 +247,22 @@ def effective_count_matrix(dtrajs, lag):
         discrete trajectories
     lag : int
         lag time
+    average : str, default='row'
+        Use either of 'row', 'all', 'none', with the following consequences:
+        'none': the statistical inefficiency is applied separately to each
+            transition count (not recommended)
+        'row': the statistical inefficiency is averaged (weighted) by row
+            (recommended).
+        'all': the statistical inefficiency is averaged (weighted) over all
+            transition counts (not recommended).
+    mact : float, default=1.0
+        multiplier for the autocorrelation time. We tend to underestimate the
+        autocorrelation time (and thus overestimate effective counts)
+        because the autocorrelation function is truncated when it passes
+        through 0 in order to avoid numerical instabilities.
+        This is a purely heuristic factor trying to compensate this effect.
+        This parameter might be removed in the future when a more robust
+        estimation method of the autocorrelation time is used.
 
     See also
     --------
@@ -258,8 +274,9 @@ def effective_count_matrix(dtrajs, lag):
     .. [1] Noe, F. and H. Wu: in preparation (2015)
 
     """
+
     dtrajs = _ensure_dtraj_list(dtrajs)
-    return sparse.effective_counts.effective_count_matrix(dtrajs, lag)
+    return sparse.effective_counts.effective_count_matrix(dtrajs, lag, average=average, mact=mact)
 
 
 # # TODO: Implement in Python directly
