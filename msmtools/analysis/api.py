@@ -155,7 +155,7 @@ def is_rate_matrix(K, tol=1e-12):
 
     Notes
     -----
-    A valid rate matrix :math:`K=(k_{ij})` has non-positive off
+    A valid rate matrix :math:`K=(k_{ij})` has non-negative off
     diagonal elements, :math:`k_{ij} \leq 0`, for :math:`i \neq j`,
     and elements of each row sum up to zero, :math:`\sum_{j}
     k_{ij}=0`.
@@ -169,7 +169,7 @@ def is_rate_matrix(K, tol=1e-12):
     >>> is_rate_matrix(A)
     False
 
-    >>> K = np.array([[0.3, -0.2, -0.1], [-0.5, 0.5, 0.0], [-0.1, -0.1, 0.2]])
+    >>> K = np.array([[-0.3, 0.2, 0.1], [0.5, -0.5, 0.0], [0.1, 0.1, -0.2]])
     >>> is_rate_matrix(K)
     True
 
@@ -225,6 +225,7 @@ def is_connected(T, directed=True):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import is_connected
 
@@ -281,6 +282,7 @@ def is_reversible(T, mu=None, tol=1e-12):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import is_reversible
 
@@ -289,7 +291,7 @@ def is_reversible(T, mu=None, tol=1e-12):
     False
 
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
-    is_reversible(T)
+    >>> is_reversible(T)
     True
 
     """
@@ -330,13 +332,14 @@ def stationary_distribution(T):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import stationary_distribution
 
     >>> T = np.array([[0.9, 0.1, 0.0], [0.4, 0.2, 0.4], [0.0, 0.1, 0.9]])
     >>> mu = stationary_distribution(T)
     >>> mu
-    array([0.44444444, 0.11111111, 0.44444444])
+    array([ 0.44444444, 0.11111111, 0.44444444])
 
     """
     # is this a transition matrix?
@@ -396,13 +399,14 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import eigenvalues
 
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> w = eigenvalues(T)
     >>> w
-    array([1.0+0.j, 0.9+0.j, -0.1+0.j])
+    array([ 1.0+0.j, 0.9+0.j, -0.1+0.j])
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -453,6 +457,7 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import timescales
 
@@ -531,17 +536,15 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
     --------
 
     >>> import numpy as np
-    >>> from msmtools.analysis import eigenvalues
+    >>> from msmtools.analysis import eigenvectors
 
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
-    >>> R = eigenvalues(T)
+    >>> R = eigenvectors(T)
 
     Matrix with right eigenvectors as columns
 
-    >>> R
-    array([[  5.77350269e-01,   7.07106781e-01,   9.90147543e-02],
-           [  5.77350269e-01,  -5.50368425e-16,  -9.90147543e-01],
-           [  5.77350269e-01,  -7.07106781e-01,   9.90147543e-02]])
+    >>> R # doctest: +ELLIPSIS
+    array([[  5.77350269e-01,   7.07106781e-01,   9.90147543e-02], ...
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -615,10 +618,8 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=Non
 
     Matrix with right eigenvectors as columns
 
-    >>> R
-    array([[  1.00000000e+00,   7.07106781e-01,   9.90147543e-02],
-           [  1.00000000e+00,  -5.50368425e-16,  -9.90147543e-01],
-           [  1.00000000e+00,  -7.07106781e-01,   9.90147543e-02]])
+    >>> R # doctest: +ELLIPSIS
+    array([[  1.00000000e+00,   1.04880885e+00,   3.16227766e-01], ...
 
     Diagonal matrix with eigenvalues
 
@@ -629,10 +630,8 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=Non
 
     Matrix with left eigenvectors as rows
 
-    >>> L
-    array([[  4.54545455e-01,   9.09090909e-02,   4.54545455e-01],
-           [  7.07106781e-01,   2.80317573e-17,  -7.07106781e-01],
-           [  4.59068406e-01,  -9.18136813e-01,   4.59068406e-01]])
+    >>> L # +doctest: +ELLIPSIS
+    array([[  4.54545455e-01,   9.09090909e-02,   4.54545455e-01], ...
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
@@ -699,11 +698,12 @@ def mfpt(T, target, origin=None, tau=1, mu=None):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import mfpt
 
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
-    >>> m_t = mfpt(T,0)
+    >>> m_t = mfpt(T, 0)
     >>> m_t
     array([  0.,  12.,  22.])
 
@@ -750,7 +750,6 @@ def hitting_probability(T, target):
     -------
     h : ndarray(n)
         a vector with hitting probabilities
-
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
     target = _types.ensure_int_vector(target)
@@ -854,6 +853,7 @@ def committor(T, A, B, forward=True, mu=None):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import committor
     >>> T = np.array([[0.89, 0.1, 0.01], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
@@ -925,6 +925,7 @@ def expected_counts(T, p0, N):
 
     Examples
     --------
+
     >>> import numpy as np
     >>> from msmtools.analysis import expected_counts
 
@@ -1249,7 +1250,8 @@ def expectation(T, a, mu=None):
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
     >>> a = np.array([1.0, 0.0, 1.0])
     >>> m_a = expectation(T, a)
-    0.90909090909090917
+    >>> m_a # doctest: +ELLIPSIS
+    0.909090909...
 
     """
     # check if square matrix and remember size
@@ -1413,7 +1415,7 @@ def relaxation(T, p0, obs, times=(1), k=None, ncv=None):
     >>> a = np.array([1.0, 1.0, 0.0])
     >>> times = np.array([1, 5, 10, 20])
 
-    >>> rel = relaxation(P, p0, times=times)
+    >>> rel = relaxation(T, p0, a, times=times)
     >>> rel
     array([ 1.        ,  0.8407    ,  0.71979377,  0.60624287])
 

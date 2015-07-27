@@ -84,8 +84,9 @@ def read_discrete_trajectory(filename):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from tempfile import NamedTemporaryFile
-    >>> from msmtools.io import write_discrete_trajectory, load_discrete_trajectory
+    >>> from msmtools.dtraj import write_discrete_trajectory, read_discrete_trajectory
 
     Use temporary file
 
@@ -134,8 +135,9 @@ def write_discrete_trajectory(filename, dtraj):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from tempfile import NamedTemporaryFile
-    >>> from msmtools.io import write_discrete_trajectory, load_discrete_trajectory
+    >>> from msmtools.dtraj import write_discrete_trajectory, read_discrete_trajectory
 
     Use temporary file
 
@@ -191,18 +193,19 @@ def load_discrete_trajectory(filename):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from tempfile import NamedTemporaryFile
-    >>> from msmtools.io import load_discrete_trajectory, save_discrete_trajectory
+    >>> from msmtools.dtraj import load_discrete_trajectory, save_discrete_trajectory
 
     Use temporary file
-
-    >>> tmpfile = NamedTemporaryFile()
+    
+    >>> tmpfile = NamedTemporaryFile(suffix='.npy')
 
     Discrete trajectory
 
     >>> dtraj = np.array([0, 1, 0, 0, 1, 1, 0])
 
-    Write to disk (as ascii file)
+    Write to disk (as npy file)
 
     >>> save_discrete_trajectory(tmpfile.name, dtraj)
 
@@ -241,18 +244,19 @@ def save_discrete_trajectory(filename, dtraj):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from tempfile import NamedTemporaryFile
-    >>> from msmtools.io import load_discrete_trajectory, save_discrete_trajectory
+    >>> from msmtools.dtraj import load_discrete_trajectory, save_discrete_trajectory
 
     Use temporary file
 
-    >>> tmpfile = NamedTemporaryFile()
+    >>> tmpfile = NamedTemporaryFile(suffix='.npy')
 
     Discrete trajectory
 
     >>> dtraj = np.array([0, 1, 0, 0, 1, 1, 0])
 
-    Write to disk (as ascii file)
+    Write to disk (as npy file)
 
     >>> save_discrete_trajectory(tmpfile.name, dtraj)
 
