@@ -26,7 +26,7 @@ function run {
     $input = "nosetests.xml"
     $output = "transformed.xml"
     
-    nosetests msmtools --all-modules --with-xunit -a '!slow'
+    nosetests msmtools --all-modules --with-xunit -a '!slow' --with-doctest --doctest-options="+NORMALIZE_WHITESPACE,+ELLIPSIS"
     $success = $?
     Write-Host "result code of nosetests:" $success
 

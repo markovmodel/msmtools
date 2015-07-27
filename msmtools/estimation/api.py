@@ -364,7 +364,7 @@ def bootstrap_trajectories(trajs, correlation_length):
     return dense.bootstrapping.bootstrap_trajectories(trajs, correlation_length)
 
 
-def bootstrap_counts(dtrajs, lagtime):
+def bootstrap_counts(dtrajs, lagtime, corrlength=None):
     r"""Generates a randomly resampled count matrix given the input coordinates.
 
     Parameters
