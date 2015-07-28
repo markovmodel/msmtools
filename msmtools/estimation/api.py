@@ -47,8 +47,8 @@ from . import dense
 from . import sparse
 
 from msmtools.util.annotators import shortcut
-from msmtools.dtraj.discrete_trajectory import count_states as _count_states
-from msmtools.dtraj.discrete_trajectory import number_of_states as _number_of_states
+from msmtools.dtraj.api import count_states as _count_states
+from msmtools.dtraj.api import number_of_states as _number_of_states
 from msmtools.util.types import ensure_dtraj_list as _ensure_dtraj_list
 
 __author__ = "Benjamin Trendelkamp-Schroer, Martin Scherer, Frank Noe"
