@@ -128,8 +128,11 @@ def read_discrete_trajectory(filename):
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
 
+<<<<<<< HEAD
     >>> os.unlink(tmpfile)
 
+=======
+>>>>>>> [dtraj] making full dtraj api available
     """
     with open(filename, "r") as f:
         lines=f.read()
@@ -184,8 +187,11 @@ def write_discrete_trajectory(filename, dtraj):
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
 
+<<<<<<< HEAD
     >>> os.unlink(tmpfile)
 
+=======
+>>>>>>> [dtraj] making full dtraj api available
     """
     dtraj=np.asarray(dtraj)
     with open(filename, 'w') as f:
@@ -246,8 +252,11 @@ def load_discrete_trajectory(filename):
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
 
+<<<<<<< HEAD
     >>> os.unlink(tmpfile)
 
+=======
+>>>>>>> [dtraj] making full dtraj api available
     """
     dtraj=np.load(filename)
     return dtraj
