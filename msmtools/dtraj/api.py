@@ -85,12 +85,13 @@ def read_discrete_trajectory(filename):
     --------
 
     >>> import numpy as np
-    >>> from tempfile import NamedTemporaryFile
+    >>> import os
+    >>> from tempfile import mktemp
     >>> from msmtools.dtraj import write_discrete_trajectory, read_discrete_trajectory
 
     Use temporary file
 
-    >>> tmpfile = NamedTemporaryFile()
+    >>> tmpfile = mktemp(suffix=".dtraj")
 
     Discrete trajectory
 
@@ -98,13 +99,15 @@ def read_discrete_trajectory(filename):
 
     Write to disk (as ascii file)
 
-    >>> write_discrete_trajectory(tmpfile.name, dtraj)
+    >>> write_discrete_trajectory(tmpfile, dtraj)
 
     Read from disk
 
-    >>> X = read_discrete_trajectory(tmpfile.name)
+    >>> X = read_discrete_trajectory(tmpfile)
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
+
+    >>> os.unlink(tmpfile)
 
     """
     return discrete_trajectory.read_discrete_trajectory(filename)
@@ -136,12 +139,13 @@ def write_discrete_trajectory(filename, dtraj):
     --------
 
     >>> import numpy as np
-    >>> from tempfile import NamedTemporaryFile
+    >>> import os
+    >>> from tempfile import mktemp
     >>> from msmtools.dtraj import write_discrete_trajectory, read_discrete_trajectory
 
     Use temporary file
 
-    >>> tmpfile = NamedTemporaryFile()
+    >>> tmpfile = mktemp()
 
     Discrete trajectory
 
@@ -149,13 +153,15 @@ def write_discrete_trajectory(filename, dtraj):
 
     Write to disk (as ascii file)
 
-    >>> write_discrete_trajectory(tmpfile.name, dtraj)
+    >>> write_discrete_trajectory(tmpfile, dtraj)
 
     Read from disk
 
-    >>> X = read_discrete_trajectory(tmpfile.name)
+    >>> X = read_discrete_trajectory(tmpfile)
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
+
+    >>> os.unlink(tmpfile)
 
     """
     discrete_trajectory.write_discrete_trajectory(filename, dtraj)
@@ -194,12 +200,13 @@ def load_discrete_trajectory(filename):
     --------
 
     >>> import numpy as np
-    >>> from tempfile import NamedTemporaryFile
+    >>> import os
+    >>> from tempfile import mktemp
     >>> from msmtools.dtraj import load_discrete_trajectory, save_discrete_trajectory
 
     Use temporary file
-    
-    >>> tmpfile = NamedTemporaryFile(suffix='.npy')
+
+    >>> tmpfile = mktemp(suffix='.npy')
 
     Discrete trajectory
 
@@ -207,13 +214,15 @@ def load_discrete_trajectory(filename):
 
     Write to disk (as npy file)
 
-    >>> save_discrete_trajectory(tmpfile.name, dtraj)
+    >>> save_discrete_trajectory(tmpfile, dtraj)
 
     Read from disk
 
-    >>> X = load_discrete_trajectory(tmpfile.name)
+    >>> X = load_discrete_trajectory(tmpfile)
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
+
+    >>> os.unlink(tmpfile)
 
     """
     return discrete_trajectory.load_discrete_trajectory(filename)
@@ -245,12 +254,13 @@ def save_discrete_trajectory(filename, dtraj):
     --------
 
     >>> import numpy as np
-    >>> from tempfile import NamedTemporaryFile
+    >>> import os
+    >>> from tempfile import mktemp
     >>> from msmtools.dtraj import load_discrete_trajectory, save_discrete_trajectory
 
     Use temporary file
 
-    >>> tmpfile = NamedTemporaryFile(suffix='.npy')
+    >>> tmpfile = mktemp(suffix='.npy')
 
     Discrete trajectory
 
@@ -258,13 +268,15 @@ def save_discrete_trajectory(filename, dtraj):
 
     Write to disk (as npy file)
 
-    >>> save_discrete_trajectory(tmpfile.name, dtraj)
+    >>> save_discrete_trajectory(tmpfile, dtraj)
 
     Read from disk
 
-    >>> X = load_discrete_trajectory(tmpfile.name)
+    >>> X = load_discrete_trajectory(tmpfile)
     >>> X
     array([0, 1, 0, 0, 1, 1, 0])
+
+    >>> os.unlink(tmpfile)
 
     """
     discrete_trajectory.save_discrete_trajectory(filename, dtraj)
