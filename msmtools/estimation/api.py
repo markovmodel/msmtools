@@ -565,15 +565,15 @@ def largest_connected_submatrix(C, directed=True, lcc=None):
     >>> C = np.array([[10, 1, 0], [2, 0, 3], [0, 0, 4]])
 
     >>> C_cc_directed = largest_connected_submatrix(C)
-    >>> C_cc_directed
+    >>> C_cc_directed # doctest: +ELLIPSIS
     array([[10,  1],
-           [ 2,  0]])
+           [ 2,  0]]...)
 
     >>> C_cc_undirected = largest_connected_submatrix(C, directed=False)
-    >>> C_cc_undirected
+    >>> C_cc_undirected # doctest: +ELLIPSIS
     array([[10,  1,  0],
            [ 2,  0,  3],
-           [ 0,  0,  4]])
+           [ 0,  0,  4]]...)
 
     """
     if isdense(C):
