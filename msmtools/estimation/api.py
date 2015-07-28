@@ -1013,13 +1013,13 @@ def log_likelihood(C, T):
 
     >>> C = np.array([[58, 7, 0], [6, 0, 4], [0, 3, 21]])
     >>> logL = log_likelihood(C, T)
-    >>> logL
-    -38.280803472508182
+    >>> logL # doctest: +ELLIPSIS
+    -38.2808034725...
 
     >>> C = np.array([[58, 20, 0], [6, 0, 4], [0, 3, 21]])
     >>> logL = log_likelihood(C, T)
-    >>> logL
-    -68.214409681430766
+    >>> logL # doctest: +ELLIPSIS
+    -68.2144096814...
 
     References
     ----------
