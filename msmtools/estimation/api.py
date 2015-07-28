@@ -191,6 +191,7 @@ def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import count_matrix
 
     >>> dtraj = np.array([0, 0, 1, 0, 1, 1, 0])
@@ -443,6 +444,7 @@ def connected_sets(C, directed=True):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import connected_sets
 
     >>> C = np.array([[10, 1, 0], [2, 0, 3], [0, 0, 4]])
@@ -498,9 +500,10 @@ def largest_connected_set(C, directed=True):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import largest_connected_set
 
-    >>> C =  np.array([10, 1, 0], [2, 0, 3], [0, 0, 4]])
+    >>> C =  np.array([[10, 1, 0], [2, 0, 3], [0, 0, 4]])
     >>> lcc_directed = largest_connected_set(C)
     >>> lcc_directed
     array([0, 1])
@@ -556,20 +559,21 @@ def largest_connected_submatrix(C, directed=True, lcc=None):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import largest_connected_submatrix
 
-    >>> C = np.array([10, 1, 0], [2, 0, 3], [0, 0, 4]])
+    >>> C = np.array([[10, 1, 0], [2, 0, 3], [0, 0, 4]])
 
     >>> C_cc_directed = largest_connected_submatrix(C)
-    >>> C_cc_directed
+    >>> C_cc_directed # doctest: +ELLIPSIS
     array([[10,  1],
-           [ 2,  0]])
+           [ 2,  0]]...)
 
     >>> C_cc_undirected = largest_connected_submatrix(C, directed=False)
-    >>> C_cc_undirected
+    >>> C_cc_undirected # doctest: +ELLIPSIS
     array([[10,  1,  0],
            [ 2,  0,  3],
-           [ 0,  0,  4]])
+           [ 0,  0,  4]]...)
 
     """
     if isdense(C):
@@ -613,13 +617,14 @@ def is_connected(C, directed=True):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import is_connected
 
-    >>> C = np.array([10, 1, 0], [2, 0, 3], [0, 0, 4]])
+    >>> C = np.array([[10, 1, 0], [2, 0, 3], [0, 0, 4]])
     >>> is_connected(C)
     False
 
-    >>> is_connected(C)
+    >>> is_connected(C, directed=False)
     True
 
     """
@@ -660,9 +665,11 @@ def prior_neighbor(C, alpha=0.001):
 
     Examples
     --------
+
+    >>> import numpy as np
     >>> from msmtools.estimation import prior_neighbor
 
-    >>> C = np.array([10, 1, 0], [2, 0, 3], [0, 1, 4]])
+    >>> C = np.array([[10, 1, 0], [2, 0, 3], [0, 1, 4]])
     >>> B = prior_neighbor(C)
     >>> B
     array([[ 0.001,  0.001,  0.   ],
@@ -703,9 +710,10 @@ def prior_const(C, alpha=0.001):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import prior_const
 
-    >>> C = np.array([10, 1, 0], [2, 0, 3], [0, 1, 4]])
+    >>> C = np.array([[10, 1, 0], [2, 0, 3], [0, 1, 4]])
     >>> B = prior_const(C)
     >>> B
     array([[ 0.001,  0.001,  0.001],
@@ -761,10 +769,11 @@ def prior_rev(C, alpha=-1.0):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import prior_rev
 
-    >>> C = np.array([10, 1, 0], [2, 0, 3], [0, 1, 4]])
-    >>> B = prior_const(C)
+    >>> C = np.array([[10, 1, 0], [2, 0, 3], [0, 1, 4]])
+    >>> B = prior_rev(C)
     >>> B
     array([[-1., -1., -1.],
            [ 0., -1., -1.],
@@ -867,24 +876,25 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import transition_matrix
 
-    >>> C = np.array([10, 1, 1], [2, 0, 3], [0, 1, 4]])
+    >>> C = np.array([[10, 1, 1], [2, 0, 3], [0, 1, 4]])
 
     Non-reversible estimate
 
     >>> T_nrev = transition_matrix(C)
     >>> T_nrev
     array([[ 0.83333333,  0.08333333,  0.08333333],
-           [ 0.33333333,  0.16666667,  0.5       ],
+           [ 0.4       ,  0.        ,  0.6       ],
            [ 0.        ,  0.2       ,  0.8       ]])
 
     Reversible estimate
 
-    >>> T_rev = transition_matrix(C)
+    >>> T_rev = transition_matrix(C, reversible=True)
     >>> T_rev
     array([[ 0.83333333,  0.10385552,  0.06281115],
-           [ 0.29228896,  0.16666667,  0.54104437],
+           [ 0.35074675,  0.        ,  0.64925325],
            [ 0.04925323,  0.15074676,  0.80000001]])
 
     Reversible estimate with given stationary vector
@@ -892,9 +902,9 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
     >>> mu = np.array([0.7, 0.01, 0.29])
     >>> T_mu = transition_matrix(C, reversible=True, mu=mu)
     >>> T_mu
-    array([[ 0.94841372,  0.00534691,  0.04623938],
-           [ 0.37428347,  0.12715063,  0.4985659 ],
-           [ 0.11161229,  0.01719193,  0.87119578]])
+    array([[ 0.94771371,  0.00612645,  0.04615984],
+           [ 0.42885157,  0.        ,  0.57114843],
+           [ 0.11142031,  0.01969477,  0.86888491]])
 
     """
     if issparse(C):
@@ -996,19 +1006,20 @@ def log_likelihood(C, T):
     Examples
     --------
 
+    >>> import numpy as np
     >>> from msmtools.estimation import log_likelihood
 
     >>> T = np.array([[0.9, 0.1, 0.0], [0.5, 0.0, 0.5], [0.0, 0.1, 0.9]])
 
     >>> C = np.array([[58, 7, 0], [6, 0, 4], [0, 3, 21]])
     >>> logL = log_likelihood(C, T)
-    >>> logL
-    -38.280803472508182
+    >>> logL # doctest: +ELLIPSIS
+    -38.2808034725...
 
     >>> C = np.array([[58, 20, 0], [6, 0, 4], [0, 3, 21]])
     >>> logL = log_likelihood(C, T)
-    >>> logL
-    -68.214409681430766
+    >>> logL # doctest: +ELLIPSIS
+    -68.2144096814...
 
     References
     ----------
@@ -1164,8 +1175,6 @@ def sample_tmatrix(C, nsample=1, nsteps=None, reversible=False, mu=None, T0=None
     -------
     P : ndarray(n,n) or array of ndarray(n,n)
         sampled transition matrix (or multiple matrices if nsample > 1)
-    mu : ndarray(n) or array of ndarray(n)
-        stationary distributions of the sampled transition matrices. Only returned if return_statdist=True
 
     Notes
     -----
