@@ -34,7 +34,7 @@ import scipy.sparse
 
 from msmtools.util.statistics import statistical_inefficiency
 from msmtools.estimation.sparse.count_matrix import count_matrix_mult
-from msmtools.dtraj.discrete_trajectory import number_of_states
+from msmtools.dtraj.api import number_of_states
 
 __author__ = 'noe'
 
