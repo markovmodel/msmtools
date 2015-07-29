@@ -75,7 +75,7 @@ class TransitionMatrixSampler(object):
         # remember number of steps to decorrelate between samples
         self.nsteps = nsteps
 
-    def sample(self, nsamples=1, return_statdist=False):
+    def sample(self, nsamples=1, return_statdist=False, call_back=None):
         if nsamples==1:
             return self.sampler.sample(N=self.nsteps, return_statdist=return_statdist)
         else:
@@ -85,8 +85,12 @@ class TransitionMatrixSampler(object):
                 pi_samples = np.zeros((nsamples, N))
                 for i in range(nsamples):
                     P_samples[i, :, :], pi_samples[i, :] = self.sampler.sample(N=self.nsteps, return_statdist=True)
+                    if call_back is not None:
+                        call_back()
                 return P_samples, pi_samples
             else:
                 for i in range(nsamples):
                     P_samples[i, :, :] = self.sampler.sample(N=self.nsteps, return_statdist=False)
+                    if call_back is not None:
+                        call_back()
                 return P_samples
