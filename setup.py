@@ -147,6 +147,13 @@ def extensions():
             ]
     if USE_CYTHON: # if we have cython available now, cythonize module
         exts = cythonize(exts)
+    else:
+        # replace pyx files by their pre generated c code.
+        for e in exts:
+            new_src = []
+            for s in e.sources:
+                new_src.append(s.replace('.pyx', '.c'))
+            e.sources = new_src
 
     if openmp_enabled:
         warnings.warn('enabled openmp')
