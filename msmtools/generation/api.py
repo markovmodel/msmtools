@@ -29,9 +29,11 @@ Created on Jan 8, 2014
 '''
 from __future__ import absolute_import
 
+import warnings
 import math
 import numpy as np
 import scipy.stats
+import scipy.sparse
 import msmtools.util.types as types
 from six.moves import range
 
@@ -62,6 +64,10 @@ class MarkovChainSampler(object):
             Internally, the dt'th power of P is taken to ensure a more efficient simulation.
 
         """
+        if scipy.sparse.issparse(P):
+            warnings.warn("Markov Chain sampler not implemented for sparse matrices. "
+                          "Converting transition matrix to dense array")
+            P = P.toarray()
         # process input
         if dt > 1:
             # take a power of P if requested

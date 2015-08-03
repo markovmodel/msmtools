@@ -32,7 +32,9 @@ https://github.com/CMD-at-ZIB/ZIBMolPy/blob/master/ZIBMolPy_package/ZIBMolPy/alg
 from __future__ import absolute_import
 from __future__ import division
 
+import warnings
 import numpy as np
+from scipy.sparse import issparse
 import math
 from six.moves import range
 
@@ -519,6 +521,9 @@ class PCCA:
     def __init__(self, P, m):
         # TODO: can be improved: if we have eigendecomposition already, this can be exploited.
         # remember input
+        if issparse(P):
+            warnings.warn('pcca is only implemented for dense matrices, converting sparse transition matrix to dense ndarray.')
+            P = P.toarray()
         self.P = P
         self.m = m
 
