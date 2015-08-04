@@ -96,9 +96,8 @@ class SamplerRev(object):
 
         """Set up initial state of the chain"""
         if P0 is None:
-            P0 = tmatrix(C, reversible=True)
-            # A = C + C.T
-            # V0 = A/A.sum()            
+            # only do a few iterations to get close to the MLE and suppress not converged warning
+            P0 = tmatrix(C, reversible=True, maxiter=100, warn_not_converged=False)
         pi0 = statdist(P0)
         V0 = pi0[:,np.newaxis] * P0            
         

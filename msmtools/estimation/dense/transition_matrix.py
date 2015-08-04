@@ -97,7 +97,7 @@ def __relative_error(x, y, norm=None):
 
 
 def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr=1e-8,
-                                          return_statdist=False, return_conv=False):
+                                          return_statdist=False, return_conv=False, warn_not_converged=True):
     """
     iterative method for estimating a maximum likelihood reversible transition matrix
 
@@ -121,10 +121,12 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
         stationary probabilities (x_i = sum_k x_ik). The relative stationary probability changes
         e_i = (x_i^(1) - x_i^(2))/(x_i^(1) + x_i^(2)) are used in order to track changes in small
         probabilities. The Euclidean norm of the change vector, |e_i|_2, is compared to convtol.
-    return_statdist = False : Boolean
+    return_statdist : bool, default=False
         If set to true, the stationary distribution is also returned
-    return_conv = False : Boolean
+    return_conv : bool, default=False
         If set to true, the likelihood history and the pi_change history is returned.
+    warn_not_converged : bool, default=True
+        Prints a warning if not converged.
 
     Returns
     -------
@@ -193,7 +195,7 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
         i += 1
     # finalize and return
     T = X / xsum[:, np.newaxis]
-    if not converged:
+    if warn_not_converged and not converged:
         warnings.warn("Reversible transition matrix estimation didn't converge.", msmtools.util.exceptions.NotConvergedWarning)
     if (return_statdist and return_conv):
         return (T, xsum, lhist[0:i], diffs[0:i])
@@ -204,7 +206,8 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
     return T  # else just return T
 
 
-def transition_matrix_reversible_fixpi(Z, mu, maxerr=1e-10, maxiter=10000, return_iterations=False):
+def transition_matrix_reversible_fixpi(Z, mu, maxerr=1e-10, maxiter=10000, return_iterations=False,
+                                       warn_not_converged=True):
     r"""
     maximum likelihood transition matrix with fixed stationary distribution
 
@@ -223,6 +226,8 @@ def transition_matrix_reversible_fixpi(Z, mu, maxerr=1e-10, maxiter=10000, retur
         Will exit when reaching maxiter iterations without reaching convergence.
     return_iterations: bool (False)
         set true in order to return (T, it), where T is the transition matrix and it is the number of iterations needed
+    warn_not_converged : bool, default=True
+        Prints a warning if not converged.
 
     Returns
     -------
@@ -267,7 +272,7 @@ def transition_matrix_reversible_fixpi(Z, mu, maxerr=1e-10, maxiter=10000, retur
         # copy new to old l-vector
         l[:] = lnew[:]
         it += 1
-    if (not converged) and (it >= maxiter):
+    if warn_not_converged and (not converged) and (it >= maxiter):
         warnings.warn('NOT CONVERGED: 2-norm of Langrange multiplier vector is still ' +
                          str(err) + ' > ' + str(maxerr) + ' after ' + str(it) +
                          ' iterations. Increase maxiter or decrease maxerr',

@@ -27,7 +27,8 @@ def mle_trev_given_pi(
   mu,
   double maxerr = 1.0E-12,
   int maxiter = 1000000,
-  double eps = 0.0
+  double eps = 0.0,
+  warn_not_converged = True
   ):
 
   assert maxerr > 0, 'maxerr must be positive'
@@ -70,7 +71,7 @@ def mle_trev_given_pi(
     raise Exception('Some row and corresponding column of C have zero counts.')
   elif err == -4:
     raise Exception('Some element of pi is zero.')
-  elif err == -5:
+  elif err == -5 and warn_not_converged:
     warnings.warn('Reversible transition matrix estimation with fixed stationary distribution didn\'t converge.', msmtools.util.exceptions.NotConvergedWarning)
 
   # unnormalized T matrix has the same shape and positions of nonzero elements as the C matrix
