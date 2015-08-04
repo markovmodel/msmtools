@@ -832,12 +832,14 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
         stationary probabilities (:math:`x_i = \sum_k x_{ik}`). The relative stationary probability changes
         :math:`e_i = (x_i^{(1)} - x_i^{(2)})/(x_i^{(1)} + x_i^{(2)})` are used in order to track changes in small
         probabilities. The Euclidean norm of the change vector, :math:`|e_i|_2`, is compared to maxerr.
-    return_statdist : False : Boolean
+    return_statdist : bool, default=False
         Optional parameter with reversible = True.
         If set to true, the stationary distribution is also returned
-    return_conv : False : Boolean
+    return_conv : bool, default=False
         Optional parameter with reversible = True.
         If set to true, the likelihood history and the pi_change history is returned.
+    warn_not_converged : bool, default=True
+        Prints a warning if not converged.
 
     Returns
     -------

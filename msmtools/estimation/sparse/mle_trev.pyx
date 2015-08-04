@@ -15,7 +15,7 @@ import msmtools.util.exceptions
 cdef extern from "_mle_trev.h":
   int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const int * const i_indices, const int * const j_indices, const int len_CCt, const double * const sum_C, const int dim, const double maxerr, const int maxiter)
 
-def mle_trev(C, double maxerr = 1.0E-12, int maxiter = 1000000):
+def mle_trev(C, double maxerr = 1.0E-12, int maxiter = 1000000, warn_not_converged = True):
 
   assert maxerr > 0, 'maxerr must be positive'
   assert maxiter > 0, 'maxiter must be positive'
@@ -53,7 +53,7 @@ def mle_trev(C, double maxerr = 1.0E-12, int maxiter = 1000000):
     raise Exception('The update of the stationary distribution produced zero or NaN.')
   elif err == -3:
     raise Exception('Some row and corresponding column of C have zero counts.')
-  elif err == -5:
+  elif err == -5 and warn_not_converged:
     warnings.warn('Reversible transition matrix estimation didn\'t converge.', msmtools.util.exceptions.NotConvergedWarning)
 
   # T matrix has the same shape and positions of nonzero elements as CCt
