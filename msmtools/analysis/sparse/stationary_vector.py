@@ -39,7 +39,7 @@ from scipy.sparse import eye
 from scipy.sparse.linalg import factorized
 
 
-def backward_iteration(A, mu, x0, tol=1e-15, maxiter=100):
+def backward_iteration(A, mu, x0, tol=1e-14, maxiter=100):
     r"""Find eigenvector to approximate eigenvalue via backward iteration.
 
     Parameters
