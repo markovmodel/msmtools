@@ -34,7 +34,7 @@ from __future__ import division
 import numpy as np
 from scipy.sparse import eye
 from scipy.sparse.linalg import spsolve
-from .decomposition import stationary_distribution_from_backward_iteration as stationary_distribution
+from .decomposition import stationary_distribution
 
 
 def mfpt(T, target):

@@ -41,7 +41,7 @@ import warnings
 from scipy.sparse import diags
 
 from msmtools.util.exceptions import ImaginaryEigenValueWarning, SpectralWarning
-from .stationary_vector import stationary_distribution_from_backward_iteration
+from .stationary_vector import stationary_distribution
 from .assessment import is_reversible
 
 def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
@@ -117,7 +117,7 @@ def eigenvalues_rev(T, k, ncv=None, mu=None):
 
     """compute stationary distribution if not given"""
     if mu is None:
-        mu = stationary_distribution_from_backward_iteration(T)
+        mu = stationary_distribution(T)
     """ symmetrize T """
     smu = np.sqrt(mu)
     D = diags(smu, 0)
@@ -225,7 +225,7 @@ def eigenvectors_rev(T, k, right=True, ncv=None, mu=None):
 
     """
     if mu is None:
-        mu = stationary_distribution_from_backward_iteration(T)
+        mu = stationary_distribution(T)
     """ symmetrize T """
     smu = np.sqrt(mu)
     D = diags(smu, 0)
@@ -357,7 +357,7 @@ def rdl_decomposition_nrev(T, k, norm='standard', ncv=None):
     # Reversible norm:
     elif norm == 'reversible':
         v, R = scipy.sparse.linalg.eigs(T, k=k, which='LM', ncv=ncv)
-        mu = stationary_distribution_from_backward_iteration(T)
+        mu = stationary_distribution(T)
 
         """Sort right eigenvectors"""
         ind = np.argsort(np.abs(v))[::-1]
@@ -420,7 +420,7 @@ def rdl_decomposition_rev(T, k, norm='reversible', ncv=None, mu=None):
 
     """
     if mu is None:
-        mu = stationary_distribution_from_backward_iteration(T)
+        mu = stationary_distribution(T)
     """ symmetrize T """
     smu = np.sqrt(mu)
     Dpi = diags(smu, 0)

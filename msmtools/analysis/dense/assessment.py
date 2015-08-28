@@ -26,7 +26,7 @@ from __future__ import absolute_import
 import numpy as np
 
 # import decomposition
-from .stationary_vector import stationary_distribution_from_backward_iteration
+from .stationary_vector import stationary_distribution
 
 def is_transition_matrix(T, tol=1e-10):
     """
@@ -106,7 +106,7 @@ def is_reversible(T, mu=None, tol=1e-10):
     """
     if is_transition_matrix(T, tol):
         if mu is None:
-            mu = stationary_distribution_from_backward_iteration(T)
+            mu = stationary_distribution(T)
         X = mu[:, np.newaxis] * T
         return np.allclose(X, np.transpose(X),  atol=tol)
     else:

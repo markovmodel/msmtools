@@ -35,7 +35,7 @@ import numpy as np
 from scipy.sparse import eye, coo_matrix, diags
 from scipy.sparse.linalg import spsolve
 
-from .decomposition import stationary_distribution_from_backward_iteration as statdist
+from .stationary_vector import stationary_distribution
 from six.moves import range
 
 
@@ -150,7 +150,7 @@ def backward_committor(T, A, B):
     notAB = X.difference(A).difference(B)
     if len(AB) > 0:
         raise ValueError("Sets A and B have to be disjoint")
-    pi = statdist(T)
+    pi = stationary_distribution(T)
     L = T - eye(T.shape[0], T.shape[0])
     D = diags([pi, ], [0, ])
     K = (D.dot(L)).T

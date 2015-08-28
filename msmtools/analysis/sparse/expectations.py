@@ -35,7 +35,7 @@ import numpy as np
 from scipy.sparse import coo_matrix
 from scipy.sparse.construct import diags
 
-from .stationary_vector import stationary_distribution_from_eigenvector
+from .stationary_vector import stationary_distribution
 
 
 def expected_counts(p0, T, N):
@@ -110,7 +110,7 @@ def expected_counts_stationary(T, n, mu=None):
         return EC
     else:
         if mu is None:
-            mu = stationary_distribution_from_eigenvector(T)
+            mu = stationary_distribution(T)
         D_mu = diags(mu, 0)
         EC = n * D_mu.dot(T)
         return EC

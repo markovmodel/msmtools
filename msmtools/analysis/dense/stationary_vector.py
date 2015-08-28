@@ -125,3 +125,33 @@ def stationary_distribution_from_eigenvector(T):
     nu = np.abs(L[:, 0])
     mu = nu / np.sum(nu)
     return mu
+
+
+def stationary_distribution(T):
+    r"""Compute stationary distribution of stochastic matrix T.
+
+    Chooses the fastest applicable algorithm automatically
+
+    Input:
+    ------
+    T : numpy array, shape(d,d)
+        Transition matrix (stochastic matrix).
+
+    Returns
+    -------
+    mu : numpy array, shape(d,)
+        Vector of stationary probabilities.
+
+    """
+    fallback = False
+    try:
+        mu = stationary_distribution_from_backward_iteration(T)
+        if np.any(mu <= 0):  # numerical problem, fall back to more robust algorithm.
+            fallback=True
+    except RuntimeError:
+        fallback = True
+
+    if fallback:
+        mu = stationary_distribution_from_eigenvector(T)
+
+    return mu

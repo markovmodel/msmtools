@@ -43,7 +43,7 @@ from scipy.linalg import eig, eigh, eigvals, eigvalsh, solve, lu_factor, lu_solv
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
 from six.moves import range
 
-from .stationary_vector import stationary_distribution_from_backward_iteration
+from .stationary_vector import stationary_distribution
 from .assessment import is_reversible
 
 def eigenvalues(T, k=None, reversible=False, mu=None):
@@ -121,7 +121,7 @@ def eigenvalues_rev(T, k=None, mu=None):
 
     """compute stationary distribution if not given"""
     if mu is None:
-        mu = stationary_distribution_from_backward_iteration(T)
+        mu = stationary_distribution(T)
     """ symmetrize T """
     smu = np.sqrt(mu)
     S = smu[:,None] * T / smu
@@ -238,7 +238,7 @@ def eigenvectors_rev(T, right=True, mu=None):
 
     """
     if mu is None:
-        mu = stationary_distribution_from_backward_iteration(T)
+        mu = stationary_distribution(T)
     """ symmetrize T """
     smu = np.sqrt(mu)
     S = smu[:,None] * T / smu
@@ -430,7 +430,7 @@ def rdl_decomposition_rev(T, norm='reversible', mu=None):
 
     """
     if mu is None:
-        mu = stationary_distribution_from_backward_iteration(T)
+        mu = stationary_distribution(T)
     """ symmetrize T """
     smu = np.sqrt(mu)
     S = smu[:,None] * T / smu

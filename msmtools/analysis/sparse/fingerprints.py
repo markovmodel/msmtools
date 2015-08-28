@@ -33,7 +33,7 @@ from __future__ import absolute_import
 import numpy as np
 
 from .decomposition import rdl_decomposition, timescales_from_eigenvalues
-from .decomposition import stationary_distribution_from_backward_iteration as statdist
+from .decomposition import stationary_distribution as statdist
 from six.moves import range
 
 ################################################################################
