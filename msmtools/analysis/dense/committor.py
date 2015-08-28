@@ -35,7 +35,7 @@ from six.moves import range
 import numpy as np
 from scipy.linalg import solve
 
-from .stationary_vector import stationary_distribution_from_backward_iteration as statdist
+from .stationary_vector import stationary_distribution
 
 
 def forward_committor(T, A, B):
@@ -146,7 +146,7 @@ def backward_committor(T, A, B, mu=None):
     if len(AB) > 0:
         raise ValueError("Sets A and B have to be disjoint")
     if mu is None:
-        mu = statdist(T)
+        mu = stationary_distribution(T)
     K = np.transpose(mu[:, np.newaxis] * (T - np.eye(T.shape[0])))
 
     """Assemble left-hand side W for linear system"""

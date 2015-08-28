@@ -36,7 +36,7 @@ from six.moves import range
 import numpy as np
 
 from .decomposition import rdl_decomposition, timescales_from_eigenvalues
-from .stationary_vector import stationary_distribution_from_backward_iteration as statdist
+from .stationary_vector import stationary_distribution as statdist
 
 ################################################################################
 # Fingerprints

@@ -35,7 +35,7 @@ from __future__ import division
 import numpy as np
 
 from .decomposition import rdl_decomposition
-from .decomposition import stationary_distribution_from_backward_iteration as statdist
+from .stationary_vector import stationary_distribution
 from six.moves import range
 
 
@@ -104,7 +104,7 @@ def expected_counts_stationary(T, n, mu=None):
         return EC
     else:
         if mu is None:
-            mu = statdist(T)
+            mu = stationary_distribution(T)
         EC = n * mu[:, np.newaxis] * T
         return EC
 

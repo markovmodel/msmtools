@@ -32,7 +32,7 @@ from __future__ import absolute_import
 from __future__ import division
 
 import numpy
-from .stationary_vector import stationary_distribution_from_backward_iteration as stationary_distribution
+from .stationary_vector import stationary_distribution
 from six.moves import range
 
 
