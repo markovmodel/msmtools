@@ -36,6 +36,10 @@ import scipy.sparse.csgraph as csgraph
 from scipy.sparse import coo_matrix
 from six.moves import range
 
+class PathwayError(Exception):
+    """Exception for failed attempt to find pathway in a given flux
+    network"""
+    pass
 
 def find_bottleneck(F, A, B):
     r"""Find dynamic bottleneck of flux network.
@@ -169,15 +173,15 @@ def pathway(F, A, B):
     if np.any(A == b1):
         wL = [b1, ]
     elif np.any(B == b1):
-        raise ValueError(("Roles of vertices b1 and b2 are switched."
-                          "This should never happen for a correct flux network"
-                          "obtained from a reversible transition meatrix."))
+        raise PathwayError(("Roles of vertices b1 and b2 are switched."
+                            "This should never happen for a correct flux network"
+                            "obtained from a reversible transition meatrix."))
     else:
         wL = pathway(F, A, [b1, ])
     if np.any(B == b2):
         wR = [b2, ]
     elif np.any(A == b2):
-        raise ValueError(("Roles of vertices b1 and b2 are switched."
+        raise PathwayError(("Roles of vertices b1 and b2 are switched."
                           "This should never happen for a correct flux network"
                           "obtained from a reversible transition meatrix."))
     else:
@@ -237,8 +241,7 @@ def remove_path(F, path):
         F[i, j] -= c
     return F
 
-
-def pathways(F, A, B, fraction=1.0, maxiter=1000):
+def pathways(F, A, B, fraction=1.0, maxiter=1000, tol=1e-14):
     r"""Decompose flux network into dominant reaction paths.
 
     Parameters
@@ -253,6 +256,10 @@ def pathways(F, A, B, fraction=1.0, maxiter=1000):
         Fraction of total flux to assemble in pathway decomposition
     maxiter : int, optional
         Maximum number of pathways for decomposition
+    tol : float, optional
+        Floating point tolerance. The iteration is terminated once the
+        relative capacity of all discovered path matches the desired
+        fraction within floating point tolerance        
 
     Returns
     -------
@@ -286,7 +293,10 @@ def pathways(F, A, B, fraction=1.0, maxiter=1000):
 
     while True:
         """Find dominant pathway of flux-network"""
-        path = pathway(F, A, B)
+        try:
+            path = pathway(F, A, B)
+        except PathwayError:
+            break
         """Compute capacity of current pathway"""
         c = capacity(F, path)
         """Remove artifical end-states"""
@@ -299,7 +309,9 @@ def pathways(F, A, B, fraction=1.0, maxiter=1000):
         """Remove capacity along given path from flux-network"""
         F = remove_path(F, path)
         niter += 1
-        if CF / TF >= fraction:
+        """Current flux numerically equals fraction * total flux or is
+        greater equal than fraction * total flux"""
+        if (abs(CF/TF - fraction) <= tol) or  (CF/TF >= fraction):
             break
         if niter > maxiter:
             warnings.warn("Maximum number of iterations reached", RuntimeWarning)
