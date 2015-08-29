@@ -34,7 +34,7 @@ import unittest
 import numpy as np
 from msmtools.util.numeric import assert_allclose
 
-from . import api as msmapi
+from msmtools.flux import api as msmapi
 import msmtools.analysis as msmana
 
 
@@ -69,10 +69,10 @@ class TestReactiveFluxFunctions(unittest.TestCase):
 
         self.ref_paths = [[0, 1, 4], [0, 2, 4], [0, 1, 2, 4]]
         self.ref_pathfluxes = np.array([0.00720338983051, 0.00308716707022, 0.000514527845036])
-
-        self.ref_paths_99percent = [[0, 1, 4], [0, 2, 4]]
-        self.ref_pathfluxes_99percent = np.array([0.00720338983051, 0.00308716707022])
-        self.ref_majorflux_99percent = np.array([[0., 0.00720339, 0.00308717, 0., 0.],
+        
+        self.ref_paths_95percent = [[0, 1, 4], [0, 2, 4]]
+        self.ref_pathfluxes_95percent = np.array([0.00720338983051, 0.00308716707022])
+        self.ref_majorflux_95percent = np.array([[0., 0.00720339, 0.00308717, 0., 0.],
                                                  [0., 0., 0., 0., 0.00720339],
                                                  [0., 0., 0., 0., 0.00308717],
                                                  [0., 0., 0., 0., 0.],
@@ -173,25 +173,25 @@ class TestReactiveFluxFunctions(unittest.TestCase):
 
     """These tests are broken since the matrix is irreversible and no
     pathway-decomposition can be computed for irreversible matrices"""
-    # def test_pathways(self):
-    # # all paths
-    # (paths,pathfluxes) = self.tpt1.pathways()
-    #     self.assertEqual(len(paths), len(self.ref_paths))
-    #     for i in range(len(paths)):
-    #         self.assertTrue(np.all(np.array(paths[i]) == np.array(self.ref_paths[i])))
-    #     assert_allclose(pathfluxes, self.ref_pathfluxes, rtol=1e-02, atol=1e-07)
-    #     # major paths
-    #     (paths,pathfluxes) = self.tpt1.pathways(fraction = 0.99)
-    #     self.assertEqual(len(paths), len(self.ref_paths_99percent))
-    #     for i in range(len(paths)):
-    #         self.assertTrue(np.all(np.array(paths[i]) == np.array(self.ref_paths_99percent[i])))
-    #     assert_allclose(pathfluxes, self.ref_pathfluxes_99percent, rtol=1e-02, atol=1e-07)
+    def test_pathways(self):
+        # all paths
+        (paths,pathfluxes) = self.tpt1.pathways()
+        self.assertEqual(len(paths), len(self.ref_paths))
+        for i in range(len(paths)):
+            self.assertTrue(np.all(np.array(paths[i]) == np.array(self.ref_paths[i])))
+        assert_allclose(pathfluxes, self.ref_pathfluxes, rtol=1e-02, atol=1e-07)
+        # major paths
+        (paths,pathfluxes) = self.tpt1.pathways(fraction = 0.95)
+        self.assertEqual(len(paths), len(self.ref_paths_95percent))
+        for i in range(len(paths)):
+            self.assertTrue(np.all(np.array(paths[i]) == np.array(self.ref_paths_95percent[i])))
+        assert_allclose(pathfluxes, self.ref_pathfluxes_95percent, rtol=1e-02, atol=1e-07)
 
-    # def test_major_flux(self):
-    #     # all flux
-    #     assert_allclose(self.tpt1.major_flux(fraction=1.0), self.ref_netflux, rtol=1e-02, atol=1e-07)
-    #     # 0.99 flux
-    #     assert_allclose(self.tpt1.major_flux(fraction=0.99), self.ref_majorflux_99percent, rtol=1e-02, atol=1e-07)
+    def test_major_flux(self):
+        # all flux
+        assert_allclose(self.tpt1.major_flux(fraction=1.0), self.ref_netflux, rtol=1e-02, atol=1e-07)
+        # 0.99 flux
+        assert_allclose(self.tpt1.major_flux(fraction=0.95), self.ref_majorflux_95percent, rtol=1e-02, atol=1e-07)
 
     def test_coarse_grain(self):
         (tpt_sets, cgRF) = self.tpt2.coarse_grain(self.coarsesets2)
