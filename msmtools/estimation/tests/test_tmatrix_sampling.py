@@ -16,16 +16,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from six.moves import ranger"""Unit tests for the transition_matrix module
+
+r"""Unit tests for the transition_matrix module
 
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 .. moduleauthor:: Frank Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
+from __future__ import absolute_import
+from six.moves import range
 
 import unittest
-import warnings
 
 import numpy as np
 from msmtools.util.numeric import assert_allclose
@@ -68,7 +69,6 @@ class TestAnalyticalDistribution(unittest.TestCase):
         self.state = np.random.get_state()
         """Set seed to enforce deterministic behavior"""
         np.random.seed(42)
-        
 
         self.C = np.array([[5, 2], [3, 10]])
         self.pi = np.array([0.25, 0.75])
@@ -96,7 +96,7 @@ class TestAnalyticalDistribution(unittest.TestCase):
 
     def posterior_revpi(self, x, C, pi):
         z = (1.0-x)**C[0, 0] * x**C[0, 1] * pi[0]/pi[1] *x**C[1, 0] *\
-            (1.0 - pi[0]/pi[1] * x)**C[1, 1]    
+            (1.0 - pi[0]/pi[1] * x)**C[1, 1]
         return z
 
     def probabilities_revpi(self, xedges):
@@ -106,7 +106,7 @@ class TestAnalyticalDistribution(unittest.TestCase):
         w = np.zeros(N-1)
         for i in range(N-1):
             w[i] = quad(self.posterior_revpi, xedges[i], xedges[i+1], args=(Cp, pi))[0]
-        return w/w.sum()                    
+        return w/w.sum()
 
     def test_rev(self):
         N = self.N
@@ -117,12 +117,12 @@ class TestAnalyticalDistribution(unittest.TestCase):
             T_sample[i, :, :] = sampler.sample()
         p_12 = T_sample[:, 0, 1]
         p_21 = T_sample[:, 1, 0]
-        H, xed, yed = np.histogram2d(p_12, p_21, bins=(self.xedges, self.yedges))        
-        P_sampled =  H/self.N
+        H, xed, yed = np.histogram2d(p_12, p_21, bins=(self.xedges, self.yedges))
+        P_sampled = H/self.N
         P_analytical = self.probabilities_rev(self.xedges, self.yedges)
-        
+
         self.assertTrue(np.all(np.abs(P_sampled - P_analytical) < 0.01))
-        
+
     def test_revpi(self):
         N = self.N
         sampler = tmatrix_sampler(self.C, reversible=True, mu=self.pi)
