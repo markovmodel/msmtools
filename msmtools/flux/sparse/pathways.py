@@ -1,3 +1,22 @@
+
+# This file is part of PyEMMA.
+#
+# Copyright 2015, Martin K. Scherer, Benjamin Trendelkamp-Schroer, Frank Noé,
+# Fabian Paul, Guillermo Pérez-Hernández
+#
+# PyEMMA is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 r"""Decomposition of a netflux network into its dominant reaction pathways
 
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
@@ -352,13 +371,3 @@ def add_endstates(F, A, B):
     F_new = coo_matrix((data, (row, col)), shape=(M + 2, M + 2))
 
     return F_new, M, M + 1
-
-
-
-
-
-
-
-
-
-
