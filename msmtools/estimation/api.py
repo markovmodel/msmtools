@@ -3,7 +3,7 @@
 
 # This file is part of MSMTools.
 #
-# Copyright (c) 2015, 2014 Computational Molecular Biology Group
+# Copyright (c) 2015, 2014 Computational Molecular Biology Group, Freie Universitaet Berlin (GER)
 #
 # MSMTools is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
