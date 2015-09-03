@@ -32,3 +32,15 @@ For bug reports/sugguestions/complains please file an issue on
 `GitHub <http://github.com/markovmodel/msmtools>`__.
 
 Or start a discussion on our mailing list: pyemma-users@lists.fu-berlin.de
+
+Contributors
+------------
+Frank Noe
+Fabian Paul
+Guillermo Perez-Hernandez
+Ismael Rodriguez Espigares
+Martin Scherer
+Benjamin Trendelkamp-Schroer
+Christoph Wehmeyer
+
+
