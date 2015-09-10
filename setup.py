@@ -126,6 +126,43 @@ def extensions():
                            'msmtools/estimation/dense/_rnglib.c',
                            'msmtools/estimation/dense/_ranlib.c',])
                            
+    lbfgsb_dir = os.path.join('msmtools','util','lbfgsb_src')
+    lbfgsb_headers = ['f2c.h']
+    lbfgsb_headers = [ lbfgsb_dir+os.sep+f for f in lbfgsb_headers ]
+    lbfgsb_sources = ['blas.c','linpack.c','timer.c','lbfgsb.c','_lbfgsb.pyx']
+    lbfgsb_sources = [ lbfgsb_dir+os.sep+f for f in lbfgsb_sources ]
+    lbfgsb_lib_dir = os.path.join('msmtools','util','lbfgsb_src','libf2c')
+    lbfgsb_lib_sources = ['close.c', 'ctype.c', 'dolio.c', 'endfile.c', 'err.c',
+        'fmt.c', 'fmtlib.c', 'lread.c', 'lwrite.c', 'open.c',
+        'rdfmt.c', 'rsfe.c', 's_cmp.c', 's_copy.c', 'sfe.c', 'sig_die.c',
+        's_stop.c', 'util.c', 'wref.c', 'wrtfmt.c', 'wsfe.c', 'wsle.c']
+    lbfgsb_lib_sources = [ lbfgsb_lib_dir+os.sep+f for f in lbfgsb_lib_sources ]
+    lbfgsb_lib_headers = ['fio.h', 'fmt.h', 'fp.h', 'lio.h', 'signal1.h', 'sysdep1.h']
+    lbfgsb_lib_headers = [ lbfgsb_lib_dir+os.sep+f for f in lbfgsb_lib_headers ]
+    if sys.platform.startswith('win'):
+        lbfgsb_extra_compile_args = ['-DMSDOS','-DUSE_CLOCK','-DNO_ONEXIT','-DNO_ISATTY']
+        lbfgsb_libraries = []
+    else:
+        lbfgsb_extra_compile_args = ['-Wno-strict-prototypes','-Wno-parentheses']
+        lbfgsb_libraries = ['m']
+    lbfgsb_module = \
+        Extension('msmtools.util._lbfgsb',
+                  sources = lbfgsb_sources+lbfgsb_lib_sources,
+                  include_dirs=[lbfgsb_dir],
+                  depends = lbfgsb_headers+lbfgsb_lib_headers,
+                  libraries = lbfgsb_libraries,
+                  extra_compile_args = lbfgsb_extra_compile_args)
+
+    kahandot_dir = os.path.join('msmtools','util','kahandot_src')
+    kahandot_sources = ['kahandot.pyx','_kahandot.c']
+    kahandot_sources = [ kahandot_dir+os.sep+f for f in kahandot_sources ]
+    kahandot_headers = ['_kahandot.h']
+    kahandot_headers = [ kahandot_dir+os.sep+f for f in kahandot_headers ]
+    kahandot_module = \
+        Extension('msmtools.util.kahandot',
+                  sources = kahandot_sources,
+                  depends = kahandot_headers,
+                  extra_compile_args = ['-ffloat-store'])
 
     if sys.platform.startswith('win'):
         lib_prefix = 'lib'
@@ -137,6 +174,8 @@ def extensions():
              mle_trev_sparse_module,
              sampler_rev,
              sampler_revpi,
+             lbfgsb_module,
+             kahandot_module
             ]
     if USE_CYTHON: # if we have cython available now, cythonize module
         exts = cythonize(exts)
