@@ -2,7 +2,6 @@ import unittest
 
 import numpy as np
 from numpy import array, asarray, float64, int32, zeros
-import ratematrix
 from msmtools.util.lbfgsb import fmin_l_bfgs_b
 
 def func(x):
