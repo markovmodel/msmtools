@@ -20,6 +20,7 @@ r"""
 """
 
 from __future__ import division
+from __future__ import absolute_import
 from six.moves import range
 import logging
 import warnings
