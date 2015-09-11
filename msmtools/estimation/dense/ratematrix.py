@@ -19,6 +19,7 @@ r"""
 .. moduleauthor:: Fabian Paul <fab@zedat.fu-berlin.de>
 """
 
+from __future__ import division
 from six.moves import range
 import logging
 import warnings
@@ -28,6 +29,7 @@ import scipy.linalg
 import scipy.sparse
 from msmtools.util.lbfgsb import fmin_l_bfgs_b  # can be removed when scipy 0.17 is released
 from msmtools.util.kahandot import kdot, ksum, exprel2  # exprel will be in scipy 0.17 too
+
 
 __all__ = [
     'PseudoGeneratorEstimator',
