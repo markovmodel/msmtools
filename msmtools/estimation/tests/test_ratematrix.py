@@ -67,7 +67,6 @@ class TestEstimators(unittest.TestCase):
     def test_Kalbfleisch_Lawless_with_connectivity(self):
         est = msmtools.estimation.dense.ratematrix.KalbfleischLawlessEstimator(self.C, self.K, self.pi, dt=self.tau, sparsity=self.C0, t_agg=self.t_agg*self.tau, tol=100.0)
         K_est = est.run()
-        print K_est, self.K
         assert np.allclose(self.K, K_est, rtol=5.0E-3)
 
     def test_Crommelin_Vanden_Eijnden_with_connectivity(self):
