@@ -71,6 +71,7 @@ __all__ = ['bootstrap_trajectories',
            'transition_matrix',
            'log_likelihood',
            'sample_tmatrix',
+           'thecount',
            'tmatrix_cov',
            'tmatrix_sampler']
 
@@ -273,6 +274,28 @@ def effective_count_matrix(dtrajs, lag, average='row', mact=1.0):
     dtrajs = _ensure_dtraj_list(dtrajs)
     return sparse.effective_counts.effective_count_matrix(dtrajs, lag, average=average, mact=mact)
 
+
+def thecount():
+    mystr = r"""
+    
+                 oooOOOooo
+               oOOOOOOOOOOOOOo
+             oOO"           "OO
+        ____oOO  ====   ====  OOo____ 
+        \   OO'      ! !.---. 'OO   /
+         \  OO   <0> ! !!<0>!  OO  /
+          \ Oo       ! !'---'  oO /
+           \o        \_/        o/
+            .' _______________ '.
+          ,'   :   V     V   :   '.
+        ,'      -_         _-      '.
+      ,'          "oOOOOOo"          '.
+    ,'              OOOOO              '.
+    -----------     "OOO"     -----------
+                     "O"             cgmm
+    
+    """
+    print mystr
 
 # # TODO: Implement in Python directly
 # def count_matrix_cores(dtraj, cores, lag, sliding=True):
