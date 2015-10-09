@@ -25,8 +25,8 @@ install:
 - python setup.py develop 
 
 script:
-# run tests omiting slow attributed tests.
-- nosetests --processes=2 --with-coverage --cover-inclusive --cover-package=msmtools --with-doctest --doctest-options="+NORMALIZE_WHITESPACE,+ELLIPSIS"
+# run tests 
+- nosetests --with-coverage --cover-inclusive --cover-package=msmtools --with-doctest --doctest-options="+NORMALIZE_WHITESPACE,+ELLIPSIS"
 # run pylint to maintain py3k compatibility
 - pylint --py3k --ignore=_version.py msmtools
 
