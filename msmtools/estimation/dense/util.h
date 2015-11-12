@@ -47,9 +47,10 @@ int my_isnan(double x) {
     :param x:
     :return:
 */
-int is_positive(double x)
+int
+is_positive(double x)
 {
-    double eps = 1e-8;
+    double eps = 1e-15;
     if (x >= eps && !my_isinf(x) && !my_isnan(x))
 		return 1;
     else
