@@ -21,9 +21,7 @@
 
 MSMTools contains an API to estimate and analyze Markov state models.
 """
-# TODO: extend docstring
 DOCLINES = __doc__.split("\n")
-__requires__ = 'setuptools>=3.6'
 
 import sys
 import os
@@ -54,13 +52,6 @@ try:
 except ImportError as ie:
     print(getSetuptoolsError())
     sys.exit(23)
-# this should catch pkg_resources.DistributionNotFound, which is not
-# importable now.
-except:
-    print("Your version of setuptools is too old. We require at least %s\n" \
-          % __requires__)
-    print(getSetuptoolsError())
-    sys.exit(24)
 
 ###############################################################################
 # Extensions
@@ -90,6 +81,9 @@ def extensions():
     from setup_util import detect_openmp
     openmp_enabled, needs_gomp = detect_openmp()
 
+    from numpy import get_include as _np_inc
+    np_inc = _np_inc()
+
     exts = []
 
     mle_trev_given_pi_dense_module = \
@@ -97,47 +91,48 @@ def extensions():
                   sources=['msmtools/estimation/dense/mle_trev_given_pi.pyx',
                            'msmtools/estimation/dense/_mle_trev_given_pi.c'],
                   depends=['msmtools/util/sigint_handler.h'],
-                  include_dirs=['msmtools/estimation/dense'])
+                  include_dirs=['msmtools/estimation/dense', np_inc])
 
     mle_trev_given_pi_sparse_module = \
         Extension('msmtools.estimation.sparse.mle_trev_given_pi',
                   sources=['msmtools/estimation/sparse/mle_trev_given_pi.pyx',
                            'msmtools/estimation/sparse/_mle_trev_given_pi.c'],
                   depends=['msmtools/util/sigint_handler.h'],
-                  include_dirs=['msmtools/estimation/dense'])
+                  include_dirs=['msmtools/estimation/dense', np_inc])
 
     mle_trev_sparse_module = \
         Extension('msmtools.estimation.sparse.mle_trev',
                   sources=['msmtools/estimation/sparse/mle_trev.pyx',
                            'msmtools/estimation/sparse/_mle_trev.c'],
-                  depends=['msmtools/util/sigint_handler.h'])
+                  depends=['msmtools/util/sigint_handler.h'],
+                  include_dirs=[np_inc,
+                                ])
 
     sampler_rev = \
         Extension('msmtools.estimation.dense.sampler_rev',
                   sources=['msmtools/estimation/dense/sampler_rev.pyx',
                            'msmtools/estimation/dense/sample_rev.c',
                            'msmtools/estimation/dense/_rnglib.c',
-                           'msmtools/estimation/dense/_ranlib.c',])
+                           'msmtools/estimation/dense/_ranlib.c'],
+                  include_dirs=[np_inc,
+                                ])
 
     sampler_revpi = \
         Extension('msmtools.estimation.dense.sampler_revpi',
                   sources=['msmtools/estimation/dense/sampler_revpi.pyx',
                            'msmtools/estimation/dense/sample_revpi.c',
                            'msmtools/estimation/dense/_rnglib.c',
-                           'msmtools/estimation/dense/_ranlib.c',])
-                           
-
-    if sys.platform.startswith('win'):
-        lib_prefix = 'lib'
-    else:
-        lib_prefix = ''
+                           'msmtools/estimation/dense/_ranlib.c'],
+                  include_dirs=[np_inc,
+                                ])
 
     exts += [mle_trev_given_pi_dense_module,
              mle_trev_given_pi_sparse_module,
              mle_trev_sparse_module,
              sampler_rev,
              sampler_revpi,
-            ]
+             ]
+
     if USE_CYTHON: # if we have cython available now, cythonize module
         exts = cythonize(exts)
     else:
@@ -162,29 +157,9 @@ def extensions():
 
 
 def get_cmdclass():
-    vervsioneer_cmds = versioneer.get_cmdclass()
+    versioneer_cmds = versioneer.get_cmdclass()
 
-    from distutils.command.build_ext import build_ext
-    class np_build(build_ext):
-        """
-        Sets numpy include path for extensions. Its ensured, that numpy exists
-        at runtime. Note that this workaround seems to disable the ability to
-        add additional include dirs via the setup(include_dirs=['...'] option.
-        So add them here!
-        """
-        def initialize_options(self):
-            # self.include_dirs = [] # gets overwritten by super init
-            build_ext.initialize_options(self)
-            # https://stackoverflow.com/questions/21605927/why-doesnt-setup-requires-work-properly-for-numpy
-            try:
-                __builtins__.__NUMPY_SETUP__ = False
-            except AttributeError:
-                # this may happen, if numpy requirement is already fulfilled.
-                pass
-            from numpy import get_include
-            self.include_dirs = [get_include()]
-
-    sdist_class = vervsioneer_cmds['sdist']
+    sdist_class = versioneer_cmds['sdist']
     class sdist(sdist_class):
         """ensure cython files are compiled to c, when distributing"""
 
@@ -201,12 +176,8 @@ def get_cmdclass():
                 warnings.warn('sdist cythonize failed')
             return sdist_class.run(self)
 
-    cmdclass = dict(build_ext=np_build,
-                    sdist=sdist,
-                    )
-
-    vervsioneer_cmds.update(cmdclass)
-    return vervsioneer_cmds
+    versioneer_cmds['sdist'] = sdist
+    return versioneer_cmds
 
 
 metadata = dict(
@@ -226,16 +197,22 @@ metadata = dict(
     # packages are found if their folder contains an __init__.py,
     packages=find_packages(),
     cmdclass=get_cmdclass(),
-    tests_require=['nose'],
-    test_suite='nose.collector',
     # runtime dependencies
     install_requires=['numpy>=1.6.0',
                       'scipy>=0.11',
                       'six',
                       ],
-
     zip_safe=False,
 )
+
+# include testing data
+metadata['package_data'] = {'msmtools.util.matrix': ['testfiles/*'],
+                            'msmtools.analysis': ['tests/*'],
+                            'msmtools.estimation': ['test/testfiles/*'],
+                            'msmtools.estimation.sparse': ['testfiles/*'],
+                            'msmtools.estimation.dense': ['testfiles/*'],
+                            }
+
 
 # this is only metadata and not used by setuptools
 metadata['requires'] = ['numpy', 'scipy']
@@ -249,8 +226,6 @@ if len(sys.argv) == 1 or (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
 else:
     # setuptools>=2.2 can handle setup_requires
     metadata['setup_requires'] = ['numpy>=1.6.0',
-                                  'setuptools>3.6',
-                                  'nose',
                                   ]
 
     # when on git, we require cython
@@ -269,11 +244,4 @@ else:
     #metadata['packages'] += ['pyemma-ipython']
     #metadata['include_package_data'] = True
 
-try:
-    setup(**metadata)
-except VersionConflict as ve:
-    print(ve)
-    print("You need to manually upgrade your 'setuptools' installation!")
-    " Please use these instructions to perform an upgrade and/or consult\n"
-    " https://pypi.python.org/pypi/setuptools#installation-instructions"
-    print(getSetuptoolsError())
+setup(**metadata)
