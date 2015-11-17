@@ -1,0 +1,38 @@
+package:
+  name: msmtools 
+  version: !!str dev 
+
+source:
+  path: ../.. 
+
+build:
+  preserve_egg_dir: True
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - cython >=0.20
+    - numpy >=1.7
+    - scipy 
+    - nose
+    - six
+
+  run:
+    - python
+    - setuptools
+    - numpy >=1.7
+    - scipy
+    - six
+
+test:
+  requires:
+    - nose
+    - coverage
+  imports:
+    - msmtools 
+
+about:
+  home: http://github.com/markovmodel/msmtools
+  license: LGPLv3+ 
+  summary: "MSMTools"

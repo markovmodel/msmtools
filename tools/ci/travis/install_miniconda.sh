@@ -1,38 +1,13 @@
 #!/bin/bash
 
-TARGET=$HOME/miniconda
-BASE_ENV=$TARGET/envs/ci
+# make TARGET overrideable with env
+: ${TARGET:=$HOME/miniconda}
 
 function install_miniconda {
-	echo "installing miniconda"
-        if [[ $TRAVIS_PYTHON_VERSION == '3.4' ]]; then
-            fn="Miniconda3-latest-Linux-x86_64.sh"
-        elif [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then
-            fn="Miniconda-latest-Linux-x86_64.sh"
-        fi
-	wget http://repo.continuum.io/miniconda/$fn -O mc.sh -o /dev/null
+	echo "installing miniconda to $TARGET"
+	wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O mc.sh -o /dev/null
 	bash mc.sh -b -f -p $TARGET
 }
 
-function create_env {
-	echo "create env"
-	# initially create env
-	if [[ ! -d $BASE_ENV ]]; then
-		echo "base env does not exists, creating it"
-		conda create -q --yes -n ci -c https://conda.binstar.org/omnia \
-			python=$TRAVIS_PYTHON_VERSION $deps $common_py_deps
-	fi
-}
-
-# check if miniconda is available
-#if [[ -d $TARGET ]]; then
-#	if [[ ! -x $TARGET/bin/conda ]]; then
-#		echo "conda not available, install miniconda now..."
-#		install_miniconda
-#	fi
-#fi
-
-export PATH=$TARGET/bin:$PATH
-
 install_miniconda
-create_env
+export PATH=$TARGET/bin:$PATH
