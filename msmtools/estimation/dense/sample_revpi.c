@@ -135,7 +135,7 @@ sample_quad(double xkl, double xkk, double xll,
 	  if(is_positive(alpha) && is_positive(1.0/beta))
 	    {
 	      //Proposal
-	      w = gengam(beta, alpha);
+	      w = 1.0/beta*sgamma(alpha);
 
 	      //If w=0 -> reject
 	      if(is_positive(w))
