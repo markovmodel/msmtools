@@ -159,7 +159,7 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0)
                                    truncate_acf=truncate_acf, mact=mact)
           for i, j in zip(I, J))
     data = np.fromiter(it, dtype=float, count=C.nnz)
-    res = csr_matrix((data, (I, J)))
+    res = csr_matrix((data, (I, J)), shape=C.shape)
     return res
 
 def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1.0):
