@@ -85,7 +85,7 @@ class TestEffectiveCountMatrix_old_impl(unittest.TestCase):
                               4.34287128e+02,   1.88573632e+03,   2.35837843e+04]])
         import pkg_resources
         f = pkg_resources.resource_filename('msmtools.estimation', 'tests/testfiles/dwell.npz')
-        ref_dtraj = np.load(f)['dtraj_T100K_dt10_n6good']
+        ref_dtraj = np.load(f)['dtraj_T100K_dt10_n6good'].astype('int32')
         Ceff = effective_count_matrix(ref_dtraj, lag=10, average='row', mact=1.0).toarray()
 
         np.testing.assert_allclose(Ceff, Ceff_ref, atol=1e-15, rtol=1e-8)
