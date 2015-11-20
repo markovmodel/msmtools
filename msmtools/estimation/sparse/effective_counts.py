@@ -30,6 +30,7 @@ import scipy.sparse
 from msmtools.util.statistics import statistical_inefficiency
 from msmtools.estimation.sparse.count_matrix import count_matrix_mult
 from msmtools.dtraj.api import number_of_states
+from scipy.sparse.csr import csr_matrix
 
 __author__ = 'noe'
 
@@ -47,13 +48,13 @@ def _split_sequences_singletraj(dtraj, nstates, lag):
         lag time
 
     """
-    sall = []
-    for i in range(nstates):
-        sall.append([])
-    for t in range(len(dtraj)-lag):
-        sall[dtraj[t]].append(dtraj[t+lag])
+    sall = [[] for _ in range(nstates)]
     res_states = []
     res_seqs = []
+
+    for t in range(len(dtraj)-lag):
+        sall[dtraj[t]].append(dtraj[t+lag])
+
     for i in range(nstates):
         if len(sall[i]) > 0:
             res_states.append(i)
@@ -102,6 +103,7 @@ def _transition_indexes(dtrajs, lag):
         I,J = C[i].nonzero()
         res.append(J)
     return res
+
 
 def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0):
     """ Computes statistical inefficiencies of sliding-window transition counts at given lag
@@ -152,14 +154,12 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0)
     # split sequences
     splitseq = _split_sequences_multitraj(dtrajs, lag)
     # compute inefficiencies
-    res = C.copy()  # copy count matrix and use its sparsity structure
-    I,J = C.nonzero()
-    for k in range(len(I)):
-        i = I[k]
-        j = J[k]
-        X = _indicator_multitraj(splitseq, i, j)
-        res[i, j] = statistical_inefficiency(X, truncate_acf=truncate_acf, mact=mact)
-
+    I, J = C.nonzero()
+    it = (statistical_inefficiency(_indicator_multitraj(splitseq, i, j),
+                                   truncate_acf=truncate_acf, mact=mact)
+          for i, j in zip(I, J))
+    data = np.fromiter(it, dtype=float, count=C.nnz)
+    res = csr_matrix((data, (I, J)), shape=C.shape)
     return res
 
 def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1.0):
