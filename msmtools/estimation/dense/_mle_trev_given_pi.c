@@ -103,13 +103,21 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
   /* calculate T */
   for(i=0; i<n; i++) {
     norm = 0;
+    // printf("%e\n", lam_new[i]);
     for(j=0; j<n; j++) {
       C_ij = C(i,j)+C(j,i);
       if(i!=j) {
-        T(i,j) = C_ij / (lam_new[i] + lam_new[j]*mu[i]/mu[j]);
-        norm += T(i,j);
+	if (C_ij>0.0){
+	  T(i,j) = C_ij / (lam_new[i] + lam_new[j]*mu[i]/mu[j]);
+	// printf("%f ", T(i, j));
+	  norm += T(i,j);
+	}
+	else{
+	  T(i,j) = 0.0;
+	}
       }
     }
+    // printf("\n");
     if(norm>1.0) T(i,i) = 0.0; else T(i,i) = 1.0-norm;
   }
 
