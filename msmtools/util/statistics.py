@@ -28,13 +28,13 @@ from six.moves import range
 import numpy as np
 import math
 import itertools
+import warnings
 
 from msmtools.util import types
 
 
 def _confidence_interval_1d(data, alpha):
-    """
-    Computes the mean and alpha-confidence interval of the given sample set
+    """ Computes the mean and alpha-confidence interval of the given sample set
 
     Parameters
     ----------
@@ -48,9 +48,17 @@ def _confidence_interval_1d(data, alpha):
     (m, l, r) : m is the mean of the data, and (l, r) are the m-alpha/2
         and m+alpha/2 confidence interval boundaries.
     """
+    # CHECK INPUT
     if alpha < 0 or alpha > 1:
         raise ValueError('Not a meaningful confidence level: '+str(alpha))
+    # exception: if data are constant, return three times the constant and raise a warning
+    dmin = np.min(data)
+    dmax = np.max(data)
+    if dmin == dmax:
+        warnings.warn('confidence interval for constant data is not meaningful')
+        return dmin, dmin, dmin
 
+    # COMPUTE INTERVAL
     # compute mean
     m = np.mean(data)
     # sort data
