@@ -19,6 +19,7 @@
 /* moduleauthor:: F. Paul <fabian DOT paul AT fu-berlin DOT de> */
 #include <stdlib.h>
 #include <math.h>
+//#include <string.h>
 #undef NDEBUG
 #include <assert.h>
 #include "../../util/sigint_handler.h"
@@ -43,7 +44,12 @@ static double distsq(const int n, const double *const a, const double *const b)
   return d;
 }
 
-int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const int * const i_indices, const int * const j_indices, const int len_CCt, const double * const sum_C, const int dim, const double maxerr, const int maxiter)
+int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
+					const int * const i_indices, const int * const j_indices,
+					const int len_CCt, const double * const sum_C,
+					const int dim, const double maxerr, const int maxiter,
+//					double * const mu,
+					double eps_mu)
 {
   double d_sq;
   int i, j, t, err, iteration;
@@ -56,8 +62,8 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const
   err = 0;
 
   x = (double*)malloc(len_CCt*sizeof(double));
-  x_new= (double*)malloc(len_CCt*sizeof(double));
-  sum_x= (double*)malloc(dim*sizeof(double));
+  x_new = (double*)malloc(len_CCt*sizeof(double));
+  sum_x = (double*)malloc(dim*sizeof(double));
   if(!(x && x_new && sum_x)) { err=1; goto error; }
    
   /* ckeck sum_C */
@@ -97,10 +103,11 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const
     /* normalize x */
     for(t=0; t<len_CCt; t++) {
       x_new[t] /= x_norm;
+      if (x_new[t] <= eps_mu) { err = 6; goto error; }
     }
 
     iteration += 1;
-    d_sq = distsq(len_CCt,x,x_new);
+    d_sq = distsq(len_CCt, x, x_new);
   } while(d_sq > maxerr*maxerr && iteration < maxiter && !interrupted);
   
   /* calculate T */
@@ -112,6 +119,7 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const
 
   if(iteration==maxiter) { err=5; goto error; }
 
+  //memcpy(mu, x_new, len_CCt*sizeof(double));
   free(x);
   free(x_new);
   free(sum_x);
@@ -119,6 +127,7 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data, const
   return 0;
 
 error:
+  //memcpy(mu, x_new, len_CCt*sizeof(double));
   free(x);
   free(x_new);
   free(sum_x);

@@ -87,6 +87,18 @@ class Test_mle_trev(unittest.TestCase):
         assert_allclose(T_dense_reference, T_dense_scaled_1)
         assert_allclose(T_dense_reference, T_dense_scaled_2)
 
+    @unittest.skip("not yet fully implemented")
+    def test_return_statdist(self):
+        C = np.loadtxt(testpath + 'C_1_lag.dat')
+        # dense
+        T, mu = apicall(C, reversible=True, method='dense', return_statdist=True)
+        mu_manual = msmtools.analysis.stationary_distribution(T)
+        np.testing.assert_allclose(mu, mu_manual)
+        # sparse
+        T, mu = apicall(C, reversible=True, method='sparse', return_statdist=True)
+        mu_manual = msmtools.analysis.stationary_distribution(T)
+        np.testing.assert_allclose(mu, mu_manual)
+
 
 if __name__ == '__main__':
     unittest.main()
