@@ -889,9 +889,9 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
 
     >>> T_rev = transition_matrix(C, reversible=True)
     >>> T_rev
-    array([[ 0.83333333,  0.10385552,  0.06281115],
-           [ 0.35074675,  0.        ,  0.64925325],
-           [ 0.04925323,  0.15074676,  0.80000001]])
+    array([[ 0.83333333,  0.10385551,  0.06281115],
+           [ 0.35074677,  0.        ,  0.64925323],
+           [ 0.04925323,  0.15074677,  0.8       ]])
 
     Reversible estimate with given stationary vector
 
