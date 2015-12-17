@@ -34,14 +34,20 @@ int isnan(double var)
 }
 #endif
 
-static double distsq(const int n, const double *const a, const double *const b)
+static double relative_error(const int n, const double *const a, const double *const b)
 {
-  double d = 0.0;
+  double sum;
+  double d;
+  double max = 0.0;
   int i;
   for(i=0; i<n; i++) {
-    d += (a[i]-b[i])*(a[i]-b[i]);
+    sum = a[i]+b[i];
+    if(sum>0) {
+      d = fabs((a[i]-b[i])/sum);
+      if(d>max) max=d;
+    }
   }
-  return d;
+  return max;
 }
 
 int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
@@ -51,9 +57,9 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
 //					double * const mu,
 					double eps_mu)
 {
-  double d_sq;
+  double rel_err;
   int i, j, t, err, iteration;
-  double *x, *x_new, *sum_x, *temp;
+  double *x, *x_new, *sum_x, *sum_x_old, *temp;
   double CCt_ij;
   double x_norm;
 
@@ -62,17 +68,21 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
   err = 0;
 
   x = (double*)malloc(len_CCt*sizeof(double));
-  x_new = (double*)malloc(len_CCt*sizeof(double));
-  sum_x = (double*)malloc(dim*sizeof(double));
-  if(!(x && x_new && sum_x)) { err=1; goto error; }
-   
+  x_new= (double*)malloc(len_CCt*sizeof(double));
+  sum_x= (double*)malloc(dim*sizeof(double));
+  sum_x_old= (double*)malloc(dim*sizeof(double));
+  if(!(x && x_new && sum_x && sum_x_old)) { err=1; goto error; }
+
   /* ckeck sum_C */
   for(i = 0; i<dim; i++) if(sum_C[i]==0) { err=3; goto error; }
-  
+
   /* initialize x */
   x_norm = 0;
   for(t = 0; t<len_CCt; t++) x_norm += CCt_data[t];
   for(t = 0; t<len_CCt; t++) x_new[t]= CCt_data[t]/x_norm;
+
+  /* initialize sum_x */
+  for(i = 0; i<dim; i++) sum_x[i] = 0;
 
   /* iterate */
   iteration = 0;
@@ -81,13 +91,17 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
     temp = x;
     x = x_new;
     x_new = temp;
-    
+
+    temp = sum_x;
+    sum_x = sum_x_old;
+    sum_x_old = temp;
+
     /* update x_sum */
     for(i = 0; i<dim; i++) sum_x[i] = 0;
     for(t = 0; t<len_CCt; t++) { 
       j = j_indices[t];
       sum_x[j] += x[t];
-    }  
+    }
     for(i = 0; i<dim; i++) if(sum_x[i]==0 || isnan(sum_x[i])) { err=2; goto error; }
 
     /* update x */
@@ -99,7 +113,7 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
       x_new[t] = CCt_ij / (sum_C[i]/sum_x[i] + sum_C[j]/sum_x[j]);
       x_norm += x_new[t];
     }
-    
+
     /* normalize x */
     for(t=0; t<len_CCt; t++) {
       x_new[t] /= x_norm;
@@ -107,9 +121,9 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
     }
 
     iteration += 1;
-    d_sq = distsq(len_CCt, x, x_new);
-  } while(d_sq > maxerr*maxerr && iteration < maxiter && !interrupted);
-  
+    rel_err = relative_error(dim, sum_x, sum_x_old);
+  } while(rel_err > maxerr && iteration < maxiter && !interrupted);
+
   /* calculate T */
   for(t=0; t<len_CCt; t++) {
       i = i_indices[t];
@@ -122,6 +136,7 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
   //memcpy(mu, x_new, len_CCt*sizeof(double));
   free(x);
   free(x_new);
+  free(sum_x_old);
   free(sum_x);
   sigint_off();
   return 0;
@@ -130,6 +145,7 @@ error:
   //memcpy(mu, x_new, len_CCt*sizeof(double));
   free(x);
   free(x_new);
+  free(sum_x_old);
   free(sum_x);
   sigint_off();
   return -err;

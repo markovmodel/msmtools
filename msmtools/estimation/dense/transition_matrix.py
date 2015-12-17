@@ -83,13 +83,16 @@ def __relative_error(x, y, norm=None):
     s = (x + y)
     # to avoid dividing by zero, always set to 0
     nz = np.nonzero(d)
-    # relative error vector
-    erel = d[nz] / s[nz]
-    # return euclidean norm
-    return np.linalg.norm(erel, ord=norm)
+    if len(nz[0])==0:
+        return 0
+    else:
+        # relative error vector
+        erel = d[nz] / s[nz]
+        # return norm
+        return np.linalg.norm(erel, ord=norm)
 
 
-def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr=1e-8,
+def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr=1.0E-12,
                                           return_statdist=False, return_conv=False, warn_not_converged=True):
     """
     iterative method for estimating a maximum likelihood reversible transition matrix
@@ -146,7 +149,6 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
     n = np.shape(C)[0]
     # initialization
     C2 = C + C.T  # reversibly counted matrix
-    nz = np.nonzero(C2)
     csum = np.sum(C, axis=1)  # row sums C
     X = Xinit
     if (X is None):
@@ -170,11 +172,11 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
         D[:] = c_over_x[:, np.newaxis]
         D += c_over_x
         # update estimate
-        X[nz] = C2[nz] / D[nz]
-        X[nz] /= np.sum(X[nz])  # renormalize
+        X = C2 / D
+        X /= np.sum(X)  # renormalize
         xsumnew = np.sum(X, axis=1)
         # compute difference in pi
-        diff = __relative_error(xsum, xsumnew)
+        diff = __relative_error(xsum, xsumnew, norm=np.inf)
         # update pi
         xsum = xsumnew
         # any convergence history wanted?
