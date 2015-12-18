@@ -80,7 +80,7 @@ def __relative_error(x, y, norm=None):
 
     """
     d = (x - y)
-    s = (x + y)
+    s = 0.5*(np.abs(x) + np.abs(y))
     # to avoid dividing by zero, always set to 0
     nz = np.nonzero(d)
     if len(nz[0])==0:

@@ -41,7 +41,7 @@ static double relative_error(const int n, const double *const a, const double *c
   double max = 0.0;
   int i;
   for(i=0; i<n; i++) {
-    sum = a[i]+b[i];
+    sum = 0.5*(a[i]+b[i]);
     if(sum>0) {
       d = fabs((a[i]-b[i])/sum);
       if(d>max) max=d;
