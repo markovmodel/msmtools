@@ -74,6 +74,7 @@ def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
                     " iteration" % eps_mu)
   # T matrix has the same shape and positions of nonzero elements as CCt
   T = scipy.sparse.csr_matrix((T_data, (i_indices, j_indices)), shape=CCt.shape)
+  T = msmtools.estimation.sparse.transition_matrix.correct_transition_matrix(T)
   if return_statdist:
       return T, mu
   else:

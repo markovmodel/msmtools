@@ -52,6 +52,34 @@ def transition_matrix_non_reversible(C):
             "Transition matrix has row sum of " + str(np.min(rowsums)) + ". Must have strictly positive row sums.")
     return np.divide(C, rowsums[:, np.newaxis])
 
+def correct_transition_matrix(T, reversible=None):
+    r"""Normalize transition matrix
+
+    Fixes a the row normalization of a transition matrix.
+    To be used with the reversible estimators to fix an almost coverged
+    transition matrix.
+
+    Parameters
+    ----------
+    T : (M, M) ndarray
+        matrix to correct
+    reversible : boolean
+        for future use
+
+    Returns
+    -------
+    (M, M) ndarray
+        corrected transition matrix
+    """
+    n = T.shape[0]
+    row_sums = T.sum(axis=1)
+    max_sum = np.max(row_sums)
+    if max_sum == 0.0:
+         max_sum = 1.0
+    diagonal = np.diag(T)
+    T_new = T / max_sum
+    T_new[range(n),range(n)] = (diagonal-row_sums+max_sum)/max_sum
+    return T_new
 
 def __initX(C):
     """
@@ -189,7 +217,7 @@ def estimate_transition_matrix_reversible(C, Xinit=None, maxiter=1000000, maxerr
         converged = (diff < maxerr)
         i += 1
     # finalize and return
-    T = X / xsum[:, np.newaxis]
+    T = correct_transition_matrix(X / xsum[:, np.newaxis])
     if warn_not_converged and not converged:
         warnings.warn("Reversible transition matrix estimation didn't converge.", msmtools.util.exceptions.NotConvergedWarning)
     if (return_statdist and return_conv):
