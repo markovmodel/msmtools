@@ -962,13 +962,15 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
     return_statdist = 'return_statdist' in kwargs
     if sparse_computation and not sparse_input_type:
         if return_statdist:
-            raise NotImplementedError()
+            if mu is not None:
+                raise NotImplementedError()
             return T[0].toarray(), T[1]
         else:
             return T.toarray()
     elif not sparse_computation and sparse_input_type:
         if return_statdist:
-            raise NotImplementedError()
+            if mu is not None:
+                raise NotImplementedError()
             return csr_matrix(T[0]), T[1]
         else:
             return csr_matrix(T)

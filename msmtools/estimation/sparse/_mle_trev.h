@@ -20,5 +20,5 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
 		const int * const i_indices, const int * const j_indices,
 		const int len_CCt, const double * const sum_C, const int dim,
 		const double maxerr, const int maxiter,
-/*		double * const mu,*/
+		double * const mu,
 		double mu_eps);

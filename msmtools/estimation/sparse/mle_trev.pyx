@@ -19,7 +19,7 @@ cdef extern from "_mle_trev.h":
                        const int * const i_indices, const int * const j_indices,
                        const int len_CCt, const double * const sum_C, const int dim,
                        const double maxerr, const int maxiter,
-                       #double * const mu,
+                       double * const mu,
                        double eps_mu)
 
 
@@ -45,7 +45,7 @@ def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
 
   # prepare data array of T in coo format
   cdef numpy.ndarray[double, ndim=1, mode="c"] T_data = numpy.zeros(n_data, dtype=numpy.float64, order='C')
-  #cdef numpy.ndarray[double, ndim=1, mode="c"] mu = numpy.zeros(C.shape[0], dtype=numpy.float64, order='C')
+  cdef numpy.ndarray[double, ndim=1, mode="c"] mu = numpy.zeros(C.shape[0], dtype=numpy.float64, order='C')
   err = _mle_trev_sparse(
         <double*> numpy.PyArray_DATA(T_data),
         <double*> numpy.PyArray_DATA(CCt_data),
@@ -56,7 +56,7 @@ def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
         CCt.shape[0],
         maxerr,
         maxiter,
-        #<double*> numpy.PyArray_DATA(mu),
+        <double*> numpy.PyArray_DATA(mu),
         eps_mu)
 
 
@@ -75,6 +75,6 @@ def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
   # T matrix has the same shape and positions of nonzero elements as CCt
   T = scipy.sparse.csr_matrix((T_data, (i_indices, j_indices)), shape=CCt.shape)
   if return_statdist:
-      return T#, mu
+      return T, mu
   else:
       return T

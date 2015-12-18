@@ -19,6 +19,7 @@
 /* moduleauthor:: F. Paul <fabian DOT paul AT fu-berlin DOT de> */
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #undef NDEBUG
 #include <assert.h>
 #include "../../util/sigint_handler.h"
@@ -53,7 +54,7 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
 					const int * const i_indices, const int * const j_indices,
 					const int len_CCt, const double * const sum_C,
 					const int dim, const double maxerr, const int maxiter,
-/* 					double * const mu,*/
+					double * const mu,
 					double eps_mu)
 {
   double rel_err;
@@ -127,14 +128,14 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
 
   if(iteration==maxiter) { err=5; goto error; }
 
-  /*memcpy(mu, x_new, len_CCt*sizeof(double));*/
+  memcpy(mu, sum_x_new, dim*sizeof(double));
   free(sum_x_new);
   free(sum_x);
   sigint_off();
   return 0;
 
 error:
-  /*memcpy(mu, x_new, len_CCt*sizeof(double));*/
+  memcpy(mu, sum_x_new, dim*sizeof(double));
   free(sum_x_new);
   free(sum_x);
   sigint_off();
