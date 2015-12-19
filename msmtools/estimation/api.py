@@ -889,9 +889,9 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
 
     >>> T_rev = transition_matrix(C, reversible=True)
     >>> T_rev
-    array([[ 0.83333333,  0.10385552,  0.06281115],
-           [ 0.35074675,  0.        ,  0.64925325],
-           [ 0.04925323,  0.15074676,  0.80000001]])
+    array([[ 0.83333333,  0.10385551,  0.06281115],
+           [ 0.35074677,  0.        ,  0.64925323],
+           [ 0.04925323,  0.15074677,  0.8       ]])
 
     Reversible estimate with given stationary vector
 
@@ -940,7 +940,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
             if sparse_computation:
                 T = sparse.mle_trev.mle_trev(C, **kwargs)
             else:
-                T = dense.transition_matrix.estimate_transition_matrix_reversible(C, **kwargs)
+                T = dense.mle_trev.mle_trev(C, **kwargs)
         else:
             if sparse_computation:
                 # Sparse, reversible, fixed pi (currently using dense with sparse conversion)
@@ -962,13 +962,15 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
     return_statdist = 'return_statdist' in kwargs
     if sparse_computation and not sparse_input_type:
         if return_statdist:
-            raise NotImplementedError()
+            if mu is not None:
+                raise NotImplementedError()
             return T[0].toarray(), T[1]
         else:
             return T.toarray()
     elif not sparse_computation and sparse_input_type:
         if return_statdist:
-            raise NotImplementedError()
+            if mu is not None:
+                raise NotImplementedError()
             return csr_matrix(T[0]), T[1]
         else:
             return csr_matrix(T)

@@ -20,19 +20,19 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#undef NDEBUG
-#include <assert.h>
-#include "../../util/sigint_handler.h"
-#include "_mle_trev.h"
-
 #ifdef _MSC_VER
 #undef isnan
-int isnan(double var)
+static int isnan(double var)
 {
     volatile double d = var;
     return d != d;
 }
 #endif
+
+#undef NDEBUG
+#include <assert.h>
+#include "../../util/sigint_handler.h"
+#include "_mle_trev.h"
 
 static double relative_error(const int n, const double *const a, const double *const b)
 {
@@ -50,23 +50,21 @@ static double relative_error(const int n, const double *const a, const double *c
   return max;
 }
 
-int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
-					const int * const i_indices, const int * const j_indices,
-					const int len_CCt, const double * const sum_C,
-					const int dim, const double maxerr, const int maxiter,
-					double * const mu,
-					double eps_mu)
+#define CCt(i,j) (CCt[(i)*dim+(j)])
+#define T(i,j) (T[(i)*dim+(j)])
+
+int _mle_trev_dense(double * const T, const double * const CCt, 
+                    const double * const sum_C, const int dim,
+                    const double maxerr, const int maxiter,
+                    double * const mu,
+                    double eps_mu)
 {
-  double rel_err;
-  int i, j, t, err, iteration;
+  double rel_err, x_norm, value;
+  int i, j, err, iteration;
   double *sum_x, *sum_x_new, *temp;
-  double CCt_ij, value;
-  double x_norm;
-
+  
   sigint_on();
-
-  err = 0;
-
+  
   sum_x= (double*)malloc(dim*sizeof(double));
   sum_x_new= (double*)malloc(dim*sizeof(double));
   if(!(sum_x && sum_x_new)) { err=1; goto error; }
@@ -76,12 +74,12 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
 
   /* initialize sum_x_new */
   x_norm = 0;
-  for(i=0; i<dim; i++) sum_x_new[i]=0;
-  for(t=0; t<len_CCt; t++) {
-      j = j_indices[t];
-      CCt_ij = CCt_data[t];
-      sum_x_new[j] += CCt_ij;
-      x_norm += CCt_ij;
+  for(i=0; i<dim; i++) { 
+    sum_x_new[i]=0;
+	for(j=0; j<dim; j++) {
+	   sum_x_new[i] += CCt(i,j);
+	}
+	x_norm += sum_x_new[i];
   }
   for(i=0; i<dim; i++) sum_x_new[i] /= x_norm;
 
@@ -93,21 +91,17 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
     sum_x = sum_x_new;
     sum_x_new = temp;
 
-    /* update sum_x */
-    for(i=0; i<dim; i++) sum_x_new[i] = 0;
-    for(t=0; t<len_CCt; t++) {
-      i = i_indices[t];
-      j = j_indices[t];
-      CCt_ij = CCt_data[t];
-      value = CCt_ij / (sum_C[i]/sum_x[i] + sum_C[j]/sum_x[j]);
-      sum_x_new[j] += value;
+	x_norm = 0;
+    for(i=0; i<dim; i++) { 
+      sum_x_new[i]=0;
+	  for(j=0; j<dim; j++) {
+         sum_x_new[i] += CCt(i,j) / (sum_C[i]/sum_x[i] + sum_C[j]/sum_x[j]);
+	  }
+	  if(sum_x_new[i]==0 || isnan(sum_x_new[i])) { err=2; goto error; }
+	  x_norm += sum_x_new[i];
     }
 
-    for(i = 0; i<dim; i++) if(sum_x_new[i]==0 || isnan(sum_x_new[i])) { err=2; goto error; }
-
     /* normalize sum_x */
-    x_norm = 0;
-    for(i=0; i<dim; i++) x_norm += sum_x_new[i];
     for(i=0; i<dim; i++) {
       sum_x_new[i] /= x_norm;
       if (sum_x_new[i] <= eps_mu) { err = 6; goto error; }
@@ -118,15 +112,14 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
   } while(rel_err > maxerr && iteration < maxiter && !interrupted);
 
   /* calculate T */
-  for(t=0; t<len_CCt; t++) {
-    i = i_indices[t];
-    j = j_indices[t];
-    CCt_ij = CCt_data[t];
-    value = CCt_ij / (sum_C[i]/sum_x_new[i] + sum_C[j]/sum_x_new[j]);
-    T_data[t] = value / sum_x_new[i];
+  for(i=0; i<dim; i++) { 
+    for(j=0; j<dim; j++) {
+      value = CCt(i,j) / (sum_C[i]/sum_x_new[i] + sum_C[j]/sum_x_new[j]);
+      T(i,j) = value / sum_x_new[i];
+	}
   }
 
-  if(iteration==maxiter) { err=5; goto error; }
+  if(iteration==maxiter) { err=5; goto error; } 
 
   memcpy(mu, sum_x_new, dim*sizeof(double));
   free(sum_x_new);
@@ -141,3 +134,6 @@ error:
   sigint_off();
   return -err;
 }
+
+#undef T
+#undef CCt

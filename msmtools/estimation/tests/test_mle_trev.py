@@ -29,7 +29,8 @@ from os.path import abspath, join
 from os import pardir
 
 from msmtools.estimation.sparse.mle_trev import mle_trev as impl_sparse
-from msmtools.estimation.dense.transition_matrix import estimate_transition_matrix_reversible as impl_dense
+from msmtools.estimation.dense.mle_trev import mle_trev as impl_dense
+#from msmtools.estimation.dense.transition_matrix import estimate_transition_matrix_reversible as impl_dense
 from msmtools.estimation import tmatrix as apicall
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
@@ -87,7 +88,6 @@ class Test_mle_trev(unittest.TestCase):
         assert_allclose(T_dense_reference, T_dense_scaled_1)
         assert_allclose(T_dense_reference, T_dense_scaled_2)
 
-    @unittest.skip("not yet fully implemented")
     def test_return_statdist(self):
         C = np.loadtxt(testpath + 'C_1_lag.dat')
         # dense

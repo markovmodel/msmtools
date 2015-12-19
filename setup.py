@@ -100,6 +100,13 @@ def extensions():
                   depends=['msmtools/util/sigint_handler.h'],
                   include_dirs=['msmtools/estimation/dense', np_inc])
 
+    mle_trev_dense_module = \
+        Extension('msmtools.estimation.dense.mle_trev',
+                  sources=['msmtools/estimation/dense/mle_trev.pyx',
+                           'msmtools/estimation/dense/_mle_trev.c'],
+                  depends=['msmtools/util/sigint_handler.h'],
+                  include_dirs=[np_inc])
+
     mle_trev_sparse_module = \
         Extension('msmtools.estimation.sparse.mle_trev',
                   sources=['msmtools/estimation/sparse/mle_trev.pyx',
@@ -128,6 +135,7 @@ def extensions():
 
     exts += [mle_trev_given_pi_dense_module,
              mle_trev_given_pi_sparse_module,
+             mle_trev_dense_module,
              mle_trev_sparse_module,
              sampler_rev,
              sampler_revpi,
