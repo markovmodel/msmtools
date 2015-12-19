@@ -940,7 +940,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
             if sparse_computation:
                 T = sparse.mle_trev.mle_trev(C, **kwargs)
             else:
-                T = dense.transition_matrix.estimate_transition_matrix_reversible(C, **kwargs)
+                T = dense.mle_trev.mle_trev(C, **kwargs)
         else:
             if sparse_computation:
                 # Sparse, reversible, fixed pi (currently using dense with sparse conversion)
