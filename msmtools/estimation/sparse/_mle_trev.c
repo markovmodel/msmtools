@@ -117,13 +117,19 @@ int _mle_trev_sparse(double * const T_data, const double * const CCt_data,
     rel_err = relative_error(dim, sum_x, sum_x_new);
   } while(rel_err > maxerr && iteration < maxiter && !interrupted);
 
-  /* calculate T */
+  /* calculate X */
+  for(i=0; i<dim; i++) sum_x[i] = 0;  // updated sum
   for(t=0; t<len_CCt; t++) {
     i = i_indices[t];
     j = j_indices[t];
     CCt_ij = CCt_data[t];
-    value = CCt_ij / (sum_C[i]/sum_x_new[i] + sum_C[j]/sum_x_new[j]);
-    T_data[t] = value / sum_x_new[i];
+    T_data[t] = CCt_ij / (sum_C[i]/sum_x_new[i] + sum_C[j]/sum_x_new[j]);
+    sum_x[i] += T_data[t];  // update sum with X_ij
+  }
+  /* normalize to T */
+  for(t=0; t<len_CCt; t++) {
+    i = i_indices[t];
+    T_data[t] /= sum_x[i];
   }
 
   if(iteration==maxiter) { err=5; goto error; }

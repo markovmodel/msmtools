@@ -93,7 +93,7 @@ int _mle_trev_dense(double * const T, const double * const CCt,
 
 	x_norm = 0;
     for(i=0; i<dim; i++) { 
-      sum_x_new[i]=0;
+      sum_x_new[i] = 0;
 	  for(j=0; j<dim; j++) {
          sum_x_new[i] += CCt(i,j) / (sum_C[i]/sum_x[i] + sum_C[j]/sum_x[j]);
 	  }
@@ -111,12 +111,17 @@ int _mle_trev_dense(double * const T, const double * const CCt,
     rel_err = relative_error(dim, sum_x, sum_x_new);
   } while(rel_err > maxerr && iteration < maxiter && !interrupted);
 
-  /* calculate T */
-  for(i=0; i<dim; i++) { 
+  /* calculate T*/
+  for(i=0; i<dim; i++) {
+    sum_x[i] = 0;  // updated sum
     for(j=0; j<dim; j++) {
-      value = CCt(i,j) / (sum_C[i]/sum_x_new[i] + sum_C[j]/sum_x_new[j]);
-      T(i,j) = value / sum_x_new[i];
+      T(i,j) = CCt(i,j) / (sum_C[i]/sum_x_new[i] + sum_C[j]/sum_x_new[j]);  // X_ij
+      sum_x[i] += T(i,j);  // update sum with X_ij
 	}
+	/* normalize X to T*/
+    for(j=0; j<dim; j++) {
+      T(i,j) /= sum_x[i];
+    }
   }
 
   if(iteration==maxiter) { err=5; goto error; } 
