@@ -342,8 +342,8 @@ def stationary_distribution(T):
         raise ValueError("Input matrix is not a transition matrix."
                          "Cannot compute stationary distribution")
     # is the stationary distribution unique?
-    if not is_connected(T):
-        raise ValueError("Input matrix is not connected. "
+    if not is_connected(T, directed=False):
+        raise ValueError("Input matrix is not weakly connected. "
                          "Therefore it has no unique stationary "
                          "distribution. Separate disconnected components "
                          "and handle them separately")
