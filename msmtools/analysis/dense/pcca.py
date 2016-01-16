@@ -385,8 +385,11 @@ def pcca(P, m):
         else:
             transition_states.append(component)
     n_closed_components = len(closed_components)
-    closed_states = np.array(closed_components, dtype=int).flatten()
-    transition_states = np.array(transition_states, dtype=int).flatten()
+    closed_states = np.concatenate(closed_components)
+    if len(transition_states) == 0:
+        transition_states = np.array([], dtype=int)
+    else:
+        transition_states = np.concatenate(transition_states)
 
     # check if we have enough clusters to support the disconnected sets
     if (m < len(closed_components)):
@@ -444,6 +447,11 @@ def pcca(P, m):
             for j in range(transition_states.size):
                 # transition states belong to closed states with the hitting probability, and inherit their chi
                 chi[transition_states[j]] += h[transition_states[j]] * chi[closed_states[i]]
+
+    # check if we have m metastable sets. If less than m, we must raise
+    nmeta = np.count_nonzero(chi.sum(axis=0))
+    assert m <= nmeta, str(m) + " metastable states requested, but transition matrix only has " + str(nmeta) \
+                       + ". Consider using a prior or request less metastable states. "
 
     # print "chi\n", chi
     return chi
