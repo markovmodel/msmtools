@@ -81,8 +81,8 @@ def count_matrix_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None, fail
     #         nmax=max(nmax, max(dtraj[0:-lag:lag].max(), dtraj[lag::lag].max()))
     # nstates=nmax+1
 
-    """If nstates<4000 use bincount else use coo"""
-    if nstates < 4000:
+    """If nstates<400 use bincount else use coo"""
+    if nstates < 400:
         return count_matrix_bincount_mult(dtrajs, lag, sliding=sliding, nstates=nstates, sparse=sparse,
                                           failfast=failfast)
     else:
@@ -131,8 +131,8 @@ def count_matrix(dtraj, lag, sliding=True, sparse=True, nstates=None):
     if nstates < nmax + 1:
         raise ValueError("nstates is smaller than the number of observed microstates")
 
-    """If nstates<4000 use bincount else use coo"""
-    if nstates < 4000:
+    """If nstates<400 use bincount else use coo"""
+    if nstates < 400:
         return count_matrix_bincount(dtraj, lag, sliding=sliding, sparse=sparse, nstates=nstates)
     else:
         return count_matrix_coo(dtraj, lag, sliding=sliding, sparse=sparse, nstates=nstates)
