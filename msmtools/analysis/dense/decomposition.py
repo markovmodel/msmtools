@@ -74,9 +74,12 @@ def eigenvalues(T, k=None, reversible=False, mu=None):
 
     """
     if reversible:
-        evals = eigenvalues_rev(T, k=k, mu=mu)
+        try:
+            evals = eigenvalues_rev(T, k=k, mu=mu)
+        except:
+            evals = eigvals(T).real  # use fallback code but cast to real
     else:
-        evals = eigvals(T)
+        evals = eigvals(T)  # nonreversible
 
     """Sort by decreasing absolute value"""
     ind = np.argsort(np.abs(evals))[::-1]
@@ -111,11 +114,18 @@ def eigenvalues_rev(T, k=None, mu=None):
         If k is None then n=d, if k is int then n=k otherwise
         n is the length of the given tuple of eigenvalue indices.
 
+    Raises
+    ------
+    ValueError
+        If stationary distribution is nonpositive.
+
     """
 
     """compute stationary distribution if not given"""
     if mu is None:
         mu = stationary_distribution(T)
+    if np.any(mu <= 0):
+        raise ValueError('Cannot symmetrize transition matrix')
     """ symmetrize T """
     smu = np.sqrt(mu)
     S = smu[:,None] * T / smu
