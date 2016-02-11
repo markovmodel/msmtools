@@ -75,13 +75,15 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
         raise ValueError("Number of eigenvalues required for decomposition of sparse matrix")
     else:
         if reversible:
-            v = eigenvalues_rev(T, k, ncv=ncv, mu=mu)
-            ind = np.argsort(np.abs(v))[::-1]
-            return v[ind]
+            try:
+                v = eigenvalues_rev(T, k, ncv=ncv, mu=mu)
+            except:  # use fallback code, but cast to real
+                v = scipy.sparse.linalg.eigs(T, k=k, which='LM', return_eigenvectors=False, ncv=ncv).real
         else:
             v = scipy.sparse.linalg.eigs(T, k=k, which='LM', return_eigenvectors=False, ncv=ncv)
-            ind = np.argsort(np.abs(v))[::-1]
-            return v[ind]
+
+    ind = np.argsort(np.abs(v))[::-1]
+    return v[ind]
 
 def eigenvalues_rev(T, k, ncv=None, mu=None):
     r"""Compute the eigenvalues of a reversible, sparse transition matrix.
@@ -103,6 +105,11 @@ def eigenvalues_rev(T, k, ncv=None, mu=None):
     v : (k,) ndarray
         Eigenvalues of T
 
+    Raises
+    ------
+    ValueError
+        If stationary distribution is nonpositive.
+
     Notes
     -----
     The first k eigenvalues of largest magnitude are computed.
@@ -112,6 +119,8 @@ def eigenvalues_rev(T, k, ncv=None, mu=None):
     """compute stationary distribution if not given"""
     if mu is None:
         mu = stationary_distribution(T)
+    if np.any(mu <= 0):
+        raise ValueError('Cannot symmetrize transition matrix')
     """ symmetrize T """
     smu = np.sqrt(mu)
     D = diags(smu, 0)
