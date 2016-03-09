@@ -209,6 +209,7 @@ metadata = dict(
     install_requires=['numpy>=1.6.0',
                       'scipy>=0.11',
                       'six',
+                      'decorator',
                       ],
     zip_safe=False,
 )
