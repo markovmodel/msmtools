@@ -17,6 +17,8 @@ requirements:
     - scipy 
     - nose
     - six
+    - decorator
+    - nomkl
 
   run:
     - python
@@ -24,6 +26,8 @@ requirements:
     - numpy >=1.7
     - scipy
     - six
+    - decorator
+    - nomkl
 
 test:
   requires:
