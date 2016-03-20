@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-int _mle_trev_dense(double * const T, const double * const CCt, 
-                    const double * const sum_C, const int dim,
+int _mle_trev_dense(double * const restrict T, const double * const restrict CCt, 
+                    const double * const restrict sum_C, const int dim,
                     const double maxerr, const int maxiter,
-                    double * const mu,
+                    double * const restrict mu,
                     double eps_mu);
