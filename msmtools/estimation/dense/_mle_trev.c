@@ -29,6 +29,26 @@ static int isnan(double var)
 }
 #endif
 
+#if __STDC_VERSION__ >= 199901L
+#warning "Modern C"
+
+#elif defined(__GNUC__)
+#define restrict __restrict__
+
+#elif defined(_MSC_VER)
+#define restrict __restrict__
+#warning "MS C compiler"
+
+#elif defined(__clang__)
+#warning "Clang compiler"
+#define restrict __restrict
+
+#else
+#define restrict
+#warning "Unknown compiler"
+
+#endif
+
 #undef NDEBUG
 #include <assert.h>
 #include "../../util/sigint_handler.h"
