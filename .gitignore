@@ -27,6 +27,7 @@ Untitled*.ipynb
 /*/estimation/sparse/mle_trev_given_pi.c
 /*/estimation/dense/sampler_rev.c
 /*/estimation/dense/sampler_revpi.c
+/*/estimation/sparse/newton/objective_sparse.c
 
 # generated from MANIFEST.in
 MANIFEST
