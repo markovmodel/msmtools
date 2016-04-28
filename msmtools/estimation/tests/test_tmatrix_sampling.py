@@ -135,6 +135,32 @@ class TestAnalyticalDistribution(unittest.TestCase):
         P_analytical = self.probabilities_revpi(self.xedges)
         self.assertTrue(np.all( np.abs(P_sampled - P_analytical) < 0.01 ))
 
+    def test_parallel_rev(self):
+        N = self.N
+        sampler = tmatrix_sampler(self.C, reversible=True)
+        M = self.C.shape[0]
+        T_sample = sampler.sample(nsamples=N, n_jobs=2)
+        p_12 = T_sample[:, 0, 1]
+        p_21 = T_sample[:, 1, 0]
+        H, xed, yed = np.histogram2d(p_12, p_21, bins=(self.xedges, self.yedges))
+        P_sampled = H / self.N
+        P_analytical = self.probabilities_rev(self.xedges, self.yedges)
+
+        self.assertTrue(np.all(np.abs(P_sampled - P_analytical) < 0.01))
+
+    def test_parallel_rev_statdist(self):
+        N = self.N
+        sampler = tmatrix_sampler(self.C, reversible=True)
+        M = self.C.shape[0]
+        T_sample, pi_sample = sampler.sample(nsamples=N, return_statdist=True, n_jobs=2)
+        p_12 = T_sample[:, 0, 1]
+        p_21 = T_sample[:, 1, 0]
+        H, xed, yed = np.histogram2d(p_12, p_21, bins=(self.xedges, self.yedges))
+        P_sampled = H / self.N
+        P_analytical = self.probabilities_rev(self.xedges, self.yedges)
+
+        self.assertTrue(np.all(np.abs(P_sampled - P_analytical) < 0.01))
+
 
 if __name__ == "__main__":
     unittest.main()
