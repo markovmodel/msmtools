@@ -2,7 +2,6 @@
 from __future__ import print_function, absolute_import
 import os
 import sys
-import mock
 
 
 # class foo(object):
@@ -18,14 +17,18 @@ import mock
 
 sys.path.insert(0, os.path.abspath('../..'))
 
+from unittest.mock import MagicMock, Mock
 
-class mymock(mock.Mock):
+
+class mymock(MagicMock):
     __all__ = []
-
 
 # mock binary stuff
 autodoc_mock_imports = [
-    'msmtools.estimation.dense',
+    'decorator',
+    #'numpy.testing',
+
+    #'msmtools.estimation.dense',
     'msmtools.estimation.dense.mle_trev',
     'msmtools.estimation.dense.mle_trev_given_pi',
     'msmtools.estimation.dense.sampler_rev',
@@ -33,7 +36,7 @@ autodoc_mock_imports = [
     'msmtools.estimation.sparse.mle_trev',
     'msmtools.estimation.sparse.mle_trev_given_pi',
     'msmtools.util.numeric',
-    'numpy', 'numpy.testing', 'numpy',
+    'numpy',
 
     'scipy', 'scipy.linalg',
     'scipy.stats',
@@ -47,7 +50,7 @@ autodoc_mock_imports = [
 ]
 
 for mod_name in autodoc_mock_imports:
-    sys.modules[mod_name] = mymock()
+    sys.modules[mod_name] = Mock()
 
 # Check Sphinx version
 needs_sphinx = '1.4+'
