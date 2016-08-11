@@ -58,7 +58,7 @@ sys.meta_path.insert(0, foo())
 sys.path.insert(0, os.path.abspath('../..'))
 
 # Check Sphinx version
-needs_sphinx = '1.4+'
+needs_sphinx = '1.3.5+'
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
