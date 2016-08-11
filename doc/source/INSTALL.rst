@@ -20,7 +20,7 @@ but play at your own risk.
 
 If you already have a conda installation, directly go to step 3:
 
-1. Download and install miniconda for Python 2.7, 32 or 64 bit depending on your system:
+1. Download and install miniconda for Python 2 or 3, 32 or 64 bit depending on your system:
    http://conda.pydata.org/miniconda.html
 
 
