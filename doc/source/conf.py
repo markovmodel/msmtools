@@ -4,41 +4,25 @@ import os
 import sys
 
 
-# class foo(object):
-#     def find_module(self, fullname, path=None):
-#         print(fullname)
-#         # raise ImportError()
-#
-#     def load_module(self, fullname):
-#         pass
-# sys.meta_path.insert(0, foo())
+from mock import Mock
 
-# sys.path_hooks
-
-sys.path.insert(0, os.path.abspath('../..'))
-
-from mock import MagicMock, Mock
-
-
-class mymock(MagicMock):
-    __all__ = []
-
-# mock binary stuff
-autodoc_mock_imports = [
+# mock uninstallable stuff on readthedocs.org
+mock_imports = [
     'decorator',
     #'numpy.testing',
 
-    #'msmtools.estimation.dense',
-    'msmtools.estimation.dense.mle_trev',
-    'msmtools.estimation.dense.mle_trev_given_pi',
+    #'msmtools.estimation.dense.mle_trev',
+    #'msmtools.estimation.dense.mle_trev_given_pi',
     'msmtools.estimation.dense.sampler_rev',
     'msmtools.estimation.dense.sampler_revpi',
-    'msmtools.estimation.sparse.mle_trev',
-    'msmtools.estimation.sparse.mle_trev_given_pi',
+
+    #'msmtools.estimation.sparse.mle_trev',
+    #'msmtools.estimation.sparse.mle_trev_given_pi',
     'msmtools.util.numeric',
     'numpy',
 
-    'scipy', 'scipy.linalg',
+    'scipy',
+    'scipy.linalg',
     'scipy.stats',
     'scipy.sparse',
     'scipy.sparse.base',
@@ -49,8 +33,29 @@ autodoc_mock_imports = [
     'scipy.sparse.linalg',
 ]
 
-for mod_name in autodoc_mock_imports:
+for mod_name in mock_imports:
     sys.modules[mod_name] = Mock()
+
+
+class foo(object):
+    def find_module(self, fullname, path=None):
+        if not fullname.startswith('msmtools'):
+            return
+        if fullname == 'msmtools.estimation.dense.mle_trev':
+            return self
+        if fullname == 'msmtools.estimation.dense.mle_trev_given_pi':
+            return self
+        if fullname == 'msmtools.estimation.sparse.mle_trev':
+            return self
+        if fullname == 'msmtools.estimation.sparse.mle_trev_given_pi':
+            return self
+
+    def load_module(self, fullname):
+        sys.modules['fullname'] = Mock()
+
+sys.meta_path.insert(0, foo())
+
+sys.path.insert(0, os.path.abspath('../..'))
 
 # Check Sphinx version
 needs_sphinx = '1.4+'
@@ -65,7 +70,6 @@ needs_sphinx = '1.4+'
 # version.
 ##################################
 import msmtools
-
 print("Generating doc for msmtools version %s installed in %s"
       % (msmtools.__version__, msmtools.__path__))
 
