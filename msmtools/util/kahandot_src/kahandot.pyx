@@ -18,16 +18,6 @@ cdef extern from "_kahandot.h":
             size_t n,
             size_t m
         )
-    void _exprel(
-            double *X,
-            double *Y,
-            size_t n
-        )
-    void _exprel2(
-            double *X,
-            double *Y,
-            size_t n
-        )
 
 def kdot(np.ndarray[double, ndim=2, mode="c"] A not None,
         np.ndarray[double, ndim=2, mode="c"] B not None):
@@ -51,22 +41,4 @@ def ksum(np.ndarray[double, ndim=2, mode="c"] X not None):
         X.shape[0],
         X.shape[1]
         )
-
-def exprel(np.ndarray[double, ndim=2, mode="c"] X not None):
-    Y = np.zeros((X.shape[0],X.shape[1]),dtype=np.float64)
-    _exprel(
-        <double*> np.PyArray_DATA( X ),
-        <double*> np.PyArray_DATA( Y ),
-        X.shape[0]*X.shape[1]
-    )
-    return Y
-
-def exprel2(np.ndarray[double, ndim=2, mode="c"] X not None):
-    Y = np.zeros((X.shape[0],X.shape[1]),dtype=np.float64)
-    _exprel2(
-        <double*> np.PyArray_DATA( X ),
-        <double*> np.PyArray_DATA( Y ),
-        X.shape[0]*X.shape[1]
-    )
-    return Y
 

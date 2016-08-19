@@ -28,8 +28,9 @@ import numpy as np
 import scipy as sp
 import scipy.linalg
 import scipy.sparse
-from msmtools.util.lbfgsb import fmin_l_bfgs_b  # can be removed when scipy 0.17 is released
-from msmtools.util.kahandot import kdot, ksum, exprel2  # exprel will be in scipy 0.17 too
+from scipy.optimize import fmin_l_bfgs_b
+from scipy.special import exprel
+from msmtools.util.kahandot import kdot, ksum
 
 
 __all__ = [
@@ -64,10 +65,10 @@ def getV(lam, tau):
     positive = delta >= 0
     negative = delta < 0
     a1 = tau * np.exp(tau * lam)[:, np.newaxis] * ones  # tau*e^l_i
-    b1 = exprel2(delta)  # GSL's exprel; exprel2() would be AMath's
+    b1 = exprel(delta)
     V[negative] = a1[negative] * b1[negative]
     a2 = tau * np.exp(tau * lam)[np.newaxis, :] * ones  # tau*e^l_j *
-    b2 = exprel2(-delta)
+    b2 = exprel(-delta)
     V[positive] = a2[positive] * b2[positive]
     return V
 
