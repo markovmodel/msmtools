@@ -102,7 +102,7 @@ def sum1(M):
 
 class _RateMatrixEstimator(object):
     # base class: includes parametrization of K matrix and the basic class interface
-    def __init__(self, C, dt=1.0, sparsity=None, t_agg=None, pi=None, tol=1.0E7):
+    def __init__(self, C, dt=1.0, sparsity=None, t_agg=None, pi=None, tol=1.0E7, maxiter=100000, on_error='raise'):
         assert np.all(C >= 0)
         assert C.shape[0] == C.shape[1]
         self.zero_C = np.where(C == 0)
@@ -127,12 +127,14 @@ class _RateMatrixEstimator(object):
         self.sparsity = sparsity
         self.tol = tol
         self.verbose = False
+        self.maxiter = maxiter
+        self.on_error = on_error
 
 
 class _ReversibleRateMatrixEstimator(_RateMatrixEstimator):
     # this estimator requires a known stationary vector
-    def __init__(self, C, pi, dt=1.0, sparsity=None, t_agg=None, tol=1.0E7):
-        super(_ReversibleRateMatrixEstimator, self).__init__(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol)
+    def __init__(self, C, pi, dt=1.0, sparsity=None, t_agg=None, tol=1.0E7, maxiter=100000, on_error='raise'):
+        super(_ReversibleRateMatrixEstimator, self).__init__(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
 
         if self.sparsity is None:
             self.I, self.J = np.triu_indices(self.N, k=1)
@@ -176,17 +178,8 @@ class _ReversibleRateMatrixEstimator(_RateMatrixEstimator):
                      '%f and a directional derivative of %f. This corresponds '
                      'to a relative error of %f.' % (f2-f1, df, err))
 
-    def run(self, maxiter=100000, on_error='raise'):
+    def run(self):
         """Run the minimization.
-
-        Parameters
-        ----------
-        maxiter : int, optional, default = 100000
-            Minimization of the objective function will do at most this number
-            of steps.
-        on_error : string, optional, default = 'raise'
-            What to do then an error happend. When 'raise' is given, raise
-            an exception. When 'warn' is given, produce a (Python) warning.
 
         Returns
         -------
@@ -202,12 +195,12 @@ class _ReversibleRateMatrixEstimator(_RateMatrixEstimator):
         theta0 = self.initial
         theta, f, d = fmin_l_bfgs_b(self.function_and_gradient, theta0, fprime=None, args=(),
                                     approx_grad=False, bounds=self.bounds, factr=self.tol,
-                                    pgtol=1.0E-11, disp=0, maxiter=maxiter, maxfun=maxiter, maxls=100)
+                                    pgtol=1.0E-11, disp=0, maxiter=self.maxiter, maxfun=self.maxiter, maxls=100)
         if self.verbose:
             logging.info('l_bfgs_b says: '+str(d))
             logging.info('objective function value reached: %f' % f)
         if d['warnflag'] != 0:
-            if on_error == 'raise':
+            if self.on_error == 'raise':
                 raise NotConvergedError(str(d))
             else:
                 warnings.warn(str(d), NotConvergedWarning)
@@ -221,8 +214,8 @@ class _ReversibleRateMatrixEstimator(_RateMatrixEstimator):
 
 
 class PseudoGeneratorEstimator(_RateMatrixEstimator):
-    def __init__(self, C, dt, sparsity=None, t_agg=None, pi=None, tol=1.0E7):
-        super(PseudoGeneratorEstimator, self).__init__(C, dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol)
+    def __init__(self, C, dt, sparsity=None, t_agg=None, pi=None, tol=1.0E7, maxiter=100000, on_error='raise'):
+        super(PseudoGeneratorEstimator, self).__init__(C, dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
 
     def run(self, maxiter=100000, on_error='raise'):
         from msmtools.estimation import transition_matrix
@@ -238,8 +231,8 @@ class PseudoGeneratorEstimator(_RateMatrixEstimator):
 
 
 class TruncatedLogarithmEstimator(_RateMatrixEstimator):
-    def __init__(self, C, dt, sparsity=None, t_agg=None, pi=None, tol=1.0E7):
-        super(TruncatedLogarithmEstimator, self).__init__(C, dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol)
+    def __init__(self, C, dt, sparsity=None, t_agg=None, pi=None, tol=1.0E7, maxiter=100000, on_error='raise'):
+        super(TruncatedLogarithmEstimator, self).__init__(C, dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
 
     def run(self, maxiter=100000, on_error='raise'):
         from msmtools.estimation import transition_matrix
@@ -299,16 +292,22 @@ class CrommelinVandenEijndenEstimator(_ReversibleRateMatrixEstimator):
         `scipy.optimize.fmin_l_bfgs_b`.
         Typical values for factr are: 1e12 for low accuracy; 1e7
         for moderate accuracy; 10.0 for extremely high accuracy.
+    maxiter : int, optional, default = 100000
+        Minimization of the objective function will do at most this number
+        of steps.
+    on_error : string, optional, default = 'raise'
+        What to do then an error happend. When 'raise' is given, raise
+        an exception. When 'warn' is given, produce a (Python) warning.
 
     Note
     ----
     To compute the rate matrix, call the `run` method of the estimator object.
     """
 
-    def __init__(self, T, K0, pi, dt=1.0, sparsity=None, t_agg=None, tol=1.0E7):
+    def __init__(self, T, K0, pi, dt=1.0, sparsity=None, t_agg=None, tol=1.0E7, maxiter=100000, on_error='raise'):
         from msmtools.analysis import is_transition_matrix
 
-        super(CrommelinVandenEijndenEstimator, self).__init__(T, pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol)
+        super(CrommelinVandenEijndenEstimator, self).__init__(T, pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
 
         assert K0.shape[0] == K0.shape[1] == self.N
         assert is_transition_matrix(T)
@@ -411,14 +410,20 @@ class KalbfleischLawlessEstimator(_ReversibleRateMatrixEstimator):
         `scipy.optimize.fmin_l_bfgs_b`.
         Typical values for factr are: 1e12 for low accuracy; 1e7
         for moderate accuracy; 10.0 for extremely high accuracy.
+    maxiter : int, optional, default = 100000
+        Minimization of the objective function will do at most this number
+        of steps.
+    on_error : string, optional, default = 'raise'
+        What to do then an error happend. When 'raise' is given, raise
+        an exception. When 'warn' is given, produce a (Python) warning.
 
     Note
     ----
     To compute the rate matrix, call the `run` method of the estimator object.
     """
 
-    def __init__(self, C, K0, pi, dt=1.0, sparsity=None, t_agg=None, tol=1.0E7):
-        super(KalbfleischLawlessEstimator, self).__init__(C, pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol)
+    def __init__(self, C, K0, pi, dt=1.0, sparsity=None, t_agg=None, tol=1.0E7, maxiter=100000, on_error='raise'):
+        super(KalbfleischLawlessEstimator, self).__init__(C, pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
 
         assert K0.shape[0] == K0.shape[1] == self.N
 
@@ -496,7 +501,8 @@ class KalbfleischLawlessEstimator(_ReversibleRateMatrixEstimator):
 
 
 def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
-                         t_agg=None, pi=None, tol=1.0E7, K0=None):
+                         t_agg=None, pi=None, tol=1.0E7, K0=None,
+                         maxiter=100000, on_error='raise'):
     r"""Estimate a reversible rate matrix from a count matrix.
 
     Parameters
@@ -557,6 +563,12 @@ def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
         `scipy.optimize.fmin_l_bfgs_b`.
         Typical values for factr are: 1e12 for low accuracy; 1e7
         for moderate accuracy; 10.0 for extremely high accuracy.
+    maxiter : int, optional, default = 100000
+        Minimization of the objective function will do at most this number
+        of steps.
+    on_error : string, optional, default = 'raise'
+        What to do then an error happend. When 'raise' is given, raise
+        an exception. When 'warn' is given, produce a (Python) warning.
 
     Retruns
     -------
@@ -595,21 +607,21 @@ def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
 
     # special case: truncated matrix logarithm
     if method == 'truncated_log':
-        e_tlog = TruncatedLogarithmEstimator(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol)
+        e_tlog = TruncatedLogarithmEstimator(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
         e_tlog.run()
         return e_tlog.K
 
     # remaining algorithms are based on each other in the order pseudo->CVE->KL
-    e_pseudo = PseudoGeneratorEstimator(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol)
+    e_pseudo = PseudoGeneratorEstimator(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
     e_pseudo.run()
     if method == 'pseudo':
         return e_pseudo.K
 
-    e_CVE = CrommelinVandenEijndenEstimator(e_pseudo.T, e_pseudo.K, e_pseudo.pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol)
+    e_CVE = CrommelinVandenEijndenEstimator(e_pseudo.T, e_pseudo.K, e_pseudo.pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
     e_CVE.run()
     if method == 'CVE':
         return e_CVE.K
 
-    e_KL = KalbfleischLawlessEstimator(C, e_CVE.K, e_CVE.pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol)
+    e_KL = KalbfleischLawlessEstimator(C, e_CVE.K, e_CVE.pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
     e_KL.run()
     return e_KL.K

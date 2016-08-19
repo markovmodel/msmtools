@@ -1256,7 +1256,8 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
 
 
 def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
-                         t_agg=None, pi=None, tol=1.0E7, K0=None):
+                         t_agg=None, pi=None, tol=1.0E7, K0=None,
+                         maxiter=100000, on_error='raise'):
     r"""Estimate a reversible rate matrix from a count matrix.
 
     Parameters
@@ -1317,6 +1318,12 @@ def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
         `scipy.optimize.fmin_l_bfgs_b`.
         Typical values for factr are: 1e12 for low accuracy; 1e7
         for moderate accuracy; 10.0 for extremely high accuracy.
+    maxiter : int, optional, default = 100000
+        Minimization of the objective function will do at most this number
+        of steps.
+    on_error : string, optional, default = 'raise'
+        What to do then an error happend. When 'raise' is given, raise
+        an exception. When 'warn' is given, produce a (Python) warning.
 
     Retruns
     -------
@@ -1353,5 +1360,6 @@ def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
     
     from .dense.ratematrix import estimate_rate_matrix
     return estimate_rate_matrix(C, dt=dt, method=method, sparsity=sparsity,
-                         t_agg=t_agg, pi=pi, tol=tol, K0=K0)
+                         t_agg=t_agg, pi=pi, tol=tol, K0=K0,
+                         maxiter=maxiter, on_error=on_error)
 
