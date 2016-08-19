@@ -106,7 +106,6 @@ class SamplerRevPi:
         self.pi = pi
 
         if P_mle is None:
-            # P_mle = tmatrix(C, reversible=True, mu=pi, eps=1e-6)
             P_mle = mle_trev_given_pi(C, pi)
 
         if P0 is None:
@@ -117,7 +116,6 @@ class SamplerRevPi:
             bdiag = np.zeros_like(cdiag)
             bdiag[ind] = 1.0
             B = np.diag(bdiag)
-            # P0 = tmatrix(C+B, reversible=True, mu=pi, eps=1e-6)
             P0 = mle_trev_given_pi(C+B, pi)
 
         """Diagonal prior parameters"""
@@ -155,7 +153,7 @@ class SamplerRevPi:
     def check_input(self):
         if not np.all(self.C>=0):
             raise ValueError("Count matrix contains negative elements")
-        if not is_connected(self.C):
+        if not is_connected(self.C, directed=False):
             raise ValueError("Count matrix is not connected")
         if not np.all(self.X>=0.0):
             raise ValueError("P0 contains negative entries")

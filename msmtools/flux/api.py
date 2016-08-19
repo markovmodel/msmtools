@@ -462,9 +462,8 @@ def mfpt(totflux, pi, qminus):
 
     Returns
     -------
-    kAB : float
-        The reaction rate (per time step of the
-        Markov chain)
+    tAB : float
+        The mean first-passage time for the A to B reaction
 
     See also
     --------

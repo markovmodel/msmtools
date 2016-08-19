@@ -1,3 +1,20 @@
+# This file is part of MSMTools.
+#
+# Copyright (c) 2015, 2014 Computational Molecular Biology Group, Freie Universitaet Berlin (GER)
+#
+# MSMTools is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 r"""Cython implementation of iterative likelihood maximization.
 
 .. moduleauthor:: F. Paul <fabian DOT paul AT fu-berlin DOT de>
@@ -5,8 +22,6 @@ r"""Cython implementation of iterative likelihood maximization.
 """
 
 import numpy
-import scipy
-import scipy.sparse
 cimport numpy
 numpy.import_array()
 
@@ -15,14 +30,13 @@ import warnings
 import msmtools.util.exceptions
 
 cdef extern from "_mle_trev.h":
-  int _mle_trev_sparse(double * const T_data, const double * const CCt_data, 
-                       const int * const i_indices, const int * const j_indices,
-                       const int len_CCt, const double * const sum_C, const int dim,
-                       const double maxerr, const int maxiter,
-                       double * const mu,
-                       double eps_mu)
+  int _mle_trev_dense(double * const T, const double * const CCt, 
+                      const double * const sum_C, const int dim,
+                      const double maxerr, const int maxiter,
+                      double * const mu,
+                      double eps_mu)
 
-
+					  
 def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
              warn_not_converged=True, return_statdist=False,
              eps_mu=1.0E-15):
@@ -32,26 +46,14 @@ def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
   assert C.shape[0] == C.shape[1], 'C must be a square matrix.'
   assert msmtools.estimation.is_connected(C, directed=True), 'C must be strongly connected'
 
-  C_sum_py = C.sum(axis=1).A1
-  cdef numpy.ndarray[double, ndim=1, mode="c"] C_sum = C_sum_py.astype(numpy.float64, order='C', copy=False)
+  cdef numpy.ndarray[double, ndim=1, mode="c"] C_sum = C.sum(axis=1).astype(numpy.float64, order='C', copy=False)
+  cdef numpy.ndarray[double, ndim=2, mode="c"] CCt = (C+C.T).astype(numpy.float64, order='C', copy=False)
 
-  CCt = C+C.T
-  # convert CCt to coo format 
-  CCt_coo = CCt.tocoo()
-  n_data = CCt_coo.nnz
-  cdef numpy.ndarray[double, ndim=1, mode="c"] CCt_data =  CCt_coo.data.astype(numpy.float64, order='C', copy=False)
-  cdef numpy.ndarray[int, ndim=1, mode="c"] i_indices = CCt_coo.row.astype(numpy.intc, order='C', copy=True)
-  cdef numpy.ndarray[int, ndim=1, mode="c"] j_indices = CCt_coo.col.astype(numpy.intc, order='C', copy=True)
-
-  # prepare data array of T in coo format
-  cdef numpy.ndarray[double, ndim=1, mode="c"] T_data = numpy.zeros(n_data, dtype=numpy.float64, order='C')
+  cdef numpy.ndarray[double, ndim=2, mode="c"] T = numpy.zeros(C.shape, dtype=numpy.float64, order='C')
   cdef numpy.ndarray[double, ndim=1, mode="c"] mu = numpy.zeros(C.shape[0], dtype=numpy.float64, order='C')
-  err = _mle_trev_sparse(
-        <double*> numpy.PyArray_DATA(T_data),
-        <double*> numpy.PyArray_DATA(CCt_data),
-        <int*> numpy.PyArray_DATA(i_indices),
-        <int*> numpy.PyArray_DATA(j_indices),
-        n_data,
+  err = _mle_trev_dense(
+        <double*> numpy.PyArray_DATA(T),
+        <double*> numpy.PyArray_DATA(CCt),
         <double*> numpy.PyArray_DATA(C_sum),
         CCt.shape[0],
         maxerr,
@@ -72,9 +74,7 @@ def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
   elif err == -6:
     raise Exception("Stationary distribution contains entries smaller than %s during"
                     " iteration" % eps_mu)
-  # T matrix has the same shape and positions of nonzero elements as CCt
-  T = scipy.sparse.csr_matrix((T_data, (i_indices, j_indices)), shape=CCt.shape)
-  T = msmtools.estimation.sparse.transition_matrix.correct_transition_matrix(T)
+
   if return_statdist:
       return T, mu
   else:

@@ -1,55 +1,24 @@
-language: python
-python:
- - 2.7
- - 3.4
-
+language: c 
 sudo: false
 
 env:
   global:
-    - PATH=$HOME/miniconda/bin:$HOME/miniconda/envs/ci/bin/:$PATH
-    - common_py_deps="pylint nose python-coveralls cython"
-    - doc_deps="sphinx==1.2.3"
-    - deps="scipy numpy"
+    - PATH=$HOME/miniconda/bin:$PATH
   matrix:
-    secure: "byk9bmnGvP3qDfpYvPKX4909KeS6pJQtfW+GkSsuHy4vnp++gu2IsXC/CJeCB0r7hpoRp7Z+XlOtYmJLvb585LZmGaqIs5LKs1DimJniAg5anpywOnaXodspeFcz6UWtLlIAQQS3SvP9SXvvrlIiF8IwXqWfEewtoGbpiCj3dEo="
+    - python=2.7  CONDA_PY=27  CONDA_NPY=17
+    - python=3.4  CONDA_PY=34  CONDA_NPY=18
+    - python=3.4  CONDA_PY=34  CONDA_NPY=19
+    - python=3.5  CONDA_PY=35  CONDA_NPY=19
 
 before_install:
-# before we invoke setup.py, install $common_deps with conda and let the rest
-# (currently only pystallone) be resolved by setuptools.
-- deactivate # travis python venv
 - tools/ci/travis/install_miniconda.sh
-- source activate ci
+- conda install conda-build -qy
 - conda list
-install:
-- python setup.py develop 
 
 script:
-# run tests omiting slow attributed tests.
-- nosetests --processes=2 --with-coverage --cover-inclusive --cover-package=msmtools --with-doctest --doctest-options="+NORMALIZE_WHITESPACE,+ELLIPSIS"
-# run pylint to maintain py3k compatibility
-- pylint --py3k --ignore=_version.py msmtools
+- conda build tools/conda-recipe
 
 after_success:
+- pip install coveralls
 - coveralls
-- tools/ci/travis/make_docs.sh
-
-deploy:
-  edge: true # testing bleeding edge git deployment code
-  provider: pypi
-  distributions: "sdist"
-  skip_cleanup: true
-# docs_dir is ignored by travis (despite the issue filed against this feature, maybe its not yet active?
-#  docs_dir: doc/build/html
-# TODO: security tokens are encrypted on repository base (reencrypt when moving repo to cmb organisation) 
-  user:
-    secure: "Z6h333HK9R9b4vwYzk5N54IeMJ8vmd4V+vXRTLNnOCCqVkWcocWY9HBX2s9jk3TkSJbg9eL/EVzCv7HVGY1A80czNN160Vj3z5J51WEfHk4hhC7GDSXEU1CGRdp3j+79/WeaioOstq3y4Mxy6v1Afn3k7gAY7ui+yYbSEbRIG0A="
-  password:
-    secure: "F3I26Mx0vbiIrSf/MsE8OGNV4xr82Wx4AWItHcXEq+pwBreNyCg/KVQInJ90lSh2RmvGAMmzw6rQ4EFaHYrFuAekilM/4tkRBGF/pSrEG7KSL2ysyoJIqTRncJCs1USyNYWodmXjRTQjLyJKoZufpNZ4u6Da1pVQDZqbsL0LtZo="
-  on:
-    python: 2.7 # only upload docs and sdist for py27
-    tags: true
-    # TODO: should only deploy for tagged master release as soon as stable
-    # temporary workaround for travis issue #1675
-    all_branches: true
 

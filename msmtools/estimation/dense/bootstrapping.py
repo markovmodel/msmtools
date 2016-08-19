@@ -26,7 +26,6 @@ from __future__ import division
 
 import numpy as np
 import scipy
-from scipy.stats import rv_discrete
 import random
 import six
 from six.moves import range
@@ -73,6 +72,7 @@ def bootstrap_trajectories(trajs, correlation_length):
 
     See API function for full documentation.
     """
+    from scipy.stats import rv_discrete
     # if we have just one trajectory, put it into a one-element list:
     if (isinstance(trajs[0], (int, int, float))):
         trajs = [trajs]
@@ -133,6 +133,7 @@ def bootstrap_counts(dtrajs, lagtime, corrlength=None):
 
     See API function for full documentation.
     """
+    from scipy.stats import rv_discrete
     # if we have just one trajectory, put it into a one-element list:
     if (isinstance(dtrajs[0], six.integer_types)):
         dtrajs = [dtrajs]

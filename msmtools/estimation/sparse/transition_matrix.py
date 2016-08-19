@@ -35,3 +35,28 @@ def transition_matrix_non_reversible(C):
     rowsum = numpy.array(1. / rowsum).flatten()
     norm = scipy.sparse.diags(rowsum, 0)
     return norm * C
+
+def correct_transition_matrix(T, reversible=None):
+    r"""Normalize transition matrix
+
+    Fixes a the row normalization of a transition matrix.
+    To be used with the reversible estimators to fix an almost coverged
+    transition matrix.
+
+    Parameters
+    ----------
+    T : (M, M) ndarray
+        matrix to correct
+    reversible : boolean
+        for future use
+
+    Returns
+    -------
+    (M, M) ndarray
+        corrected transition matrix
+    """
+    row_sums = T.sum(axis=1).A1
+    max_sum = numpy.max(row_sums)
+    if max_sum == 0.0:
+         max_sum = 1.0
+    return (T + scipy.sparse.diags(-row_sums+max_sum, 0)) / max_sum

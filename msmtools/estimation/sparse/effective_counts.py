@@ -28,8 +28,9 @@ import numpy as np
 import scipy.sparse
 
 from msmtools.util.statistics import statistical_inefficiency
-from msmtools.estimation.sparse.count_matrix import count_matrix_mult
+from msmtools.estimation.sparse.count_matrix import count_matrix_coo2_mult
 from msmtools.dtraj.api import number_of_states
+from scipy.sparse.csr import csr_matrix
 
 __author__ = 'noe'
 
@@ -47,13 +48,13 @@ def _split_sequences_singletraj(dtraj, nstates, lag):
         lag time
 
     """
-    sall = []
-    for i in range(nstates):
-        sall.append([])
-    for t in range(len(dtraj)-lag):
-        sall[dtraj[t]].append(dtraj[t+lag])
+    sall = [[] for _ in range(nstates)]
     res_states = []
     res_seqs = []
+
+    for t in range(len(dtraj)-lag):
+        sall[dtraj[t]].append(dtraj[t+lag])
+
     for i in range(nstates):
         if len(sall[i]) > 0:
             res_states.append(i)
@@ -96,12 +97,13 @@ def _indicator_multitraj(ss, i, j):
 
 def _transition_indexes(dtrajs, lag):
     """ for each state, returns a list of target states to which a transition is observed at lag tau """
-    C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
+    C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
     res = []
     for i in range(C.shape[0]):
         I,J = C[i].nonzero()
         res.append(J)
     return res
+
 
 def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0):
     """ Computes statistical inefficiencies of sliding-window transition counts at given lag
@@ -148,18 +150,16 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0)
     """
     # count matrix
     if C is None:
-        C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
+        C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
     # split sequences
     splitseq = _split_sequences_multitraj(dtrajs, lag)
     # compute inefficiencies
-    res = C.copy()  # copy count matrix and use its sparsity structure
-    I,J = C.nonzero()
-    for k in range(len(I)):
-        i = I[k]
-        j = J[k]
-        X = _indicator_multitraj(splitseq, i, j)
-        res[i, j] = statistical_inefficiency(X, truncate_acf=truncate_acf, mact=mact)
-
+    I, J = C.nonzero()
+    it = (statistical_inefficiency(_indicator_multitraj(splitseq, i, j),
+                                   truncate_acf=truncate_acf, mact=mact)
+          for i, j in zip(I, J))
+    data = np.fromiter(it, dtype=float, count=C.nnz)
+    res = csr_matrix((data, (I, J)), shape=C.shape)
     return res
 
 def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1.0):
@@ -182,7 +182,7 @@ def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1
 
     Parameters
     ----------
-    dtrajs : list of int-iterables
+    dtrajs : list of int-ndarrays
         discrete trajectories
     lag : int
         lag time
@@ -220,7 +220,7 @@ def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1
 
     """
     # observed C
-    C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
+    C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
     # statistical inefficiencies
     si = statistical_inefficiencies(dtrajs, lag, C=C, truncate_acf=truncate_acf, mact=mact)
     # effective element-wise counts

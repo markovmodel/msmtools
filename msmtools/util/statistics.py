@@ -28,13 +28,13 @@ from six.moves import range
 import numpy as np
 import math
 import itertools
+import warnings
 
 from msmtools.util import types
 
 
 def _confidence_interval_1d(data, alpha):
-    """
-    Computes the mean and alpha-confidence interval of the given sample set
+    """ Computes the mean and alpha-confidence interval of the given sample set
 
     Parameters
     ----------
@@ -48,9 +48,17 @@ def _confidence_interval_1d(data, alpha):
     (m, l, r) : m is the mean of the data, and (l, r) are the m-alpha/2
         and m+alpha/2 confidence interval boundaries.
     """
+    # CHECK INPUT
     if alpha < 0 or alpha > 1:
         raise ValueError('Not a meaningful confidence level: '+str(alpha))
+    # exception: if data are constant, return three times the constant and raise a warning
+    dmin = np.min(data)
+    dmax = np.max(data)
+    if dmin == dmax:
+        warnings.warn('confidence interval for constant data is not meaningful')
+        return dmin, dmin, dmin
 
+    # COMPUTE INTERVAL
     # compute mean
     m = np.mean(data)
     # sort data
@@ -158,13 +166,11 @@ def confidence_interval(data, conf=0.95):
         # return
         return lower, upper
 
+
 def _maxlength(X):
     """ Returns the maximum length of signal trajectories X """
-    N = 0
-    for x in X:
-        if len(x) > N:
-            N = len(x)
-    return N
+    return np.fromiter((map(lambda x: len(x), X)), dtype=int).max()
+
 
 def statistical_inefficiency(X, truncate_acf=True, mact=1.0):
     """ Estimates the statistical inefficiency from univariate time series X
@@ -207,7 +213,7 @@ def statistical_inefficiency(X, truncate_acf=True, mact=1.0):
     """
     # check input
     assert np.ndim(X[0]) == 1, 'Data must be 1-dimensional'
-    N = _maxlength(X)  # length
+    N = _maxlength(X)  # max length
     # mean-free data
     xflat = np.concatenate(X)
     Xmean = np.mean(xflat)
@@ -218,13 +224,15 @@ def statistical_inefficiency(X, truncate_acf=True, mact=1.0):
     corrsum = 0.0
     for lag in range(N):
         acf = 0.0
-        n = 0.0
+        n = 0
+        # cache partial sums
         for x in X0:
             Nx = len(x)  # length of this trajectory
             if (Nx > lag):  # only use trajectories that are long enough
-                acf += np.sum(x[0:Nx-lag] * x[lag:Nx])
-                n += float(Nx-lag)
-        acf /= n
+                prod = x[:Nx-lag] * x[lag:]
+                acf += np.sum(prod)
+                n += Nx-lag
+        acf /= float(n)
         if acf <= 0 and truncate_acf:  # zero autocorrelation. Exit
             break
         elif lag > 0:  # start integrating at lag 1 (effect of lag 0 is contained in the 0.5 below

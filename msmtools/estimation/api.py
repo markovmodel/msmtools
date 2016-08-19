@@ -75,7 +75,7 @@ __all__ = ['bootstrap_trajectories',
            'tmatrix_sampler',
            'estimate_rate_matrix']
 
-# append shortcuts separately in order to avoid code syntax error
+# append shortcuts separately in order to avoid complaints by syntax checker
 __all__.append('histogram')
 __all__.append('nstates')
 __all__.append('cmatrix')
@@ -124,7 +124,6 @@ def number_of_states(dtrajs, only_used=False):
 # Count matrix
 ################################################################################
 
-# DONE: Benjamin
 @shortcut('cmatrix')
 def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
     r"""Generate a count matrix from given microstate trajectory.
@@ -161,7 +160,8 @@ def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
 
     Transition counts :math:`c_{ij}(\tau)` are generated according to
 
-    .. math:: c_{ij}(\tau)=\sum_{k=0}^{\left \lfloor \frac{N}{\tau} \right \rfloor -2}\chi_{i}(X_{k\tau})\chi_{j}(X_{(k+1)\tau}).
+    .. math:: c_{ij}(\tau) = \sum_{k=0}^{\left \lfloor \frac{N}{\tau} \right \rfloor -2}
+                                        \chi_{i}(X_{k\tau})\chi_{j}(X_{(k+1)\tau}).
 
     :math:`\chi_{i}(x)` is the indicator function of :math:`i`, i.e
     :math:`\chi_{i}(x)=1` for :math:`x=i` and :math:`\chi_{i}(x)=0` for
@@ -196,7 +196,7 @@ def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
 
     >>> C_sliding = count_matrix(dtraj, tau)
 
-    The generated matrix is a sparse matrix in COO-format. For
+    The generated matrix is a sparse matrix in CSR-format. For
     convenient printing we convert it to a dense ndarray.
 
     >>> C_sliding.toarray()
@@ -215,7 +215,8 @@ def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
     # convert dtraj input, if it contains out of nested python lists to
     # a list of int ndarrays.
     dtraj = _ensure_dtraj_list(dtraj)
-    return sparse.count_matrix.count_matrix_mult(dtraj, lag, sliding=sliding, sparse=sparse_return, nstates=nstates)
+    return sparse.count_matrix.count_matrix_coo2_mult(dtraj, lag, sliding=sliding,
+                                                      sparse=sparse_return, nstates=nstates)
 
 
 @shortcut('effective_cmatrix')
@@ -273,18 +274,6 @@ def effective_count_matrix(dtrajs, lag, average='row', mact=1.0):
 
     dtrajs = _ensure_dtraj_list(dtrajs)
     return sparse.effective_counts.effective_count_matrix(dtrajs, lag, average=average, mact=mact)
-
-
-# # TODO: Implement in Python directly
-# def count_matrix_cores(dtraj, cores, lag, sliding=True):
-# r"""Generate a countmatrix for the milestoning process on the
-#     given core sets.
-#
-#     """
-#     raise NotImplementedError('Not implemented.')
-#
-# # shortcut
-# cmatrix_cores=count_matrix_cores
 
 
 ################################################################################
@@ -401,7 +390,6 @@ def bootstrap_counts(dtrajs, lagtime, corrlength=None):
 # Connectivity
 ################################################################################
 
-# DONE: Ben Implement in Python directly
 def connected_sets(C, directed=True):
     r"""Compute connected sets of microstates.
 
@@ -458,7 +446,6 @@ def connected_sets(C, directed=True):
         return sparse.connectivity.connected_sets(C, directed=directed)
 
 
-# DONE: Ben
 def largest_connected_set(C, directed=True):
     r"""Largest connected component for a directed graph with edge-weights
     given by the count matrix.
@@ -514,7 +501,6 @@ def largest_connected_set(C, directed=True):
         return sparse.connectivity.largest_connected_set(C, directed=directed)
 
 
-# DONE: Ben
 @shortcut('connected_cmatrix')
 def largest_connected_submatrix(C, directed=True, lcc=None):
     r"""Compute the count matrix on the largest connected set.
@@ -577,7 +563,6 @@ def largest_connected_submatrix(C, directed=True, lcc=None):
         return sparse.connectivity.largest_connected_submatrix(C, directed=directed, lcc=lcc)
 
 
-# DONE: Jan
 def is_connected(C, directed=True):
     """Check connectivity of the given matrix.
 
@@ -633,7 +618,6 @@ def is_connected(C, directed=True):
 # priors
 ################################################################################
 
-# DONE: Frank, Ben
 def prior_neighbor(C, alpha=0.001):
     r"""Neighbor prior for the given count matrix.
 
@@ -680,7 +664,6 @@ def prior_neighbor(C, alpha=0.001):
         return sparse.prior.prior_neighbor(C, alpha=alpha)
 
 
-# DONE: Frank, Ben
 def prior_const(C, alpha=0.001):
     r"""Constant prior for given count matrix.
 
@@ -725,7 +708,7 @@ def prior_const(C, alpha=0.001):
 
 __all__.append('prior_const')
 
-# DONE: Ben
+
 def prior_rev(C, alpha=-1.0):
     r"""Prior counts for sampling of reversible transition
     matrices.
@@ -782,9 +765,7 @@ def prior_rev(C, alpha=-1.0):
         return sparse.prior.prior_rev(C, alpha=alpha)
 
 
-    ################################################################################
-
-
+################################################################################
 # Transition matrix
 ################################################################################
 
@@ -890,9 +871,9 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
 
     >>> T_rev = transition_matrix(C, reversible=True)
     >>> T_rev
-    array([[ 0.83333333,  0.10385552,  0.06281115],
-           [ 0.35074675,  0.        ,  0.64925325],
-           [ 0.04925323,  0.15074676,  0.80000001]])
+    array([[ 0.83333333,  0.10385551,  0.06281115],
+           [ 0.35074677,  0.        ,  0.64925323],
+           [ 0.04925323,  0.15074677,  0.8       ]])
 
     Reversible estimate with given stationary vector
 
@@ -928,7 +909,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
             sparse_computation = True
     else:
         raise ValueError(('method="%s" is no valid choice. It should be one of'
-                          '"dense", "sparse" or "auto".')%method)
+                          '"dense", "sparse" or "auto".') % method)
 
     # convert input type
     if sparse_computation and not sparse_input_type:
@@ -941,7 +922,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
             if sparse_computation:
                 T = sparse.mle_trev.mle_trev(C, **kwargs)
             else:
-                T = dense.transition_matrix.estimate_transition_matrix_reversible(C, **kwargs)
+                T = dense.mle_trev.mle_trev(C, **kwargs)
         else:
             if sparse_computation:
                 # Sparse, reversible, fixed pi (currently using dense with sparse conversion)
@@ -960,15 +941,25 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
             raise NotImplementedError('nonreversible mle with fixed stationary distribution not implemented.')
 
     # convert return type
+    return_statdist = 'return_statdist' in kwargs
     if sparse_computation and not sparse_input_type:
-        return T.toarray()
+        if return_statdist:
+            if mu is not None:
+                raise NotImplementedError()
+            return T[0].toarray(), T[1]
+        else:
+            return T.toarray()
     elif not sparse_computation and sparse_input_type:
-        return csr_matrix(T)
+        if return_statdist:
+            if mu is not None:
+                raise NotImplementedError()
+            return csr_matrix(T[0]), T[1]
+        else:
+            return csr_matrix(T)
     else:
         return T
 
 
-# DONE: FN+Jan+Ben Implement in Python directly
 def log_likelihood(C, T):
     r"""Log-likelihood of the count matrix given a transition matrix.
 
@@ -1032,9 +1023,9 @@ def log_likelihood(C, T):
         # use the dense likelihood calculator for all other cases
         # if a mix of dense/sparse C/T matrices is used, then both
         # will be converted to ndarrays.
-        if (not isinstance(C, np.ndarray)):
+        if not isinstance(C, np.ndarray):
             C = np.array(C)
-        if (not isinstance(T, np.ndarray)):
+        if not isinstance(T, np.ndarray):
             T = np.array(T)
         # computation is still efficient, because we only use terms
         # for nonzero elements of T
@@ -1042,7 +1033,6 @@ def log_likelihood(C, T):
         return np.dot(C[nz], np.log(T[nz]))
 
 
-# DONE: Ben
 def tmatrix_cov(C, k=None):
     r"""Covariance tensor for non-reversible transition matrix posterior.
 
@@ -1081,7 +1071,6 @@ def tmatrix_cov(C, k=None):
     return dense.covariance.tmatrix_cov(C, row=k)
 
 
-# DONE: Ben
 def error_perturbation(C, S):
     r"""Error perturbation for given sensitivity matrix.
 
@@ -1125,10 +1114,10 @@ def error_perturbation(C, S):
 
     The sensitivity is the covariance matrix for the observable
 
-    .. math:: \text{cov}[f_{\alpha}(T),f_{\beta}(T)]=\sum_{i,j,k,l} s_{\alpha i j} \text{cov}[t_{ij}, t_{kl}] s_{\beta kl}
+    .. math:: \text{cov}[f_{\alpha}(T),f_{\beta}(T)] = \sum_{i,j,k,l} s_{\alpha i j}
+                                                       \text{cov}[t_{ij}, t_{kl}] s_{\beta kl}
 
     """
-
     if issparse(C):
         warnings.warn("Error-perturbation will be dense for sparse input")
         C = C.toarray()
@@ -1138,6 +1127,7 @@ def error_perturbation(C, S):
 def _showSparseConversionWarning():
     warnings.warn('Converting input to dense, since method is '
                   'currently only implemented for dense matrices.', UserWarning)
+
 
 def sample_tmatrix(C, nsample=1, nsteps=None, reversible=False, mu=None, T0=None, return_statdist=False):
     r"""samples transition matrices from the posterior distribution
@@ -1192,6 +1182,7 @@ def sample_tmatrix(C, nsample=1, nsteps=None, reversible=False, mu=None, T0=None
 
     sampler = tmatrix_sampler(C, reversible=reversible, mu=mu, T0=T0, nsteps=nsteps)
     return sampler.sample(nsamples=nsample, return_statdist=return_statdist)
+
 
 def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='sparse'):
     r"""Generate transition matrix sampler object.
@@ -1262,6 +1253,7 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
     sampler = TransitionMatrixSampler(C, reversible=reversible, mu=mu, P0=T0,
                                       nsteps=nsteps, prior=prior)
     return sampler
+
 
 def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
                          t_agg=None, pi=None, tol=1.0E7, K0=None):
@@ -1362,3 +1354,4 @@ def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
     from .dense.ratematrix import estimate_rate_matrix
     return estimate_rate_matrix(C, dt=dt, method=method, sparsity=sparsity,
                          t_agg=t_agg, pi=pi, tol=tol, K0=K0)
+
