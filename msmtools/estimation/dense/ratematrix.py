@@ -117,8 +117,9 @@ class _RateMatrixEstimator(object):
             assert np.allclose(np.sum(pi), 1.0)
         if t_agg is not None:
             assert t_agg > 0
+            self.t_agg = t_agg
         else:
-            t_agg = dt*C.sum()
+            self.t_agg = dt*C.sum()
 
         self.N = C.shape[0]
         self.C = C
@@ -151,7 +152,7 @@ class _ReversibleRateMatrixEstimator(_RateMatrixEstimator):
             self.bounds = [None] * len(self.I)
             self.lower_bounds = np.zeros(len(self.I))
             for i, j, n in zip(self.I, self.J, range(len(self.I))):
-                self.lower_bounds[n] = 1.0 / (t_agg * (1.0 / self.pi[i] + 1.0 / self.pi[j]))
+                self.lower_bounds[n] = 1.0 / (self.t_agg * (1.0 / self.pi[i] + 1.0 / self.pi[j]))
                 self.bounds[n] = (self.lower_bounds[n], None)
 
         # for matrix derivatives
