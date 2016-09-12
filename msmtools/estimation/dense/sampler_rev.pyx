@@ -24,13 +24,11 @@ r"""Transition matrix sampling for revrsible stochastic matrices.
 """
 from __future__ import absolute_import
 
-import numpy as np
 import ctypes
-cimport numpy as np
 
+cimport numpy as np
+import numpy as np
 from msmtools.analysis import statdist, is_connected
-# from .. sparse import transition_matrix
-# from msmtools.estimation import is_connected
 
 cdef extern from "sample_rev.h":
     void _update(double* C, double* sumC, double* X, int n, int n_step)
@@ -90,20 +88,28 @@ class SamplerRev(object):
 
         """Set up initial state of the chain"""
         if P0 is None:
+            P0_input = False
             # only do a few iterations to get close to the MLE and suppress not converged warning
             P0 = tmatrix(C, reversible=True, maxiter=100, warn_not_converged=False)
+            # use sparsity pattern of given counts
+            self.I, self.J = np.where( (self.C + self.C.T)>0.0 )
+        else:
+            P0_input = True
+            # use sparsity pattern of given initial transition matrix
+            self.I, self.J = np.where( (P0 + P0.T)>0.0 )
+
         pi0 = statdist(P0)
-        V0 = pi0[:,np.newaxis] * P0            
+        V0 = pi0[:, np.newaxis] * P0
         
-        self.V = V0   
+        self.V = V0
         # self.v = self.V.sum(axis=1)
         self.c = self.C.sum(axis=1)
-        
+
         """Check for valid input"""
         self.check_input()
 
-        """Get nonzero indices"""
-        self.I, self.J = np.where( (self.C + self.C.T)>0.0 )
+        """Check sparsity pattern"""
+        self.check_sparsity_pattern(P0 if P0_input else None)
 
         """Init Vsampler"""
         self.vsampler = VSampler()
@@ -117,8 +123,14 @@ class SamplerRev(object):
             raise ValueError("P0 contains negative entries")
         if not np.allclose(self.V, self.V.T):
             raise ValueError("P0 is not reversible")
+
+    def check_sparsity_pattern(self, P0=None):
         """Check sparsity pattern"""
-        iC, jC = np.where( (self.C+self.C.T)>0 )
+        if P0 is None:
+            iC, jC = np.where( (self.C+self.C.T)>0 )
+        else:
+            iC, jC = np.where( (P0+P0.T)>0 )
+
         iV, jV = np.where( (self.V+self.V.T)>0 )
         if not np.array_equal(iC, iV):
             raise ValueError('Sparsity patterns of C and X are different.')
@@ -137,10 +149,3 @@ class SamplerRev(object):
             return P, pi
         else:
             return P    
-
-
-
-
-
-
-
