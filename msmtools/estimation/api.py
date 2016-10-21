@@ -1340,9 +1340,9 @@ def rate_matrix(C, dt=1.0, method='KL', sparsity=None,
     Example
     -------
     >>> import numpy as np
-    >>> from msmtools.estimation import estimate_rate_matrix
+    >>> from msmtools.estimation import rate_matrix
     >>> C = np.array([[100,1],[50,50]])
-    >>> estimate_rate_matrix(C)
+    >>> rate_matrix(C)
     array([[-0.01384753,  0.01384753],
            [ 0.69930032, -0.69930032]])
 
