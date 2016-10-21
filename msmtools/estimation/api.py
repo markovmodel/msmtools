@@ -73,7 +73,7 @@ __all__ = ['bootstrap_trajectories',
            'sample_tmatrix',
            'tmatrix_cov',
            'tmatrix_sampler',
-           'estimate_rate_matrix']
+           'rate_matrix']
 
 # append shortcuts separately in order to avoid complaints by syntax checker
 __all__.append('histogram')
@@ -1255,9 +1255,9 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
     return sampler
 
 
-def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
-                         t_agg=None, pi=None, tol=1.0E7, K0=None,
-                         maxiter=100000, on_error='raise'):
+def rate_matrix(C, dt=1.0, method='KL', sparsity=None,
+                t_agg=None, pi=None, tol=1.0E7, K0=None,
+                maxiter=100000, on_error='raise'):
     r"""Estimate a reversible rate matrix from a count matrix.
 
     Parameters
