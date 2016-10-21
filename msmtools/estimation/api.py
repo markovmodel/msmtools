@@ -72,7 +72,8 @@ __all__ = ['bootstrap_trajectories',
            'log_likelihood',
            'sample_tmatrix',
            'tmatrix_cov',
-           'tmatrix_sampler']
+           'tmatrix_sampler',
+           'rate_matrix']
 
 # append shortcuts separately in order to avoid complaints by syntax checker
 __all__.append('histogram')
@@ -1252,3 +1253,113 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
     sampler = TransitionMatrixSampler(C, reversible=reversible, mu=mu, P0=T0,
                                       nsteps=nsteps, prior=prior)
     return sampler
+
+
+def rate_matrix(C, dt=1.0, method='KL', sparsity=None,
+                t_agg=None, pi=None, tol=1.0E7, K0=None,
+                maxiter=100000, on_error='raise'):
+    r"""Estimate a reversible rate matrix from a count matrix.
+
+    Parameters
+    ----------
+    C : (N,N) ndarray
+        count matrix at a lag time dt
+    dt : float, optional, default=1.0
+        lag time that was used to estimate C
+    method : {'KL', 'CVE', 'pseudo', 'truncated_log'}
+        Method to use for estimation of the rate matrix.
+
+        * 'pseudo' selects the pseudo-generator. A reversible transition
+          matrix T is estimated and (T-Id)/dt is retruned as the rate matrix.
+
+        * 'truncated_log' selects the truncated logarithm [3]_. A
+          reversible transition matrix T is estimated and max(logm(T*T)/(2dt),0)
+          is returned as the rate matrix. logm is the matrix logarithm and
+          the maximum is taken element-wise.
+
+        * 'CVE' selects the algorithm of Crommelin and Vanden-Eijnden [1]_.
+          It consists of minimizing the following objective function:
+
+          .. math:: f(K)=\sum_{ij}\left(\sum_{kl} U_{ik}^{-1}K_{kl}U_{lj}-L_{ij}\right)^2 \left|\Lambda_{i}\Lambda_{j}\right|
+
+          where :math:`\Lambda_i` are the eigenvalues of :math:`T` and :math:`U`
+          is the matrix of its (right) eigenvectors; :math:`L_{ij}=\delta_{ij}\frac{1}{\tau}\log\left|\Lambda_i\right|`.
+          :math:`T` is computed from C using the reversible maximum likelihood
+          estimator.
+
+        * 'KL' selects the algorihtm of Kalbfleisch and Lawless [2]_.
+          It consists of maximizing the following log-likelihood:
+
+          .. math:: f(K)=\log L=\sum_{ij}C_{ij}\log(e^{K\Delta t})_{ij}
+
+          where :math:`C_{ij}` are the transition counts at a lag-time :math:`\Delta t`.
+          Here :math:`e` is the matrix exponential and the logarithm is taken
+          element-wise.
+
+    sparsity : (N,N) ndarray or None, optional, default=None
+        If sparsity is None, a fully occupied rate matrix will be estimated.
+        Alternatively, with the methods 'CVE' and 'KL' a ndarray of the
+        same shape as C can be supplied. If sparsity[i,j]=0 and sparsity[j,i]=0
+        the rate matrix elements :math:`K_{ij}` and :math:`K_{ji}` will be
+        constrained to zero.
+    t_agg : float, optional
+        the aggregated simulation time;
+        by default this is the total number of transition counts times
+        the lag time (no sliding window counting). This value is used
+        to compute the lower bound on the transition rate (that are not zero).
+        If sparsity is None, this value is ignored.
+    pi : (N) ndarray, optional
+        the stationary vector of the desired rate matrix K.
+        If no pi is given, the function takes the stationary vector
+        of the MLE reversible T matrix that is computed from C.
+    tol : float, optional, default = 1.0E7
+        Tolerance of the quasi-Newton algorithm that is used to minimize
+        the objective function. This is passed as the `factr` parameter to
+        `scipy.optimize.fmin_l_bfgs_b`.
+        Typical values for factr are: 1e12 for low accuracy; 1e7
+        for moderate accuracy; 10.0 for extremely high accuracy.
+    maxiter : int, optional, default = 100000
+        Minimization of the objective function will do at most this number
+        of steps.
+    on_error : string, optional, default = 'raise'
+        What to do then an error happend. When 'raise' is given, raise
+        an exception. When 'warn' is given, produce a (Python) warning.
+
+    Retruns
+    -------
+    K : (N,N) ndarray
+        the optimal rate matrix
+
+    Notes
+    -----
+    In this implementation the algorithm of Crommelin and Vanden-Eijnden
+    (CVE) is initialized with the pseudo-generator estimate. The
+    algorithm of Kalbfleisch and Lawless (KL) is initialized using the
+    CVE result.
+
+    Example
+    -------
+    >>> import numpy as np
+    >>> from msmtools.estimation import rate_matrix
+    >>> C = np.array([[100,1],[50,50]])
+    >>> rate_matrix(C)
+    array([[-0.01384753,  0.01384753],
+           [ 0.69930032, -0.69930032]])
+
+    References
+    ----------
+    .. [1] D. Crommelin and E. Vanden-Eijnden. Data-based inference of
+        generators for markov jump processes using convex optimization.
+        Multiscale. Model. Sim., 7(4):1751-1778, 2009.
+    .. [2] J. D. Kalbfleisch and J. F. Lawless. The analysis of panel
+        data under a markov assumption. J. Am. Stat. Assoc.,
+        80(392):863-871, 1985.
+    .. [3] E. B. Davies. Embeddable Markov Matrices. Electron. J. Probab.
+        15:1474, 2010.
+    """
+    
+    from .dense.ratematrix import estimate_rate_matrix
+    return estimate_rate_matrix(C, dt=dt, method=method, sparsity=sparsity,
+                         t_agg=t_agg, pi=pi, tol=tol, K0=K0,
+                         maxiter=maxiter, on_error=on_error)
+
