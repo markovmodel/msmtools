@@ -68,12 +68,12 @@ __all__ = ['bootstrap_trajectories',
            'prior_const',
            'prior_neighbor',
            'prior_rev',
-           'transition_matrix',
-           'log_likelihood',
+           'rate_matrix',
            'sample_tmatrix',
            'tmatrix_cov',
            'tmatrix_sampler',
-           'rate_matrix']
+           'transition_matrix'
+           ]
 
 # append shortcuts separately in order to avoid complaints by syntax checker
 __all__.append('histogram')
@@ -784,10 +784,12 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
         space of stochastic matrices.
     mu : array_like
         The stationary distribution of the MLE transition matrix.
-    method : string (one of 'auto', 'dense' and 'sparse', optional, default='auto')
-        Select which implementation to use for the estimation. 'dense' always
-        selects the dense implementation, 'sparse' always selects the sparse
-        one. 'auto' selectes the most efficient implementation according to
+    method : str
+        Select which implementation to use for the estimation.
+        One of 'auto', 'dense' and 'sparse', optional, default='auto'.
+        'dense' always selects the dense implementation, 'sparse' always selects
+        the sparse one.
+        'auto' selects the most efficient implementation according to
         the sparsity structure of the matrix: if the occupation of the C
         matrix is less then one third, select sparse. Else select dense.
         The type of the T matrix returned always matches the type of the
@@ -808,6 +810,11 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
         stationary probabilities (:math:`x_i = \sum_k x_{ik}`). The relative stationary probability changes
         :math:`e_i = (x_i^{(1)} - x_i^{(2)})/(x_i^{(1)} + x_i^{(2)})` are used in order to track changes in small
         probabilities. The Euclidean norm of the change vector, :math:`|e_i|_2`, is compared to maxerr.
+    rev_pisym : bool, default=False
+        Fast computation of reversible transition matrix by normalizing
+        :math:`x_{ij} = \pi_i p_{ij} + \pi_j p_{ji}`. :math:`p_{ij}` is the direct
+        (nonreversible) estimate and :math:`pi_i` is its stationary distribution.
+        This estimator is asympotically unbiased but not maximum likelihood.
     return_statdist : bool, default=False
         Optional parameter with reversible = True.
         If set to true, the stationary distribution is also returned
@@ -850,6 +857,9 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
     .. [2] Bowman, G R, K A Beauchamp, G Boxer and V S Pande. 2009.
         Progress and challenges in the automated construction of Markov state models for full protein systems.
         J. Chem. Phys. 131: 124101
+    .. [3] Trendelkamp-Schroer, B, H Wu, F Paul and F. Noe. 2015
+        Estimation and uncertainty of reversible Markov models.
+        J. Chem. Phys. 143: 174101
 
     Examples
     --------
@@ -918,11 +928,19 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
         C = C.toarray()
 
     if reversible:
+        rev_pisym = kwargs.pop('rev_pisym', False)
+
         if mu is None:
             if sparse_computation:
-                T = sparse.mle_trev.mle_trev(C, **kwargs)
+                if rev_pisym:
+                    T = sparse.transition_matrix.transition_matrix_reversible_pisym(C)
+                else:
+                    T = sparse.mle_trev.mle_trev(C, **kwargs)
             else:
-                T = dense.mle_trev.mle_trev(C, **kwargs)
+                if rev_pisym:
+                    T = dense.transition_matrix.transition_matrix_reversible_pisym(C)
+                else:
+                    T = dense.mle_trev.mle_trev(C, **kwargs)
         else:
             if sparse_computation:
                 # Sparse, reversible, fixed pi (currently using dense with sparse conversion)
