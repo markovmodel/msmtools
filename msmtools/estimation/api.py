@@ -1284,14 +1284,14 @@ def rate_matrix(C, dt=1.0, method='KL', sparsity=None,
         count matrix at a lag time dt
     dt : float, optional, default=1.0
         lag time that was used to estimate C
-    method : {'KL', 'CVE', 'pseudo', 'truncated_log'}
+    method : str, one of {'KL', 'CVE', 'pseudo', 'truncated_log'}
         Method to use for estimation of the rate matrix.
 
         * 'pseudo' selects the pseudo-generator. A reversible transition
-          matrix T is estimated and (T-Id)/dt is retruned as the rate matrix.
+          matrix T is estimated and :math:`(T-Id)/d` is returned as the rate matrix.
 
         * 'truncated_log' selects the truncated logarithm [3]_. A
-          reversible transition matrix T is estimated and max(logm(T*T)/(2dt),0)
+          reversible transition matrix T is estimated and :math:`max(logm(T*T)/(2dt),0)`
           is returned as the rate matrix. logm is the matrix logarithm and
           the maximum is taken element-wise.
 
@@ -1343,7 +1343,7 @@ def rate_matrix(C, dt=1.0, method='KL', sparsity=None,
         What to do then an error happend. When 'raise' is given, raise
         an exception. When 'warn' is given, produce a (Python) warning.
 
-    Retruns
+    Returns
     -------
     K : (N,N) ndarray
         the optimal rate matrix
