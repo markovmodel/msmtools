@@ -131,7 +131,7 @@ class MarkovChainSampler(object):
 
     def trajectories(self, M, N, start=None, stop=None):
         """
-        Generates M trajectories, each of length N, starting from state s
+        Generates M trajectories, each of length N, starting from state(s) s
 
         Parameters
         ----------
@@ -139,14 +139,22 @@ class MarkovChainSampler(object):
             number of trajectories
         N : int
             trajectory length
-        start : int, optional, default = None
-            starting state. If not given, will sample from the stationary distribution of P
+        start : int or ndarray, optional, default = None
+            starting state(s). If not given, will sample from the stationary distribution of P.
+            If type(start) == int, the same starting state will be used to generate the M trajectories,
+            if type(start) == ndarray, the i-th starting state from that array is taken trajectory generation.
         stop : int or int-array-like, optional, default = None
             stopping set. If given, the trajectory will be stopped before N steps
             once a state of the stop set is reached
 
         """
-        trajs = [self.trajectory(N, start=start, stop=stop) for _ in range(M)]
+
+        #ToDo If start is an ndarray, ensure that it is 1 dimensional and len(start) >= M
+
+        if start is not None and type(start) == np.ndarray:
+            trajs = [self.trajectory(N, start=start[i], stop=stop) for i in range(M)]
+        else:
+            trajs = [self.trajectory(N, start=start, stop=stop) for _ in range(M)]
         return trajs
 
 
