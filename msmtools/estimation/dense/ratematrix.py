@@ -153,6 +153,7 @@ class _ReversibleRateMatrixEstimator(_RateMatrixEstimator):
             self.lower_bounds = np.zeros(len(self.I))
             for i, j, n in zip(self.I, self.J, range(len(self.I))):
                 self.lower_bounds[n] = 1.0 / (self.t_agg * (1.0 / self.pi[i] + 1.0 / self.pi[j]))
+                assert self.lower_bounds[n] > 0.0
                 self.bounds[n] = (self.lower_bounds[n], None)
 
         # for matrix derivatives
@@ -222,10 +223,10 @@ class PseudoGeneratorEstimator(_RateMatrixEstimator):
         from msmtools.estimation import transition_matrix
         from msmtools.analysis import stationary_distribution
         if self.pi is None:
-            self.T = transition_matrix(self.C, maxiter=maxiter, reversible=True)
+            self.T = transition_matrix(self.C, reversible=True)
             self.pi = stationary_distribution(self.T)
         else:
-            self.T = transition_matrix(self.C, maxiter=maxiter, reversible=True, mu=self.pi)
+            self.T = transition_matrix(self.C, reversible=True, mu=self.pi)
 
         self.K = (self.T - np.eye(self.N)) / self.dt
         return self.K
@@ -239,10 +240,10 @@ class TruncatedLogarithmEstimator(_RateMatrixEstimator):
         from msmtools.estimation import transition_matrix
         from msmtools.analysis import stationary_distribution
         if self.pi is None:
-            self.T = transition_matrix(self.C, maxiter=maxiter, reversible=True)
+            self.T = transition_matrix(self.C, reversible=True)
             self.pi = stationary_distribution(self.T)
         else:
-            self.T = transition_matrix(self.C, maxiter=maxiter, reversible=True, mu=self.pi)
+            self.T = transition_matrix(self.C, reversible=True, mu=self.pi)
 
         self.K = np.maximum(np.array(sp.linalg.logm(np.dot(self.T, self.T))/(2.0*self.dt)), 0)
         return self.K
@@ -340,6 +341,7 @@ class CrommelinVandenEijndenEstimator(_ReversibleRateMatrixEstimator):
         return f
 
     def function_and_gradient(self, x):
+        assert np.all(x>=self.lower_bounds) # debug
         if self.sparsity is None:
             assert np.all(x >= 0)
         else:
@@ -459,6 +461,7 @@ class KalbfleischLawlessEstimator(_ReversibleRateMatrixEstimator):
         return -f
 
     def function_and_gradient(self, x):
+        assert np.all(x>=self.lower_bounds) # debug
         if self.sparsity is None:
             assert np.all(x >= 0)
         else:
@@ -477,8 +480,11 @@ class KalbfleischLawlessEstimator(_ReversibleRateMatrixEstimator):
         T = sp.linalg.expm(self.dt * K)
         T[self.zero_C] = 1.0  # set unused elements to dummy to avoid division by 0
         # check T!=0 for C!=0
-        if np.any(np.abs(T[self.nonzero_C]) <= 1E-15):
-            warnings.warn('Warning: during iteration T_ij became very small while C(tau)_ij > 0.', NotConnectedWarning)
+        if np.any(np.abs(T[self.nonzero_C]) <= 1E-20):
+            warnings.warn('Warning: during iteration T_ij became very small while C(tau)_ij > 0. Regularizing T.', NotConnectedWarning)
+            for i,j in zip(*self.nonzero_C):
+                if T[i,j] <= 1E-20:
+                    T[i,j] = 1E-20
 
         f = ksum(self.C * np.log(T))
 
@@ -613,16 +619,28 @@ def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
         return e_tlog.K
 
     # remaining algorithms are based on each other in the order pseudo->CVE->KL
-    e_pseudo = PseudoGeneratorEstimator(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
-    e_pseudo.run()
-    if method == 'pseudo':
-        return e_pseudo.K
+    if method == 'pseudo' or method == 'CVE' or K0 is None or pi is None:
+        e_pseudo = PseudoGeneratorEstimator(C, dt=dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
+        e_pseudo.run()
+        if pi is None:
+            pi = e_pseudo.pi
+        if method == 'pseudo':
+            return e_pseudo.K
 
-    e_CVE = CrommelinVandenEijndenEstimator(e_pseudo.T, e_pseudo.K, e_pseudo.pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
-    e_CVE.run()
-    if method == 'CVE':
-        return e_CVE.K
+    if method == 'CVE' or K0 is None:
+        if K0 is not None:
+            K_init = K0
+        else:
+            K_init = e_pseudo.K
+        e_CVE = CrommelinVandenEijndenEstimator(e_pseudo.T, K_init, pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
+        e_CVE.run()
+        if method == 'CVE':
+            return e_CVE.K
 
-    e_KL = KalbfleischLawlessEstimator(C, e_CVE.K, e_CVE.pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
+    if K0 is not None:
+        K_init = K0
+    else:
+        K_init = e_CVE.K
+    e_KL = KalbfleischLawlessEstimator(C, K_init, pi, dt=dt, sparsity=sparsity, t_agg=t_agg, tol=tol, maxiter=maxiter, on_error=on_error)
     e_KL.run()
     return e_KL.K
