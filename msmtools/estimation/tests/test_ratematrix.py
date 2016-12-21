@@ -57,6 +57,22 @@ class TestEstimators(unittest.TestCase):
         K_est = msmtools.estimation.rate_matrix(self.C, dt=self.tau, tol=100.0)
         assert np.allclose(self.K, K_est, rtol=5.0E-3, atol=1.0E-3)
 
+    def test_api_with_connectivity_with_pi_with_guess(self):
+        K_est = msmtools.estimation.rate_matrix(self.C, dt=self.tau, sparsity=self.C0, t_agg=self.t_agg*self.tau, pi=self.pi, tol=100.0, K0=self.K)
+        assert np.allclose(self.K, K_est, rtol=5.0E-3)
+
+    def test_api_without_connectivity_with_pi_with_guess(self):
+        K_est = msmtools.estimation.rate_matrix(self.C, dt=self.tau, pi=self.pi, tol=100.0, K0=self.K)
+        assert np.allclose(self.K, K_est, rtol=5.0E-3, atol=1.0E-3)
+
+    def test_api_with_connectivity_without_pi_with_guess(self):
+        K_est = msmtools.estimation.rate_matrix(self.C, dt=self.tau, sparsity=self.C0, t_agg=self.t_agg*self.tau, tol=100.0, K0=self.K)
+        assert np.allclose(self.K, K_est, rtol=5.0E-3)
+
+    def test_api_without_connectivity_without_pi_with_guess(self):
+        K_est = msmtools.estimation.rate_matrix(self.C, dt=self.tau, tol=100.0, K0=self.K)
+        assert np.allclose(self.K, K_est, rtol=5.0E-3, atol=1.0E-3)
+
 
 if __name__ == '__main__':
     unittest.main()
