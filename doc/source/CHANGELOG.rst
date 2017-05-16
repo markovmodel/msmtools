@@ -1,6 +1,18 @@
 Changelog
 =========
 
+1.2.1 (5-16-17)
+---------------
+
+**New features**
+
+- Added fast reversible transition matrix estimation. #94
+
+**Fixes:**
+
+- Fixed some minor issues in rate matrix estimation. #97 #98  
+
+
 1.2 (10-24-16)
 --------------
 
