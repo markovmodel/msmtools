@@ -29,12 +29,32 @@ static int isnan(double var)
 }
 #endif
 
+#if __STDC_VERSION__ >= 199901L
+#warning "Modern C"
+
+#elif defined(__GNUC__)
+#define restrict __restrict__
+
+#elif defined(_MSC_VER)
+#define restrict __restrict__
+#warning "MS C compiler"
+
+#elif defined(__clang__)
+#warning "Clang compiler"
+#define restrict __restrict
+
+#else
+#define restrict
+#warning "Unknown compiler"
+
+#endif
+
 #undef NDEBUG
 #include <assert.h>
 #include "../../util/sigint_handler.h"
 #include "_mle_trev.h"
 
-static double relative_error(const int n, const double *const a, const double *const b)
+static double relative_error(const int n, const double *restrict const a, const double *restrict const b)
 {
   double sum;
   double d;
@@ -53,10 +73,10 @@ static double relative_error(const int n, const double *const a, const double *c
 #define CCt(i,j) (CCt[(i)*dim+(j)])
 #define T(i,j) (T[(i)*dim+(j)])
 
-int _mle_trev_dense(double * const T, const double * const CCt, 
-                    const double * const sum_C, const int dim,
+int _mle_trev_dense(double * const restrict T, const double * const restrict CCt, 
+                    const double * const restrict sum_C, const int dim,
                     const double maxerr, const int maxiter,
-                    double * const mu,
+                    double * const restrict mu,
                     double eps_mu)
 {
   double rel_err, x_norm, value;
@@ -104,7 +124,7 @@ int _mle_trev_dense(double * const T, const double * const CCt,
     /* normalize sum_x */
     for(i=0; i<dim; i++) {
       sum_x_new[i] /= x_norm;
-      if (sum_x_new[i] <= eps_mu) { err = 6; goto error; }
+      // if (sum_x_new[i] <= eps_mu) { err = 6; goto error; }
     }
 
     iteration += 1;
