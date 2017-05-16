@@ -1,50 +1,27 @@
-
-import subprocess
 import os
 import sys
-import shutil
-import re
 
-src_dir = os.getenv('SRC_DIR')
+import pytest
 
 test_pkg = 'msmtools'
 cover_pkg = test_pkg
 
-# matplotlib headless backend
-with open('matplotlibrc', 'w') as fh:
-    fh.write('backend: Agg')
+junit_xml = os.path.join(os.getenv('CIRCLE_TEST_REPORTS', '.'), 'junit.xml')
 
 
-def coverage_report():
-    fn = '.coverage'
-    assert os.path.exists(fn)
-    build_dir = os.getenv('TRAVIS_BUILD_DIR')
-    dest = os.path.join(build_dir, fn)
-    print( "copying coverage report to", dest)
-    shutil.copy(fn, dest)
-    assert os.path.exists(dest)
-
-    # fix paths in .coverage file
-    with open(dest, 'r') as fh:
-        data = fh.read()
-    match= '"/home/travis/miniconda/envs/_test/lib/python.+?/site-packages/.+?/({test_pkg}/.+?)"'.format(test_pkg=test_pkg)
-    repl = '"%s/\\1"' % build_dir
-    data = re.sub(match, repl, data)
-    os.unlink(dest)
-    with open(dest, 'w+') as fh:
-       fh.write(data)
-
-nose_run = "nosetests {test_pkg} -vv" \
-           " --with-coverage --cover-inclusive --cover-package={cover_pkg}" \
-           " --with-doctest --doctest-options=+NORMALIZE_WHITESPACE,+ELLIPSIS" \
-           .format(test_pkg=test_pkg, cover_pkg=cover_pkg).split(' ')
-
-res = subprocess.call(nose_run)
-
-
-# move .coverage file to git clone on Travis CI
-if os.getenv('TRAVIS', False):
-   coverage_report()
+pytest_args = ("-v --pyargs {test_pkg} "
+               "--cov={cover_pkg} "
+               "--cov-report=xml:{dest_report} "
+               #"--doctest-modules "
+               "--junit-xml={junit_xml} "
+               "-c {pytest_cfg}"
+               .format(test_pkg=test_pkg, cover_pkg=cover_pkg,
+                       junit_xml=junit_xml, pytest_cfg='setup.cfg',
+                       dest_report=os.path.join(os.path.expanduser('~/'), 'coverage.xml'),
+                       )
+               .split(' '))
+print("args:", pytest_args)
+res = pytest.main(pytest_args)
 
 sys.exit(res)
 
