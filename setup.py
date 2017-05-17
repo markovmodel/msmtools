@@ -219,6 +219,7 @@ metadata = dict(
                       'scipy>=0.11',
                       'six',
                       'decorator',
+                      'joblib',
                       ],
     zip_safe=False,
 )
