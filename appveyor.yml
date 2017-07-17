@@ -1,8 +1,4 @@
 environment:
-  myuser:
-    secure: BNlXevLtF9e2aPA67RkRlg==
-  mypass:
-    secure: UVcVBPUuJmH6Dargd2JZHitYoqNavVuBWWeJ8fvarLfSahvVhAAlXsnO2roo/75L
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
@@ -10,37 +6,35 @@ environment:
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\tools\\ci\\appveyor\\run_with_env.cmd"
 
   matrix:
-    - PYTHON: "C:\\Python27_32"
-      PYTHON_VERSION: "2.7.8"
-      PYTHON_ARCH: "32"
-    
-    - PYTHON: "C:\\Python27_64"
-      PYTHON_VERSION: "2.7.8"
-      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Miniconda3"
+      CONDA_PY: "27"
+      CONDA_NUMPY: "18"
 
-    - PYTHON: "C:\\Python34_32"
-      PYTHON_VERSION: "3.4.1"
-      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Miniconda3-x64"
+      CONDA_PY: "27"
+      CONDA_NUMPY: "18"
 
-    - PYTHON: "C:\\Python34_64"
-      PYTHON_VERSION: "3.4.1"
-      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Miniconda3"
+      CONDA_PY: "34"
+      CONDA_NUMPY: "112"
+
+    - PYTHON: "C:\\Miniconda3-x64"
+      CONDA_PY: "34"
+      CONDA_NUMPY: "112"
+
+    - PYTHON: "C:\\Miniconda3-x64"
+      CONDA_PY: "36"
+      CONDA_NUMPY: "113"
+
+    - PYTHON: "C:\\Miniconda3"
+      CONDA_PY: "36"
+      CONDA_NUMPY: "113"
 
 install:
-  - "powershell ./tools/ci/appveyor/install.ps1"
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%;"
+  - conda config --add channels conda-forge
+  - conda install conda-build
 
-  # Check that we have the expected version and architecture for Python
-  - "python --version"
-  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
-  # install dependencies
-  - conda install -q --yes -c https://conda.binstar.org/omnia scipy numpy cython nose
+build:
   # Build the compiled extension and run the project tests
-  - "%CMD_IN_ENV% python setup.py develop"
-
-build: false # Not a C# project, build stuff at the test step instead.
-
-test_script:
-  # run testsuite and upload test results to AppVeyor; return exit code of testsuite
-  - "powershell ./tools/ci/appveyor/runTestsuite.ps1"
-
+  - "%CMD_IN_ENV% conda build tools/conda-recipe"
