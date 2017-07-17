@@ -410,8 +410,8 @@ def pcca(P, m):
         closed_components_enum.append(i * np.ones((component.size), dtype=int))
 
     # flatten
-    closed_components_ev_flat = np.array(closed_components_ev).flatten()
-    closed_components_enum_flat = np.array(closed_components_enum).flatten()
+    closed_components_ev_flat = np.hstack(closed_components_ev)
+    closed_components_enum_flat = np.hstack(closed_components_enum)
     # which components should be clustered?
     component_indexes = closed_components_enum_flat[np.argsort(closed_components_ev_flat)][0:m]
     # cluster each component
