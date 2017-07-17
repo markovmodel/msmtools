@@ -1,11 +1,12 @@
 package:
-  name: msmtools 
-  version: !!str dev 
+  name: msmtools
+  version: !!str dev
 
 source:
-  path: ../.. 
+  path: ../..
 
 build:
+  script: python -B setup.py install --single-version-externally-managed --record record.txt
   preserve_egg_dir: True
 
 requirements:
@@ -13,32 +14,24 @@ requirements:
     - python
     - setuptools
     - cython >=0.20
-    - numpy >=1.7
-    - scipy 
-    - nose
-    - six
-    - decorator
-    - nomkl
+    - numpy x.x
 
   run:
     - python
     - setuptools
-    - numpy >=1.7
+    - numpy x.x
     - scipy
     - six
     - decorator
-    - nomkl
+
 test:
-  commands:
-  # enable the reporting of Python warning
-    - pip install pytest-warnings
   source_files:
     - setup.cfg
   requires:
-    - pytest 
+    - pytest
     - pytest-cov
 
 about:
   home: http://github.com/markovmodel/msmtools
-  license: LGPLv3+ 
+  license: LGPLv3+
   summary: "MSMTools"
