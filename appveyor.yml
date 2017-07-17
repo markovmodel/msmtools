@@ -34,7 +34,8 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%;"
   - conda config --add channels conda-forge
   - conda install conda-build
-
-build:
   # Build the compiled extension and run the project tests
   - "%CMD_IN_ENV% conda build tools/conda-recipe"
+
+build: false
+
