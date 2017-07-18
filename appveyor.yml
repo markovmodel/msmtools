@@ -35,7 +35,7 @@ install:
   - conda config --add channels conda-forge
   - conda install conda-build -yq
   # Build the compiled extension and run the project tests
-  - "%CMD_IN_ENV% conda build tools/conda-recipe"
+  - conda build tools/conda-recipe"
 
 build: false
 
