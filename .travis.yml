@@ -1,4 +1,4 @@
-language: c 
+language: c
 sudo: false
 
 env:
@@ -6,14 +6,15 @@ env:
     - PATH=$HOME/miniconda/bin:$PATH
   matrix:
     - python=2.7  CONDA_PY=27  CONDA_NPY=17
-    - python=3.4  CONDA_PY=34  CONDA_NPY=18
-    - python=3.4  CONDA_PY=34  CONDA_NPY=19
-    - python=3.5  CONDA_PY=35  CONDA_NPY=19
+    - python=3.5  CONDA_PY=35  CONDA_NPY=110
+    - python=3.5  CONDA_PY=35  CONDA_NPY=111
+    - python=3.6  CONDA_PY=36  CONDA_NPY=112
+    - python=3.6  CONDA_PY=36  CONDA_NPY=113
 
 before_install:
 - tools/ci/travis/install_miniconda.sh
 - conda install conda-build -qy
-- conda list
+- conda config --add channels conda-forge
 
 script:
 - conda build tools/conda-recipe
@@ -21,4 +22,3 @@ script:
 after_success:
 - pip install coveralls
 - coveralls
-

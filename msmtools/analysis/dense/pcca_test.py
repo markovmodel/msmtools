@@ -185,5 +185,25 @@ class TestPCCA(unittest.TestCase):
         # test mass conservation
         assert np.allclose(p.coarse_grained_transition_matrix.sum(axis=1), np.ones(m))
 
+    def test_multiple_components(self):
+        L = np.array([[0, 1, 1, 0, 0, 0, 0],
+                      [1, 0, 1, 0, 0, 0, 0],
+                      [1, 1, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 1, 1, 1],
+                      [0, 0, 0, 1, 0, 1, 0],
+                      [0, 0, 0, 1, 1, 0, 1],
+                      [0, 0, 0, 1, 0, 1, 0]])
+
+        transition_matrix = L / np.sum(L, 1).reshape(-1, 1)
+        chi = pcca(transition_matrix, 2)
+        expected = np.array([[0., 1.],
+                             [0., 1.],
+                             [0., 1.],
+                             [1., 0.],
+                             [1., 0.],
+                             [1., 0.],
+                             [1., 0.]])
+        np.testing.assert_equal(chi, expected)
+
 if __name__ == "__main__":
     unittest.main()
