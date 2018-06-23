@@ -45,7 +45,8 @@ Topic :: Scientific/Engineering :: Mathematics
 Topic :: Scientific/Engineering :: Physics
 
 """
-from setup_util import getSetuptoolsError, lazy_cythonize
+from setup_util import getSetuptoolsError, lazy_cythonize, detect_openmp
+
 try:
     from setuptools import setup, Extension, find_packages
     from pkg_resources import VersionConflict
@@ -76,10 +77,6 @@ def extensions():
         USE_CYTHON = True
     except ImportError:
         warnings.warn('Cython not found. Using pre cythonized files.')
-
-    # setup OpenMP support
-    from setup_util import detect_openmp
-    openmp_enabled, needs_gomp = detect_openmp()
 
     from numpy import get_include as _np_inc
     np_inc = _np_inc()
@@ -160,16 +157,6 @@ def extensions():
                 new_src.append(s.replace('.pyx', '.c'))
             e.sources = new_src
 
-    if openmp_enabled:
-        warnings.warn('enabled openmp')
-        omp_compiler_args = ['-fopenmp']
-        omp_libraries = ['-lgomp'] if needs_gomp else []
-        omp_defines = [('USE_OPENMP', None)]
-        for e in exts:
-            e.extra_compile_args += omp_compiler_args
-            e.extra_link_args += omp_libraries
-            e.define_macros += omp_defines
-
     return exts
 
 
@@ -194,6 +181,28 @@ def get_cmdclass():
             return sdist_class.run(self)
 
     versioneer_cmds['sdist'] = sdist
+
+    from setuptools.command.build_ext import build_ext
+    class BuildExt(build_ext):
+        def build_extensions(self):
+            # setup OpenMP support
+            openmp_enabled, additional_libs = detect_openmp(self.compiler)
+            if openmp_enabled:
+                warnings.warn('enabled openmp')
+                if sys.platform == 'darwin':
+                    omp_compiler_args = ['-fopenmp=libiomp5']
+                else:
+                    omp_compiler_args = ['-fopenmp']
+                omp_libraries = ['-l%s' % l for l in additional_libs]
+                omp_defines = [('USE_OPENMP', None)]
+                for ext in self.extensions:
+                    ext.extra_compile_args += omp_compiler_args
+                    ext.extra_link_args += omp_libraries
+                    ext.define_macros += omp_defines
+
+            build_ext.build_extensions(self)
+
+    versioneer_cmds['build_ext'] = BuildExt
     return versioneer_cmds
 
 

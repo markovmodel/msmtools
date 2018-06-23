@@ -19,54 +19,93 @@
 """
 utility functions for python setup
 """
-import tempfile
+import contextlib
 import os
-import sys
 import shutil
-from distutils.ccompiler import new_compiler
+import sys
+import tempfile
+
+import setuptools
+
+
+@contextlib.contextmanager
+def TemporaryDirectory():
+    n = tempfile.mkdtemp()
+    yield n
+    shutil.rmtree(n)
+
+
+@contextlib.contextmanager
+def stdchannel_redirected(stdchannel, dest_filename, fake=False):
+    """
+    A context manager to temporarily redirect stdout or stderr
+
+    e.g.:
+
+    with stdchannel_redirected(sys.stderr, os.devnull):
+        if compiler.has_function('clock_gettime', libraries=['rt']):
+            libraries.append('rt')
+    """
+    if fake:
+        yield
+        return
+    oldstdchannel = dest_file = None
+    try:
+        oldstdchannel = os.dup(stdchannel.fileno())
+        dest_file = open(dest_filename, 'w')
+        os.dup2(dest_file.fileno(), stdchannel.fileno())
+
+        yield
+    finally:
+        if oldstdchannel is not None:
+            os.dup2(oldstdchannel, stdchannel.fileno())
+        if dest_file is not None:
+            dest_file.close()
 
 # From http://stackoverflow.com/questions/
 # 7018879/disabling-output-when-compiling-with-distutils
-def hasfunction(cc, funcname):
-    tmpdir = tempfile.mkdtemp(prefix='hasfunction-')
-    devnull = oldstderr = None
-    try:
+def has_function(compiler, funcname, headers):
+    if not isinstance(headers, (tuple, list)):
+        headers = [headers]
+    with TemporaryDirectory() as tmpdir, stdchannel_redirected(sys.stderr, os.devnull), \
+             stdchannel_redirected(sys.stdout, os.devnull):
         try:
             fname = os.path.join(tmpdir, 'funcname.c')
             f = open(fname, 'w')
+            for h in headers:
+                f.write('#include <%s>\n' % h)
             f.write('int main(void) {\n')
             f.write(' %s();\n' % funcname)
-            f.write('}\n')
+            f.write('return 0;}')
             f.close()
-            # Redirect stderr to /dev/null to hide any error messages
-            # from the compiler.
-            # This will have to be changed if we ever have to check
-            # for a function on Windows.
-            devnull = open('/dev/null', 'w')
-            oldstderr = os.dup(sys.stderr.fileno())
-            os.dup2(devnull.fileno(), sys.stderr.fileno())
-            objects = cc.compile([fname], output_dir=tmpdir)
-            cc.link_executable(objects, os.path.join(tmpdir, "a.out"))
+            objects = compiler.compile([fname], output_dir=tmpdir)
+            compiler.link_executable(objects, os.path.join(tmpdir, 'a.out'))
+        except (setuptools.distutils.errors.CompileError, setuptools.distutils.errors.LinkError):
+            return False
         except:
+            import traceback
+            traceback.print_last()
             return False
         return True
-    finally:
-        if oldstderr is not None:
-            os.dup2(oldstderr, sys.stderr.fileno())
-        if devnull is not None:
-            devnull.close()
-        shutil.rmtree(tmpdir)
 
-
-def detect_openmp():
-    compiler = new_compiler()
-    hasopenmp = hasfunction(compiler, 'omp_get_num_threads')
-    needs_gomp = hasopenmp
-    if not hasopenmp:
-        compiler.add_library('gomp')
-        hasopenmp = hasfunction(compiler, 'omp_get_num_threads')
-        needs_gomp = hasopenmp
-    return hasopenmp, needs_gomp
+def detect_openmp(compiler):
+    from distutils.log import debug
+    from copy import deepcopy
+    compiler = deepcopy(compiler) # avoid side-effects
+    has_openmp = has_function(compiler, 'omp_get_num_threads', headers='omp.h')
+    debug('[OpenMP] compiler %s has builtin support', compiler)
+    additional_libs = []
+    if not has_openmp:
+        debug('[OpenMP] compiler %s needs library support', compiler)
+        if sys.platform == 'darwin':
+            compiler.add_library('iomp5')
+        elif sys.platform == 'linux':
+            compiler.add_library('gomp')
+        has_openmp = has_function(compiler, 'omp_get_num_threads', headers='omp.h')
+        if has_openmp:
+            additional_libs = [compiler.libraries[-1]]
+            debug('[OpenMP] added library %s', additional_libs)
+    return has_openmp, additional_libs
 
 
 def getSetuptoolsError():
