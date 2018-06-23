@@ -6,20 +6,22 @@ source:
   path: ../..
 
 build:
-  script: python -B setup.py install --single-version-externally-managed --record record.txt
-  preserve_egg_dir: True
+  script: python setup.py install --single-version-externally-managed --record record.txt
 
 requirements:
   build:
+    - {{ compiler('c') }}
+  host:
     - python
     - setuptools
     - cython >=0.20
-    - numpy x.x
+    - numpy 1.8.*  # [not (win and (py35 or py36))]
+    - numpy 1.8.*  # [win and py35]
+    - numpy 1.11.*  # [win and py36]
 
   run:
-    - python
     - setuptools
-    - numpy x.x
+    - numpy
     - scipy
     - six
     - decorator
