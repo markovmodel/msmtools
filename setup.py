@@ -254,12 +254,5 @@ else:
     # only require numpy and extensions in case of building/installing
     metadata['ext_modules'] = lazy_cythonize(extensions)
 
-    # add argparse to runtime deps if python version is 2.6
-    if sys.version_info[:2] == (2, 6):
-        metadata['install_requires'] += ['argparse']
-
-    # include ipython notebooks. Will be installed directly in site-packages
-    #metadata['packages'] += ['pyemma-ipython']
-    #metadata['include_package_data'] = True
-
-setup(**metadata)
+if __name__ == '__main__':
+    setup(**metadata)
