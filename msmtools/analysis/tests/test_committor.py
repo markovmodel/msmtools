@@ -29,7 +29,7 @@ from msmtools.util.numeric import assert_allclose
 
 from msmtools.analysis import committor
 
-from birth_death_chain import BirthDeathChain
+from .birth_death_chain import BirthDeathChain
 from six.moves import range
 
 
