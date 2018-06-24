@@ -120,8 +120,8 @@ def factor_aug(z, DPhival, G, A):
 
     """Since we expect symmetric DPhival, we need to change A"""
     sign = np.zeros(N)
-    sign[0:N/2] = 1.0
-    sign[N/2:] = -1.0
+    sign[0:N//2] = 1.0
+    sign[N//2:] = -1.0
     T = diags(sign, 0)
 
     A_new = A.dot(T)
@@ -170,8 +170,8 @@ def solve_factorized_aug(z, Fval, LU, G, A):
 
     """Prepare iterative solve via MINRES"""
     sign = np.zeros(N+P)
-    sign[0:N/2] = 1.0
-    sign[N/2:] = -1.0
+    sign[0:N//2] = 1.0
+    sign[N//2:] = -1.0
     T = diags(sign, 0)        
    
     """Change rhs"""
