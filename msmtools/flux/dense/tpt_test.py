@@ -26,6 +26,7 @@ from __future__ import division
 
 import unittest
 import numpy as np
+from msmtools.util.birth_death_chain import BirthDeathChain
 from msmtools.util.numeric import assert_allclose
 
 from . import tpt
@@ -46,7 +47,6 @@ class TestTPT(unittest.TestCase):
         self.a = 1
         self.b = 8
 
-        from analysis.dense.birth_death_chain import BirthDeathChain
         self.bdc = BirthDeathChain(q, p)
         self.T = self.bdc.transition_matrix()
 

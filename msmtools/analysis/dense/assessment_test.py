@@ -24,9 +24,9 @@ Created on 07.10.2013
 from __future__ import absolute_import
 import unittest
 import numpy as np
+from msmtools.util.birth_death_chain import BirthDeathChain
 
 from . import assessment
-from .committor_test import BirthDeathChain
 
 
 def create_rate_matrix():

@@ -26,6 +26,7 @@ from __future__ import division
 
 import unittest
 import numpy as np
+from msmtools.util.birth_death_chain import BirthDeathChain
 from msmtools.util.numeric import assert_allclose
 
 from . import committor
@@ -40,11 +41,7 @@ class TestCommittor(unittest.TestCase):
         p[4] = 0.01
         q[6] = 0.1
 
-        from analysis.dense.birth_death_chain import BirthDeathChain
         self.bdc = BirthDeathChain(q, p)
-
-    def tearDown(self):
-        pass
 
     def test_forward_comittor(self):
         P = self.bdc.transition_matrix()
