@@ -21,7 +21,7 @@ r"""Unit test for the reversible mle newton module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-# from __future__ import absolute_import
+from __future__ import absolute_import
 
 import unittest
 
@@ -32,7 +32,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 from msmtools.util.numeric import assert_allclose
-from mle_rev import solve_mle_rev
+from .mle_rev import solve_mle_rev
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
 

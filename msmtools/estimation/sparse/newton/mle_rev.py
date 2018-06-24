@@ -21,7 +21,7 @@ r"""
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import numpy as np
 import scipy.sparse
@@ -224,8 +224,8 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
     step_type = " "
 
     if show_progress:
-        print "%s %s %s %s %s %s %s" %("iter", "gap", "dual", "primal",
-                                       "min", "max", "step")
+        print("%s %s %s %s %s %s %s" %("iter", "gap", "dual", "primal",
+                                       "min", "max", "step"))
     """MAIN LOOP"""
     z = z0
     x = z0[0:N]
@@ -244,9 +244,9 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
         if show_progress:
             l=z[N+P:N+P+M]
             s=z[N+P+M:]
-            print "%i %.6e %.6e %.6e %.6e %.6e %s" %(n+1, mu, dual, prim,
+            print("%i %.6e %.6e %.6e %.6e %.6e %s" %(n+1, mu, dual, prim,
                                                      np.min(l*s), np.max(l*s),
-                                                     step_type)
+                                                     step_type))
         """Attempt fast step"""
         beta_new = (1.0 + GAMMA_BAR**(t+1)) * beta
         gamma_new = GAMMA_MIN + GAMMA_BAR**(t+1)*(GAMMA_MAX - GAMMA_MIN)
@@ -294,9 +294,9 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
     if show_progress:
             l=z[N+P:N+P+M]
             s=z[N+P+M:]
-            print "%i %.6e %.6e %.6e %.6e %.6e %s" %(n+1, mu, dual, prim,
+            print("%i %.6e %.6e %.6e %.6e %.6e %s" %(n+1, mu, dual, prim,
                                                      np.min(l*s), np.max(l*s),
-                                                     step_type)
+                                                     step_type))
     if full_output:
         return z[0:N], info
     else:
