@@ -32,7 +32,7 @@ from msmtools.util.numeric import assert_allclose
 from scipy.linalg import eig, eigvals
 
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
-from .birth_death_chain import BirthDeathChain
+from msmtools.util.birth_death_chain import BirthDeathChain
 
 from msmtools.analysis import stationary_distribution, eigenvalues, eigenvectors
 from msmtools.analysis import rdl_decomposition, timescales
