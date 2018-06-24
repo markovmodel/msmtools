@@ -29,10 +29,12 @@ import scipy.sparse.csgraph as csgraph
 from scipy.sparse import coo_matrix
 from six.moves import range
 
+
 class PathwayError(Exception):
     """Exception for failed attempt to find pathway in a given flux
     network"""
     pass
+
 
 def find_bottleneck(F, A, B):
     r"""Find dynamic bottleneck of flux network.
@@ -52,6 +54,8 @@ def find_bottleneck(F, A, B):
     The edge corresponding to the dynamic bottleneck
 
     """
+    if F.nnz == 0:
+        raise PathwayError('no more pathways left: Flux matrix does not contain any positive entries')
     F = F.tocoo()
     n = F.shape[0]
 
@@ -162,6 +166,8 @@ def pathway(F, A, B):
         The dominant reaction-pathway
 
     """
+    if F.nnz == 0:
+        raise PathwayError('no more pathways left: Flux matrix does not contain any positive entries')
     b1, b2, F = find_bottleneck(F, A, B)
     if np.any(A == b1):
         wL = [b1, ]
@@ -175,8 +181,8 @@ def pathway(F, A, B):
         wR = [b2, ]
     elif np.any(A == b2):
         raise PathwayError(("Roles of vertices b1 and b2 are switched."
-                          "This should never happen for a correct flux network"
-                          "obtained from a reversible transition meatrix."))
+                            "This should never happen for a correct flux network"
+                            "obtained from a reversible transition meatrix."))
     else:
         wR = pathway(F, [b2, ], B)
     return wL + wR
@@ -234,6 +240,7 @@ def remove_path(F, path):
         F[i, j] -= c
     return F
 
+
 def pathways(F, A, B, fraction=1.0, maxiter=1000, tol=1e-14):
     r"""Decompose flux network into dominant reaction paths.
 
@@ -252,7 +259,7 @@ def pathways(F, A, B, fraction=1.0, maxiter=1000, tol=1e-14):
     tol : float, optional
         Floating point tolerance. The iteration is terminated once the
         relative capacity of all discovered path matches the desired
-        fraction within floating point tolerance        
+        fraction within floating point tolerance
 
     Returns
     -------

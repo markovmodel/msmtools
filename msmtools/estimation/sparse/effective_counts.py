@@ -28,7 +28,7 @@ import numpy as np
 import scipy.sparse
 
 from msmtools.util.statistics import statistical_inefficiency
-from msmtools.estimation.sparse.count_matrix import count_matrix_mult
+from msmtools.estimation.sparse.count_matrix import count_matrix_coo2_mult
 from msmtools.dtraj.api import number_of_states
 from scipy.sparse.csr import csr_matrix
 
@@ -97,7 +97,7 @@ def _indicator_multitraj(ss, i, j):
 
 def _transition_indexes(dtrajs, lag):
     """ for each state, returns a list of target states to which a transition is observed at lag tau """
-    C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
+    C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
     res = []
     for i in range(C.shape[0]):
         I,J = C[i].nonzero()
@@ -150,7 +150,7 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0)
     """
     # count matrix
     if C is None:
-        C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
+        C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
     # split sequences
     splitseq = _split_sequences_multitraj(dtrajs, lag)
     # compute inefficiencies
@@ -182,7 +182,7 @@ def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1
 
     Parameters
     ----------
-    dtrajs : list of int-iterables
+    dtrajs : list of int-ndarrays
         discrete trajectories
     lag : int
         lag time
@@ -220,7 +220,7 @@ def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1
 
     """
     # observed C
-    C = count_matrix_mult(dtrajs, lag, sliding=True, sparse=True)
+    C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
     # statistical inefficiencies
     si = statistical_inefficiencies(dtrajs, lag, C=C, truncate_acf=truncate_acf, mact=mact)
     # effective element-wise counts

@@ -141,6 +141,14 @@ def extensions():
                   include_dirs=[np_inc,
                                 ])
 
+    kahandot_module = \
+        Extension('msmtools.util.kahandot',
+                  sources = ['msmtools/util/kahandot_src/kahandot.pyx',
+                             'msmtools/util/kahandot_src/_kahandot.c'],
+                  depends = ['msmtools/util/kahandot_src/_kahandot.h'],
+                  include_dirs=[np_inc,
+                                ])
+
     exts += [mle_trev_given_pi_dense_module,
              mle_trev_given_pi_sparse_module,
              mle_trev_dense_module,
@@ -148,7 +156,8 @@ def extensions():
              mle_trev_sparse_newton_module,
              sampler_rev,
              sampler_revpi,
-             ]
+             kahandot_module
+            ]
 
     if USE_CYTHON: # if we have cython available now, cythonize module
         exts = cythonize(exts)

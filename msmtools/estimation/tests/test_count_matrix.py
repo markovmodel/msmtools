@@ -32,32 +32,87 @@ from msmtools.estimation import count_matrix
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
 
 
-class TestCountMatrixMult(unittest.TestCase):
-    def setUp(self):
-        """Small test cases"""
-        self.S1 = np.array([0, 0, 0, 1, 1, 1])
-        self.S2 = np.array([0, 0, 0, 1, 1, 1])
 
-        self.B1_sliding = np.array([[4, 2], [0, 4]])
-        self.B2_sliding = np.array([[2, 4], [0, 2]])
+class TestCountMatrixtMult(unittest.TestCase):
+    def setUp(self):
+        M = 10
+        self.M = M
+
+        """Small test cases"""
+        dtraj_short = np.array([0, 0, 1, 0, 1, 1, 0])
+        self.dtrajs_short = [dtraj_short for i in range(M)]
+
+        self.B1_lag = M * np.array([[1, 2], [2, 1]])
+        self.B2_lag = M * np.array([[0, 1], [1, 1]])
+        self.B3_lag = M * np.array([[2, 0], [0, 0]])
+
+        self.B1_sliding = M * np.array([[1, 2], [2, 1]])
+        self.B2_sliding = M * np.array([[1, 2], [1, 1]])
+        self.B3_sliding = M * np.array([[2, 1], [0, 1]])
+
+        """Larger test cases"""
+        dtraj_long = np.loadtxt(testpath + 'dtraj.dat').astype(int)
+        self.dtrajs_long = [dtraj_long for i in range(M)]
+        self.C1_lag = M * np.loadtxt(testpath + 'C_1_lag.dat')
+        self.C7_lag = M * np.loadtxt(testpath + 'C_7_lag.dat')
+        self.C13_lag = M * np.loadtxt(testpath + 'C_13_lag.dat')
+
+        self.C1_sliding = M * np.loadtxt(testpath + 'C_1_sliding.dat')
+        self.C7_sliding = M * np.loadtxt(testpath + 'C_7_sliding.dat')
+        self.C13_sliding = M * np.loadtxt(testpath + 'C_13_sliding.dat')
 
     def tearDown(self):
         pass
 
-    def test_count_matrix(self):
+    def test_count_matrix_mult(self):
         """Small test cases"""
-        C = count_matrix([self.S1, self.S2], 1, sliding=True).toarray()
+        C = count_matrix(self.dtrajs_short, 1, sliding=False).toarray()
+        assert_allclose(C, self.B1_lag)
+
+        C = count_matrix(self.dtrajs_short, 2, sliding=False).toarray()
+        assert_allclose(C, self.B2_lag)
+
+        C = count_matrix(self.dtrajs_short, 3, sliding=False).toarray()
+        assert_allclose(C, self.B3_lag)
+
+        C = count_matrix(self.dtrajs_short, 1).toarray()
         assert_allclose(C, self.B1_sliding)
 
-        C = count_matrix([self.S1, self.S2], 2, sliding=True).toarray()
+        C = count_matrix(self.dtrajs_short, 2).toarray()
         assert_allclose(C, self.B2_sliding)
 
+        C = count_matrix(self.dtrajs_short, 3).toarray()
+        assert_allclose(C, self.B3_sliding)
+
+        """Larger test cases"""
+        C = count_matrix(self.dtrajs_long, 1, sliding=False).toarray()
+        assert_allclose(C, self.C1_lag)
+
+        C = count_matrix(self.dtrajs_long, 7, sliding=False).toarray()
+        assert_allclose(C, self.C7_lag)
+
+        C = count_matrix(self.dtrajs_long, 13, sliding=False).toarray()
+        assert_allclose(C, self.C13_lag)
+
+        C = count_matrix(self.dtrajs_long, 1).toarray()
+        assert_allclose(C, self.C1_sliding)
+
+        C = count_matrix(self.dtrajs_long, 7).toarray()
+        assert_allclose(C, self.C7_sliding)
+
+        C = count_matrix(self.dtrajs_long, 13).toarray()
+        assert_allclose(C, self.C13_sliding)
+
+        """Test raising of value error if lag greater than trajectory length"""
+        with self.assertRaises(ValueError):
+            C = count_matrix(self.dtrajs_short, 10)
+
     def test_nstates_keyword(self):
-        C = count_matrix([self.S1, self.S2], 1, sliding=True, nstates=10)
+        C = count_matrix(self.dtrajs_short, 1, sliding=False, nstates=10)
         self.assertTrue(C.shape == (10, 10))
 
         with self.assertRaises(ValueError):
-            C = count_matrix([self.S1, self.S2], 1, sliding=True, nstates=1)
+            C = count_matrix(self.dtrajs_short, 1, sliding=False, nstates=1)
 
 
 class TestCountMatrix(unittest.TestCase):

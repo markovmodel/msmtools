@@ -53,6 +53,7 @@ Estimation
 
    transition_matrix - Estimate transition matrix
    tmatrix
+   rate_matrix
    log_likelihood
    tmatrix_cov
    error_perturbation

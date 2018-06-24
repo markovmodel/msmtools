@@ -27,10 +27,10 @@ import scipy.sparse
 
 from msmtools.estimation import transition_matrix, tmatrix_cov, error_perturbation
 
-"""Unit tests for the transition_matrix module"""
+"""Various unit tests for the transition_matrix module"""
 
 
-class TestTransitionMatrixNonReversibleSparse(unittest.TestCase):
+class TestTransitionMatrixSparse(unittest.TestCase):
     def setUp(self):
         """Small test cases"""
         self.C1 = scipy.sparse.csr_matrix([[1, 3], [3, 1]])
@@ -57,18 +57,70 @@ class TestTransitionMatrixNonReversibleSparse(unittest.TestCase):
         assert_allclose(T, self.T2.toarray())
 
         """Reversible"""
-        T = transition_matrix(self.C1, rversible=True).toarray()
+        T = transition_matrix(self.C1, reversible=True).toarray()
         assert_allclose(T, self.T1.toarray())
 
         T = transition_matrix(self.C2, reversible=True).toarray()
         assert_allclose(T, self.T2.toarray())
 
         """Reversible with fixed pi"""
-        T = transition_matrix(self.C1, rversible=True, pi=self.pi1).toarray()
+        T = transition_matrix(self.C1, reversible=True, mu=self.pi1).toarray()
         assert_allclose(T, self.T1.toarray())
 
-        T = transition_matrix(self.C2, rversible=True, pi=self.pi2).toarray()
+        T = transition_matrix(self.C2, reversible=True, mu=self.pi2).toarray()
         assert_allclose(T, self.T2.toarray())
+
+
+class TestTransitionRevPiSym(unittest.TestCase):
+    def setUp(self):
+        """Small test cases"""
+        self.C = np.array([[1, 2, 0],
+                           [1, 1, 1],
+                           [1, 5, 10]])
+        self.Cs = scipy.sparse.csr_matrix(self.C)
+
+        self.P_nonrev = np.array([[ 0.33333333,  0.66666667,  0.        ],
+                                  [ 0.33333333,  0.33333333,  0.33333333],
+                                  [ 0.0625    ,  0.3125    ,  0.625     ]])
+        self.P_rev_ml = np.array([[ 0.33333333,  0.60290585,  0.06376081],
+                                  [ 0.39709415,  0.33333333,  0.26957252],
+                                  [ 0.05054485,  0.32445515,  0.625     ]])
+        self.P_rev_pirev = np.array([[ 0.33333333,  0.61904762,  0.04761905],
+                                     [ 0.36111111,  0.33333333,  0.30555556],
+                                     [ 0.03125   ,  0.34375   ,  0.625     ]])
+
+    def tearDown(self):
+        pass
+
+    def test_dense(self):
+        # non-reversible
+        P = transition_matrix(self.C)
+        assert_allclose(P, self.P_nonrev)
+
+        # reversible maximum likelihood
+        P = transition_matrix(self.C, reversible=True)
+        assert_allclose(P, self.P_rev_ml)
+        P = transition_matrix(self.C, reversible=True, rev_pisym=False)
+        assert_allclose(P, self.P_rev_ml)
+
+        # reversible, pi symmetrization
+        P = transition_matrix(self.C, reversible=True, rev_pisym=True)
+        assert_allclose(P, self.P_rev_pirev)
+
+    def test_sparse(self):
+        # non-reversible
+        P = transition_matrix(self.Cs).toarray()
+        assert_allclose(P, self.P_nonrev)
+
+        # reversible maximum likelihood
+        P = transition_matrix(self.Cs, reversible=True).toarray()
+        assert_allclose(P, self.P_rev_ml)
+        P = transition_matrix(self.Cs, reversible=True, rev_pisym=False).toarray()
+        assert_allclose(P, self.P_rev_ml)
+
+        # reversible, pi symmetrization
+        P = transition_matrix(self.Cs, reversible=True, rev_pisym=True).toarray()
+        assert_allclose(P, self.P_rev_pirev)
 
 
 class TestCovariance(unittest.TestCase):
