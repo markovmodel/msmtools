@@ -286,7 +286,7 @@ def eigenvector_sensitivity(T, k, j, right=True):
     # orthogonal to rEV
     matA = numpy.concatenate((matA, [rEV]))
 
-    phi = numpy.linalg.lstsq(numpy.transpose(matA), vecA)
+    phi = numpy.linalg.lstsq(numpy.transpose(matA), vecA, rcond=-1)
 
     phi = numpy.delete(phi[0], -1)
 
@@ -335,7 +335,7 @@ def stationary_distribution_sensitivity(T, j):
     # normalize s.t. sum is one using rEV which is constant
     matA = numpy.concatenate((matA, [lEV]))
 
-    phi = numpy.linalg.lstsq(numpy.transpose(matA), vecA)
+    phi = numpy.linalg.lstsq(numpy.transpose(matA), vecA, rcond=-1)
     phi = numpy.delete(phi[0], -1)
 
     sensitivity = -numpy.outer(rEV, phi) + numpy.dot(phi, rEV) * numpy.outer(rEV, lEV)
