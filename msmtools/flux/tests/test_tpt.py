@@ -25,6 +25,7 @@ from __future__ import absolute_import
 
 import unittest
 import numpy as np
+from msmtools.util.birth_death_chain import BirthDeathChain
 from msmtools.util.numeric import assert_allclose
 
 from scipy.sparse import csr_matrix
@@ -50,9 +51,7 @@ class TestTPTDense(unittest.TestCase):
         self.a = 1
         self.b = 8
 
-        import msmtools.analysis.dense.birth_death_chain
-
-        self.bdc = msmtools.analysis.dense.birth_death_chain.BirthDeathChain(q, p)
+        self.bdc = BirthDeathChain(q, p)
         self.T = self.bdc.transition_matrix()
 
         """Compute mu, qminus, qplus in constructor"""
@@ -142,9 +141,7 @@ class TestTptFunctionsDense(unittest.TestCase):
         self.a = 1
         self.b = 8
 
-        import msmtools.analysis.dense.birth_death_chain
-
-        self.bdc = msmtools.analysis.dense.birth_death_chain.BirthDeathChain(q, p)
+        self.bdc = BirthDeathChain(q, p)
         self.T = self.bdc.transition_matrix()
 
         self.mu = self.bdc.stationary_distribution()
@@ -192,9 +189,7 @@ class TestTPTSparse(unittest.TestCase):
         self.a = 1
         self.b = 8
 
-        import msmtools.analysis.sparse.birth_death_chain
-
-        self.bdc = msmtools.analysis.sparse.birth_death_chain.BirthDeathChain(q, p)
+        self.bdc = BirthDeathChain(q, p)
         T_dense = self.bdc.transition_matrix()
         T_sparse = csr_matrix(T_dense)
         self.T = T_sparse
@@ -286,9 +281,7 @@ class TestTptFunctionsSparse(unittest.TestCase):
         self.a = 1
         self.b = 8
 
-        import msmtools.analysis.sparse.birth_death_chain
-
-        self.bdc = msmtools.analysis.sparse.birth_death_chain.BirthDeathChain(q, p)
+        self.bdc = BirthDeathChain(q, p)
         T_dense = self.bdc.transition_matrix()
         T_sparse = csr_matrix(T_dense)
         self.T = T_sparse

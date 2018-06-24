@@ -31,7 +31,7 @@ import numpy as np
 import scipy.sparse
 from scipy.sparse.dia import dia_matrix
 
-from birth_death_chain import BirthDeathChain
+from msmtools.util.birth_death_chain import BirthDeathChain
 
 from msmtools.analysis import is_rate_matrix, is_reversible, is_transition_matrix, is_connected
 from six.moves import range
@@ -118,7 +118,7 @@ def random_nonempty_rows(M, N, density=0.01):
     if N_el < M:
         raise ValueError("Density too small to obtain nonempty rows")
     else:
-        rows = np.zeros(N_el)
+        rows = np.zeros(N_el, dtype=int)
         rows[0:M] = np.arange(M)
         rows[M:N_el] = np.random.random_integers(0, M - 1, size=(N_el - M,))
         cols = np.random.random_integers(0, N - 1, size=(N_el,))

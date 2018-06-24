@@ -55,7 +55,7 @@ def random_nonempty_rows(M, N, density=0.01):
     if N_el < M:
         raise ValueError("Density too small to obtain nonempty rows")
     else:
-        rows = np.zeros(N_el)
+        rows = np.zeros(N_el, dtype=int)
         rows[0:M] = np.arange(M)
         rows[M:N_el] = np.random.random_integers(0, M - 1, size=(N_el - M,))
         cols = np.random.random_integers(0, N - 1, size=(N_el,))

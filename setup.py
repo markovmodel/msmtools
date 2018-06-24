@@ -45,7 +45,8 @@ Topic :: Scientific/Engineering :: Mathematics
 Topic :: Scientific/Engineering :: Physics
 
 """
-from setup_util import getSetuptoolsError, lazy_cythonize
+from setup_util import getSetuptoolsError, lazy_cythonize, detect_openmp
+
 try:
     from setuptools import setup, Extension, find_packages
     from pkg_resources import VersionConflict
@@ -76,10 +77,6 @@ def extensions():
         USE_CYTHON = True
     except ImportError:
         warnings.warn('Cython not found. Using pre cythonized files.')
-
-    # setup OpenMP support
-    from setup_util import detect_openmp
-    openmp_enabled, needs_gomp = detect_openmp()
 
     from numpy import get_include as _np_inc
     np_inc = _np_inc()
@@ -114,22 +111,21 @@ def extensions():
                   depends=['msmtools/util/sigint_handler.h'],
                   include_dirs=[np_inc,
                                 ])
+    rnglib_src = ['msmtools/estimation/dense/rnglib/rnglib.c',
+                  'msmtools/estimation/dense/rnglib/ranlib.c']
 
     sampler_rev = \
         Extension('msmtools.estimation.dense.sampler_rev',
                   sources=['msmtools/estimation/dense/sampler_rev.pyx',
                            'msmtools/estimation/dense/sample_rev.c',
-                           'msmtools/estimation/dense/_rnglib.c',
-                           'msmtools/estimation/dense/_ranlib.c'],
+                           ] + rnglib_src,
                   include_dirs=[np_inc,
                                 ])
-
     sampler_revpi = \
         Extension('msmtools.estimation.dense.sampler_revpi',
                   sources=['msmtools/estimation/dense/sampler_revpi.pyx',
                            'msmtools/estimation/dense/sample_revpi.c',
-                           'msmtools/estimation/dense/_rnglib.c',
-                           'msmtools/estimation/dense/_ranlib.c'],
+                          ] + rnglib_src,
                   include_dirs=[np_inc,
                                 ])
 
@@ -160,16 +156,6 @@ def extensions():
                 new_src.append(s.replace('.pyx', '.c'))
             e.sources = new_src
 
-    if openmp_enabled:
-        warnings.warn('enabled openmp')
-        omp_compiler_args = ['-fopenmp']
-        omp_libraries = ['-lgomp'] if needs_gomp else []
-        omp_defines = [('USE_OPENMP', None)]
-        for e in exts:
-            e.extra_compile_args += omp_compiler_args
-            e.extra_link_args += omp_libraries
-            e.define_macros += omp_defines
-
     return exts
 
 
@@ -194,6 +180,28 @@ def get_cmdclass():
             return sdist_class.run(self)
 
     versioneer_cmds['sdist'] = sdist
+
+    from setuptools.command.build_ext import build_ext
+    class BuildExt(build_ext):
+        def build_extensions(self):
+            # setup OpenMP support
+            openmp_enabled, additional_libs = detect_openmp(self.compiler)
+            if openmp_enabled:
+                warnings.warn('enabled openmp')
+                if sys.platform == 'darwin':
+                    omp_compiler_args = ['-fopenmp=libiomp5']
+                else:
+                    omp_compiler_args = ['-fopenmp']
+                omp_libraries = ['-l%s' % l for l in additional_libs]
+                omp_defines = [('USE_OPENMP', None)]
+                for ext in self.extensions:
+                    ext.extra_compile_args += omp_compiler_args
+                    ext.extra_link_args += omp_libraries
+                    ext.define_macros += omp_defines
+
+            build_ext.build_extensions(self)
+
+    versioneer_cmds['build_ext'] = BuildExt
     return versioneer_cmds
 
 
@@ -226,11 +234,11 @@ metadata = dict(
 # include testing data
 metadata['package_data'] = {'msmtools.util.matrix': ['testfiles/*'],
                             'msmtools.analysis': ['tests/*'],
-                            'msmtools.estimation': ['test/testfiles/*'],
-                            'msmtools.estimation.sparse': ['testfiles/*'],
-                            'msmtools.estimation.dense': ['testfiles/*'],
+                            'msmtools.dtraj.tests': ['testfiles/*'],
+                            'msmtools.estimation.tests': ['testfiles/*'],
                             }
 
+metadata['include_package_data'] = True
 
 # this is only metadata and not used by setuptools
 metadata['requires'] = ['numpy', 'scipy']
@@ -254,12 +262,5 @@ else:
     # only require numpy and extensions in case of building/installing
     metadata['ext_modules'] = lazy_cythonize(extensions)
 
-    # add argparse to runtime deps if python version is 2.6
-    if sys.version_info[:2] == (2, 6):
-        metadata['install_requires'] += ['argparse']
-
-    # include ipython notebooks. Will be installed directly in site-packages
-    #metadata['packages'] += ['pyemma-ipython']
-    #metadata['include_package_data'] = True
-
-setup(**metadata)
+if __name__ == '__main__':
+    setup(**metadata)

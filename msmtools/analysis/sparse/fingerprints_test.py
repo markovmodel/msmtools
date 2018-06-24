@@ -26,11 +26,10 @@ from __future__ import absolute_import
 import unittest
 
 import numpy as np
+from msmtools.util.birth_death_chain import BirthDeathChain
 from msmtools.util.numeric import assert_allclose
 
 from .decomposition import rdl_decomposition, timescales
-
-from .committor_test import BirthDeathChain
 
 from .fingerprints import fingerprint_correlation, fingerprint_relaxation, fingerprint
 from .fingerprints import correlation_decomp, correlation_matvec, correlation
