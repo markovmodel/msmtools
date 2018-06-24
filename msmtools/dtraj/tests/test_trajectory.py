@@ -40,9 +40,6 @@ class TestReadDiscreteTrajectory(unittest.TestCase):
     def setUp(self):
         self.filename = testpath + 'dtraj.dat'
 
-    def tearDown(self):
-        pass
-
     def test_read_discrete_trajectory(self):
         dtraj_np = np.loadtxt(self.filename, dtype=int)
         dtraj = read_discrete_trajectory(self.filename)
@@ -67,9 +64,6 @@ class TestLoadDiscreteTrajectory(unittest.TestCase):
     def setUp(self):
         self.filename = testpath + 'dtraj.npy'
 
-    def tearDown(self):
-        pass
-
     def test_load_discrete_trajectory(self):
         dtraj_n = np.load(self.filename)
         dtraj = load_discrete_trajectory(self.filename)
@@ -78,7 +72,8 @@ class TestLoadDiscreteTrajectory(unittest.TestCase):
 
 class TestSaveDiscreteTrajectory(unittest.TestCase):
     def setUp(self):
-        self.filename = testpath + 'out_dtraj.npy'
+        import tempfile
+        self.filename = tempfile.mktemp(suffix='.npy')
         self.dtraj = np.arange(10000)
 
     def tearDown(self):
