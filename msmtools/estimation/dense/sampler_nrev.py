@@ -27,12 +27,14 @@ import numpy as np
 
 from msmtools.analysis import stationary_distribution
 
+
 def update_nrev(alpha, P):
     N = alpha.shape[0]
     for i in range(N):
         P[i, :] = np.random.dirichlet(alpha[i, :])   
 
-class SamplerNonRev:
+
+class SamplerNonRev(object):
     def __init__(self, Z):
         """Posterior counts"""
         self.Z = 1.0*Z

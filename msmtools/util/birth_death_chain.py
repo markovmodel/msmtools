@@ -30,7 +30,7 @@ from scipy.sparse import diags
 from six.moves import range
 
 
-class BirthDeathChain():
+class BirthDeathChain(object):
     """Birth and death chain class
 
     A general birth and death chain on a d-dimensional state space

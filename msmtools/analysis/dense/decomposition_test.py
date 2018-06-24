@@ -28,12 +28,12 @@ import unittest
 import warnings
 
 import numpy as np
+from msmtools.util.birth_death_chain import BirthDeathChain
 from msmtools.util.numeric import assert_allclose
 
 from scipy.linalg import eig, eigvals
 
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
-from .birth_death_chain import BirthDeathChain
 
 from .decomposition import eigenvalues, eigenvectors, rdl_decomposition
 from .decomposition import timescales

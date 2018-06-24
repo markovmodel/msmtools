@@ -6,23 +6,28 @@ source:
   path: ../..
 
 build:
-  script: python -B setup.py install --single-version-externally-managed --record record.txt
-  preserve_egg_dir: True
+  script: LDSHARED="$CC -shared" python setup.py install --single-version-externally-managed --record record.txt # [osx or linux]
+  script: python setup.py install --single-version-externally-managed --record record.txt # [win]
 
 requirements:
   build:
+    - {{ compiler('c') }}
+
+  host:
+    - cython >=0.20
+    - numpy 1.11.*  # [win and py36]
+    - numpy 1.8.*  # [not (win and (py35 or py36))]
+    - numpy 1.8.*  # [win and py35]
     - python
     - setuptools
-    - cython >=0.20
-    - numpy x.x
 
   run:
-    - python
-    - setuptools
-    - numpy x.x
-    - scipy
-    - six
     - decorator
+    - numpy
+    - python
+    - scipy
+    - setuptools
+    - six
 
 test:
   source_files:

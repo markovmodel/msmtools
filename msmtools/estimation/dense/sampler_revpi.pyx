@@ -48,11 +48,11 @@ cdef extern from "sample_revpi.h":
                        size_t * I, size_t * J, size_t n_idx)
 
 
-cdef extern from "_rnglib.h":
+cdef extern from "rnglib/rnglib.h":
     void initialize()
     void set_initial_seed(int g1, int g2)
 
-cdef class XSampler:
+cdef class XSampler(object):
     
     def __init__(self):
         """Seed the generator upon init"""
@@ -98,7 +98,7 @@ cdef class XSampler:
                        n, <size_t*> I.data, <size_t*> J.data, n_idx)
     
 
-class SamplerRevPi:
+class SamplerRevPi(object):
 
     def __init__(self, C, pi, P0=None, P_mle=None, eps=0.1):
         # set_counter(0, 0, 0, 0)       

@@ -32,7 +32,7 @@ from msmtools.analysis import rdl_decomposition, timescales
 from msmtools.analysis import fingerprint_correlation, fingerprint_relaxation
 from msmtools.analysis import expectation, correlation, relaxation
 
-from birth_death_chain import BirthDeathChain
+from msmtools.util.birth_death_chain import BirthDeathChain
 
 ################################################################################
 # Dense
