@@ -111,22 +111,21 @@ def extensions():
                   depends=['msmtools/util/sigint_handler.h'],
                   include_dirs=[np_inc,
                                 ])
+    rnglib_src = ['msmtools/estimation/dense/rnglib/rnglib.c',
+                  'msmtools/estimation/dense/rnglib/ranlib.c']
 
     sampler_rev = \
         Extension('msmtools.estimation.dense.sampler_rev',
                   sources=['msmtools/estimation/dense/sampler_rev.pyx',
                            'msmtools/estimation/dense/sample_rev.c',
-                           'msmtools/estimation/dense/_rnglib.c',
-                           'msmtools/estimation/dense/_ranlib.c'],
+                           ] + rnglib_src,
                   include_dirs=[np_inc,
                                 ])
-
     sampler_revpi = \
         Extension('msmtools.estimation.dense.sampler_revpi',
                   sources=['msmtools/estimation/dense/sampler_revpi.pyx',
                            'msmtools/estimation/dense/sample_revpi.c',
-                           'msmtools/estimation/dense/_rnglib.c',
-                           'msmtools/estimation/dense/_ranlib.c'],
+                          ] + rnglib_src,
                   include_dirs=[np_inc,
                                 ])
 

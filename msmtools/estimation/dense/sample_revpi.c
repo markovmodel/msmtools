@@ -24,7 +24,7 @@
 #include <math.h>
 #include <float.h>
 
-#include "_ranlib.h"
+#include "rnglib/ranlib.h"
 #include "sample_revpi.h"
 #include "util.h"
 

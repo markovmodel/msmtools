@@ -41,7 +41,7 @@ cdef extern from "sample_rev.h":
     double _update_step(double v0, double v1, double v2, 
                         double c0, double c1, double c2, int random_walk_stepsize)
 
-cdef extern from "_rnglib.h":
+cdef extern from "rnglib/rnglib.h":
     void initialize()
     void set_initial_seed(int g1, int g2)
 
