@@ -492,7 +492,7 @@ def coarsegrain(P, n):
     return P_coarse
 
 
-class PCCA:
+class PCCA(object):
     """
     PCCA+ spectral clustering method with optimized memberships [1]_
 
