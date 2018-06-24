@@ -235,11 +235,11 @@ metadata = dict(
 # include testing data
 metadata['package_data'] = {'msmtools.util.matrix': ['testfiles/*'],
                             'msmtools.analysis': ['tests/*'],
-                            'msmtools.estimation': ['test/testfiles/*'],
-                            'msmtools.estimation.sparse': ['testfiles/*'],
-                            'msmtools.estimation.dense': ['testfiles/*'],
+                            'msmtools.dtraj.tests': ['testfiles/*'],
+                            'msmtools.estimation.tests': ['testfiles/*'],
                             }
 
+metadata['include_package_data'] = True
 
 # this is only metadata and not used by setuptools
 metadata['requires'] = ['numpy', 'scipy']
