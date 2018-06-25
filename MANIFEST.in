@@ -2,7 +2,7 @@
 include versioneer.py
 include msmtools/_version.py
 
-recursive-include msmtools testfiles/*
+recursive-include msmtools testfiles/* tests/*
 
 # setup stuff
 include setup_util.py
