@@ -19,4 +19,4 @@ script:
 - conda build tools/conda-recipe
 
 after_script:                                                                                                                                                                                
-- pwd; bash <(curl -s https://codecov.io/bash) -f coverage.xml -e CONDA_PY 
+- bash <(curl -s https://codecov.io/bash) -f $HOME/coverage.xml -e CONDA_PY 
