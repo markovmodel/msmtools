@@ -2,11 +2,7 @@
 include versioneer.py
 include msmtools/_version.py
 
-recursive-include msmtools estimation/tests/testfiles/*
-recursive-include msmtools estimation/sparse/testfiles/*
-recursive-include msmtools estimation/sparse/newton/testfiles/*
-recursive-include msmtools util/matrix/testfiles/*
-
+recursive-include msmtools testfiles/*
 
 # setup stuff
 include setup_util.py

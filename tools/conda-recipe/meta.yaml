@@ -6,7 +6,9 @@ source:
   path: ../..
 
 build:
-  script: LDSHARED="$CC -shared" python setup.py install --single-version-externally-managed --record record.txt # [osx or linux]
+  # this method tests the "installability" of the source distribution
+  script: python setup.py sdist; pip install --no-deps --ignore-installed -v  dist/*
+  #script: LDSHARED="$CC -shared" python setup.py install --single-version-externally-managed --record record.txt # [osx or linux]
   script: python setup.py install --single-version-externally-managed --record record.txt # [win]
 
 requirements:
@@ -20,6 +22,7 @@ requirements:
     - numpy 1.8.*  # [win and py35]
     - python
     - setuptools
+    - pip
 
   run:
     - decorator

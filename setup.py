@@ -246,6 +246,7 @@ metadata['package_data'] = {'msmtools.util.matrix': ['testfiles/*'],
                             'msmtools.analysis': ['tests/*'],
                             'msmtools.dtraj.tests': ['testfiles/*'],
                             'msmtools.estimation.tests': ['testfiles/*'],
+                            'msmtools.estimation.sparse.newton': ['testfiles/*'],
                             }
 
 metadata['include_package_data'] = True

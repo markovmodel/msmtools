@@ -34,21 +34,24 @@ from msmtools.dtraj import read_discrete_trajectory, write_discrete_trajectory, 
     load_discrete_trajectory, save_discrete_trajectory
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
+filename_csv = testpath + 'dtraj.dat'
+filename_npy = testpath + 'dtraj.npy'
+assert os.path.exists(filename_csv)
+assert os.path.exists(filename_npy)
 
 
 class TestReadDiscreteTrajectory(unittest.TestCase):
-    def setUp(self):
-        self.filename = testpath + 'dtraj.dat'
 
     def test_read_discrete_trajectory(self):
-        dtraj_np = np.loadtxt(self.filename, dtype=int)
-        dtraj = read_discrete_trajectory(self.filename)
+        dtraj_np = np.loadtxt(filename_csv, dtype=int)
+        dtraj = read_discrete_trajectory(filename_csv)
         self.assertTrue(np.all(dtraj_np == dtraj))
 
 
 class TestWriteDiscreteTrajectory(unittest.TestCase):
     def setUp(self):
-        self.filename = testpath + 'out_dtraj.dat'
+        import tempfile
+        self.filename = tempfile.mktemp(suffix='.dat')
         self.dtraj = np.arange(10000)
 
     def tearDown(self):
@@ -61,12 +64,9 @@ class TestWriteDiscreteTrajectory(unittest.TestCase):
 
 
 class TestLoadDiscreteTrajectory(unittest.TestCase):
-    def setUp(self):
-        self.filename = testpath + 'dtraj.npy'
-
     def test_load_discrete_trajectory(self):
-        dtraj_n = np.load(self.filename)
-        dtraj = load_discrete_trajectory(self.filename)
+        dtraj_n = np.load(filename_npy)
+        dtraj = load_discrete_trajectory(filename_npy)
         self.assertTrue(np.all(dtraj_n == dtraj))
 
 
