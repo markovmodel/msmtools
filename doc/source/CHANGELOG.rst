@@ -1,6 +1,18 @@
 Changelog
 =========
 
+1.2.2 (6-25-18)
+---------------
+
+**New features**
+
+- Added new transition matrix estimator which uses a primal-dual interior-point iteration scheme. #82
+
+**Fixes:**
+
+- Fixed a corner case, in which the pathway decomposition could fail (no more paths left). #107
+
+
 1.2.1 (5-16-17)
 ---------------
 
@@ -10,7 +22,7 @@ Changelog
 
 **Fixes:**
 
-- Fixed some minor issues in rate matrix estimation. #97 #98  
+- Fixed some minor issues in rate matrix estimation. #97 #98
 
 
 1.2 (10-24-16)
@@ -18,7 +30,7 @@ Changelog
 
 **New features:**
 
-- Continous MSM (rate matrix) estimation 
+- Continous MSM (rate matrix) estimation
 
 
 1.1.4 (9-23-16)
@@ -26,7 +38,7 @@ Changelog
 
 **Fixes**:
 
-- Fixed sparsity pattern check in transition matrix sampler. #91, thanks @fabian-paul 
+- Fixed sparsity pattern check in transition matrix sampler. #91, thanks @fabian-paul
 
 1.1.3 (8-10-16)
 ---------------
