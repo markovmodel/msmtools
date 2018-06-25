@@ -20,7 +20,7 @@
 from __future__ import absolute_import
 from __future__ import division
 
-import numpy
+import numpy as np
 import scipy.sparse
 
 
@@ -30,9 +30,9 @@ def transition_matrix_non_reversible(C):
         C = scipy.sparse.csr_matrix(C)
     rowsum = C.tocsr().sum(axis=1)
     # catch div by zero
-    if(numpy.min(rowsum) == 0.0):
+    if np.min(rowsum) == 0.0:
         raise ValueError("matrix C contains rows with sum zero.")
-    rowsum = numpy.array(1. / rowsum).flatten()
+    rowsum = np.array(1. / rowsum).flatten()
     norm = scipy.sparse.diags(rowsum, 0)
     return norm * C
 
@@ -56,12 +56,13 @@ def correct_transition_matrix(T, reversible=None):
         corrected transition matrix
     """
     row_sums = T.sum(axis=1).A1
-    max_sum = numpy.max(row_sums)
+    max_sum = np.max(row_sums)
     if max_sum == 0.0:
          max_sum = 1.0
     return (T + scipy.sparse.diags(-row_sums+max_sum, 0)) / max_sum
 
-def transition_matrix_reversible_pisym(C):
+
+def transition_matrix_reversible_pisym(C, return_statdist=False, **kwargs):
     r"""
     Estimates reversible transition matrix as follows:
 
@@ -94,6 +95,10 @@ def transition_matrix_reversible_pisym(C):
     X = scipy.sparse.diags(pi).dot(T_nonrev)
     X = X.T + X
     # result
-    pi_rev = X.sum(axis=1)
+    pi_rev = np.array(X.sum(axis=1)).squeeze()
     T_rev = scipy.sparse.diags(1.0/pi_rev).dot(X)
+    if return_statdist:
+        #np.testing.assert_allclose(pi, stationary_distribution(T_rev))
+        #np.testing.assert_allclose(T_rev.T.dot(pi), pi)
+        return T_rev, pi
     return T_rev

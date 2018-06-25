@@ -50,7 +50,8 @@ def transition_matrix_non_reversible(C):
             "Transition matrix has row sum of " + str(np.min(rowsums)) + ". Must have strictly positive row sums.")
     return np.divide(C, rowsums[:, np.newaxis])
 
-def transition_matrix_reversible_pisym(C):
+
+def transition_matrix_reversible_pisym(C, return_statdist=False, **kwargs):
     r"""
     Estimates reversible transition matrix as follows:
 
@@ -84,4 +85,8 @@ def transition_matrix_reversible_pisym(C):
     X = X.T + X
     # result
     T_rev = X / X.sum(axis=1)[:, None]
+    if return_statdist:
+        #np.testing.assert_allclose(pi, stationary_distribution(T_rev))
+        #np.testing.assert_allclose(T_rev.T.dot(pi), pi)
+        return T_rev, pi
     return T_rev

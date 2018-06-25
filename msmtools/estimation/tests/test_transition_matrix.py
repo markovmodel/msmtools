@@ -45,9 +45,6 @@ class TestTransitionMatrixSparse(unittest.TestCase):
         """Zero row sum throws an error"""
         self.C0 = scipy.sparse.csr_matrix([[0, 0], [3, 1]])
 
-    def tearDown(self):
-        pass
-
     def test_transition_matrix(self):
         """Non-reversible"""
         T = transition_matrix(self.C1).toarray()
@@ -65,6 +62,10 @@ class TestTransitionMatrixSparse(unittest.TestCase):
 
         """Reversible with fixed pi"""
         T = transition_matrix(self.C1, reversible=True, mu=self.pi1).toarray()
+        assert_allclose(T, self.T1.toarray())
+
+        """Reversible with fixed pi"""
+        T = transition_matrix(self.C1, reversible=True, mu=self.pi1, method='sparse').toarray()
         assert_allclose(T, self.T1.toarray())
 
         T = transition_matrix(self.C2, reversible=True, mu=self.pi2).toarray()
@@ -89,9 +90,6 @@ class TestTransitionRevPiSym(unittest.TestCase):
                                      [ 0.36111111,  0.33333333,  0.30555556],
                                      [ 0.03125   ,  0.34375   ,  0.625     ]])
 
-    def tearDown(self):
-        pass
-
     def test_dense(self):
         # non-reversible
         P = transition_matrix(self.C)
@@ -112,15 +110,29 @@ class TestTransitionRevPiSym(unittest.TestCase):
         P = transition_matrix(self.Cs).toarray()
         assert_allclose(P, self.P_nonrev)
 
+        # non-rev return pi
+        P, pi = transition_matrix(self.Cs, return_statdist=True)
+        assert_allclose(P.T.dot(pi), pi)
+
+        P, pi = transition_matrix(self.Cs, method='sparse', return_statdist=True)
+        assert_allclose(P.T.dot(pi), pi)
+
         # reversible maximum likelihood
         P = transition_matrix(self.Cs, reversible=True).toarray()
         assert_allclose(P, self.P_rev_ml)
         P = transition_matrix(self.Cs, reversible=True, rev_pisym=False).toarray()
         assert_allclose(P, self.P_rev_ml)
 
+        P, pi = transition_matrix(self.Cs, reversible=True, rev_pisym=False, return_statdist=True, method='sparse')
+        assert_allclose(P.T.dot(pi), pi)
+
         # reversible, pi symmetrization
         P = transition_matrix(self.Cs, reversible=True, rev_pisym=True).toarray()
         assert_allclose(P, self.P_rev_pirev)
+        P, pi = transition_matrix(self.Cs, reversible=True, rev_pisym=True, return_statdist=True)
+        assert_allclose(P.T.dot(pi), pi)
+        P, pi = transition_matrix(self.Cs, reversible=True, rev_pisym=True, return_statdist=True, method='sparse')
+        assert_allclose(P.T.dot(pi), pi)
 
 
 class TestCovariance(unittest.TestCase):
