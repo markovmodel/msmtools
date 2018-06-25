@@ -117,7 +117,7 @@ def extensions():
     mle_trev_sparse_newton_module = \
         Extension('msmtools.estimation.sparse.newton.objective_sparse',
                   sources=['msmtools/estimation/sparse/newton/objective_sparse.pyx'],
-                  libraries=["m"],
+                  libraries=['m'] if sys.platform != 'win32' else [],
                   include_dirs=[np_inc,
                                 ]
                   )
