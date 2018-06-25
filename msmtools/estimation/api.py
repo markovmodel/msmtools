@@ -927,55 +927,57 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
     if not sparse_computation and sparse_input_type:
         C = C.toarray()
 
+    return_statdist = 'return_statdist' in kwargs
+
     if reversible:
         rev_pisym = kwargs.pop('rev_pisym', False)
 
         if mu is None:
             if sparse_computation:
                 if rev_pisym:
-                    T = sparse.transition_matrix.transition_matrix_reversible_pisym(C)
+                    result = sparse.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
                 else:
-                    T = sparse.mle_trev.mle_trev(C, **kwargs)
+                    result = sparse.mle_trev.mle_trev(C, **kwargs)
             else:
                 if rev_pisym:
-                    T = dense.transition_matrix.transition_matrix_reversible_pisym(C)
+                    result = dense.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
                 else:
-                    T = dense.mle_trev.mle_trev(C, **kwargs)
+                    result = dense.mle_trev.mle_trev(C, **kwargs)
         else:
             if sparse_computation:
                 # Sparse, reversible, fixed pi (currently using dense with sparse conversion)
-                T = sparse.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
+                result = sparse.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
             else:
-                T = dense.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
+                result = dense.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
     else:  # nonreversible estimation
         if mu is None:
             if sparse_computation:
                 # Sparse,  nonreversible
-                T = sparse.transition_matrix.transition_matrix_non_reversible(C)
+                result = sparse.transition_matrix.transition_matrix_non_reversible(C)
             else:
                 # Dense,  nonreversible
-                T = dense.transition_matrix.transition_matrix_non_reversible(C)
+                result = dense.transition_matrix.transition_matrix_non_reversible(C)
+            # Both methods currently do not have an iterate of pi, so we compute it here for consistency.
+            if return_statdist:
+                from msmtools.analysis import stationary_distribution
+                mu = stationary_distribution(result)
         else:
             raise NotImplementedError('nonreversible mle with fixed stationary distribution not implemented.')
 
-    # convert return type
-    return_statdist = 'return_statdist' in kwargs
-    if sparse_computation and not sparse_input_type:
-        if return_statdist:
-            if mu is not None:
-                raise NotImplementedError()
-            return T[0].toarray(), T[1]
-        else:
-            return T.toarray()
-    elif not sparse_computation and sparse_input_type:
-        if return_statdist:
-            if mu is not None:
-                raise NotImplementedError()
-            return csr_matrix(T[0]), T[1]
-        else:
-            return csr_matrix(T)
+    if return_statdist and isinstance(result, tuple):
+        T, mu = result
     else:
-        return T
+        T = result
+
+    # convert return type
+    if sparse_computation and not sparse_input_type:
+        T = T.toarray()
+    elif not sparse_computation and sparse_input_type:
+        T = csr_matrix(T)
+
+    if return_statdist:
+        return T, mu
+    return T
 
 
 def log_likelihood(C, T):
@@ -1249,7 +1251,7 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
     t_{ji}` holds for all :math:`i,j`.
 
     **Reversible sampling with fixed stationary vector**
-    
+
     Using a MCMC sampler outlined in .. [2] it is ensured that samples
     from the posterior fulfill detailed balance with respect to a given
     probability vector :math:`(\mu_i)`.
@@ -1375,7 +1377,7 @@ def rate_matrix(C, dt=1.0, method='KL', sparsity=None,
     .. [3] E. B. Davies. Embeddable Markov Matrices. Electron. J. Probab.
         15:1474, 2010.
     """
-    
+
     from .dense.ratematrix import estimate_rate_matrix
     return estimate_rate_matrix(C, dt=dt, method=method, sparsity=sparsity,
                          t_agg=t_agg, pi=pi, tol=tol, K0=K0,
