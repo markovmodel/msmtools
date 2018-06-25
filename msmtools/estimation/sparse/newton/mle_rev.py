@@ -62,6 +62,7 @@ def wrap_function(function, args):
 
     return ncalls, function_wrapper
 
+
 def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
                       maxiter=100, show_progress=True, full_output=False):
     """Wrap calls to function and Jacobian"""
@@ -88,7 +89,7 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
 
     def KKT(z, sigma=0.0):
         r"""KKT system (possible perturbed)."""
-        
+
         """Primal variable"""
         x = z[0:N]
 
@@ -114,7 +115,7 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
         """Complementary slackness (perturbed)"""
         mu = gap(z)
         rslack = l*s-sigma*mu
-        
+
         return np.hstack((rdual, rprim1, rprim2, rslack))
 
     def step_fast(z, KKTval, LU, G, A, mu, beta, gamma, alpha0):
@@ -124,22 +125,21 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
         """Reduce step length until slacks s and multipliers l are positive"""
         alpha = 1.0*alpha_0
         k = 0
-        while True:
+        for k in range(10):
             z_new = z + alpha*dz
             if np.all( z_new[N+P:] > 0.0 ):
                 break
             alpha *= 0.5
             k += 1
-            if k>10:
-                raise RuntimeError("Maximum steplength reduction reached")
+        if k == 10 - 1:
+            raise RuntimeError("Maximum steplength reduction reached")
 
         """Reduce step length until iterates lie in correct neighborhood"""
-        k=0
-        while True:
+        for k in range(10):
             z_new = z + alpha*dz
             KKTval_new = KKT(z_new)
             dual = mynorm(KKTval_new[0:N])
-            prim = mynorm(KKTval_new[N:N+P+M])        
+            prim = mynorm(KKTval_new[N:N+P+M])
             mu_new = gap(z_new)
             cent_new = centrality(z_new)
 
@@ -148,9 +148,8 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
                 break
             alpha *= 0.5
             # alpha *= 0.95
-            k += 1
-            if k>10:
-                raise RuntimeError("Maximum steplength reduction reached")
+        if k == 10 - 1:
+            raise RuntimeError("Maximum steplength reduction reached")
         return z_new, mu_new
 
     def step_safe(z, KKTval, LU, G, A, mu, beta, gamma):
@@ -160,19 +159,19 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
         """Reduce step length until slacks s and multipliers l are positive"""
         alpha = 1.0
         k = 0
-        while True:
+        for k in range(10):
             z_new = z + alpha*dz
             if np.all( z_new[N+P:] > 0.0 ):
                 break
             alpha *= 0.5
             k += 1
-            if k>10:
-                raise RuntimeError("Maximum steplength reduction (pos.) reached")
+        if k == 10 - 1:
+            raise RuntimeError("Maximum steplength reduction (pos.) reached")
 
         """Reduce step length until iterates lie in correct neighborhood
         and mu fulfills Armijo condition"""
-        k=0
-        while True:
+        k = 0
+        for k in range(10):
             z_new = z+alpha*dz
             KKTval_new = KKT(z_new, sigma=SIGMA)
             dual = mynorm(KKTval_new[0:N])
@@ -185,13 +184,12 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
                 mu_new<=(1.0-KAPPA*alpha*(1.0-SIGMA))*mu):
                 break
             alpha *= 0.5
-            k += 1
-            if k>10:
-                raise RuntimeError("Maximum steplength reduction reached")
+        if k == 10 - 1:
+            raise RuntimeError("Maximum steplength reduction reached")
         return z_new, mu_new
 
     """INITIALIZATION"""
-    
+
     """Initial Slacks for inequality constraints"""
     s0 = -1.0*(mydot(G, x0)-h)
 
@@ -200,7 +198,7 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
 
     """Initial multipliers for equality constraints"""
     nu0 = np.zeros(P)
-    
+
     """Initial point"""
     z0 = np.hstack((x0, nu0, l0, s0))
 
@@ -239,8 +237,8 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
     if full_output:
         info = {'z': []}
         info['z'].append(z)
-        
-    while True:
+
+    for n in range(maxiter):
         if show_progress:
             l=z[N+P:N+P+M]
             s=z[N+P+M:]
@@ -282,30 +280,31 @@ def primal_dual_solve(func, x0, Dfunc, A, b, G, h, args=(), tol=1e-10,
         prim = mynorm(KKTval[N:N+P+M])
         x = z[0:N]
         Dfunc_val = Dfunc(x)
-        LU = factor(z, Dfunc_val, G, A)        
-        n += 1
+        LU = factor(z, Dfunc_val, G, A)
         if full_output:
-            info['z'].append(z)        
-        if (mu < tol and dual < tol and prim < tol):
+            info['z'].append(z)
+        if mu < tol and dual < tol and prim < tol:
             break
-        if n > maxiter:
-            raise RuntimeError("Maximum number of iterations reached")
-        
+    if n == maxiter - 1:
+        raise RuntimeError("Maximum number of iterations reached")
+
     if show_progress:
-            l=z[N+P:N+P+M]
-            s=z[N+P+M:]
-            print("%i %.6e %.6e %.6e %.6e %.6e %s" %(n+1, mu, dual, prim,
-                                                     np.min(l*s), np.max(l*s),
-                                                     step_type))
+        l=z[N+P:N+P+M]
+        s=z[N+P+M:]
+        print("%i %.6e %.6e %.6e %.6e %.6e %s" %(n+1, mu, dual, prim,
+                                                 np.min(l*s), np.max(l*s),
+                                                 step_type))
     if full_output:
         return z[0:N], info
     else:
-        return z[0:N]                                          
+        return z[0:N]
 
-def solve_mle_rev(C, tol=1e-10, maxiter=100, show_progress=False, full_output=False):
+
+def solve_mle_rev(C, tol=1e-10, maxiter=100, show_progress=False, full_output=False,
+                  return_statdist=True, **kwargs):
     """Number of states"""
     M = C.shape[0]
-    
+
     """Initial guess for primal-point"""
     z0 = np.zeros(2*M)
     z0[0:M] = 1.0
@@ -318,7 +317,7 @@ def solve_mle_rev(C, tol=1e-10, maxiter=100, show_progress=False, full_output=Fa
 
     """Equality constraints"""
     A = np.zeros((1, 2*M))
-    A[0, M] = 1.0    
+    A[0, M] = 1.0
     b = np.array([0.0])
 
     """Scaling"""
@@ -341,23 +340,24 @@ def solve_mle_rev(C, tol=1e-10, maxiter=100, show_progress=False, full_output=Fa
     else:
         F = objective_dense.F
         DF = objective_dense.DF
-        convert_solution = objective_dense.convert_solution        
+        convert_solution = objective_dense.convert_solution
 
     """PDIP iteration"""
+    res = primal_dual_solve(F, z0, DF, A, b, G, h,
+                            args=(Cs, c),
+                            maxiter=maxiter, tol=tol,
+                            show_progress=show_progress,
+                            full_output=full_output)
     if full_output:
-        z, info = primal_dual_solve(F, z0, DF, A, b, G, h,
-                                         args=(Cs, c),
-                                         maxiter=maxiter, tol=tol,
-                                         show_progress=show_progress,
-                                         full_output=True)
-
-        pi, P = convert_solution(z, Cs)
-        return pi, P, info
+        z, info = res
     else:
-        z = primal_dual_solve(F, z0, DF, A, b, G, h,
-                              args=(Cs, c),
-                              maxiter=maxiter, tol=tol,
-                              show_progress=show_progress,
-                              full_output=False)
-        pi, P = convert_solution(z, Cs)
-        return pi, P
+        z = res
+    pi, P = convert_solution(z, Cs)
+
+    result = [P]
+    if return_statdist:
+        result.append(pi)
+    if full_output:
+        result.append(info)
+
+    return tuple(result) if len(result) > 1 else result[0]

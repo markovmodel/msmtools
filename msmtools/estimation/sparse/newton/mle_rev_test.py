@@ -36,6 +36,7 @@ from .mle_rev import solve_mle_rev
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
 
+
 class TestReversibleEstimatorNewton(unittest.TestCase):
     def setUp(self):
         """Count matrix for bith-death chain with 100 states"""
@@ -43,8 +44,9 @@ class TestReversibleEstimatorNewton(unittest.TestCase):
         self.P_ref = self.C/self.C.sum(axis=1)[:,np.newaxis]
 
     def test_estimator(self):
-        pi, P = solve_mle_rev(csr_matrix(self.C))
+        P, pi = solve_mle_rev(csr_matrix(self.C))
         assert_allclose(P.toarray(), self.P_ref)
-        
+
+
 if __name__ == "__main__":
     unittest.main()
