@@ -930,6 +930,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
         C = C.toarray()
 
     return_statdist = 'return_statdist' in kwargs
+
     if not return_statdist:
         kwargs['return_statdist'] = False
 
