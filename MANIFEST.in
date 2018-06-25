@@ -1,12 +1,10 @@
+# versioneer
 include versioneer.py
 include msmtools/_version.py
 
+recursive-include msmtools testfiles/* tests/*
 
-recursive-include msmtools tests/* tests/data/*                                   
-recursive-include msmtools testfiles/
-
-
-# setup stuff                                                                   
+# setup stuff
 include setup_util.py
 
 #include cython files and sources of extensions (incl. cython)

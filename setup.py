@@ -114,6 +114,14 @@ def extensions():
     rnglib_src = ['msmtools/estimation/dense/rnglib/rnglib.c',
                   'msmtools/estimation/dense/rnglib/ranlib.c']
 
+    mle_trev_sparse_newton_module = \
+        Extension('msmtools.estimation.sparse.newton.objective_sparse',
+                  sources=['msmtools/estimation/sparse/newton/objective_sparse.pyx'],
+                  libraries=['m'] if sys.platform != 'win32' else [],
+                  include_dirs=[np_inc,
+                                ]
+                  )
+
     sampler_rev = \
         Extension('msmtools.estimation.dense.sampler_rev',
                   sources=['msmtools/estimation/dense/sampler_rev.pyx',
@@ -121,6 +129,7 @@ def extensions():
                            ] + rnglib_src,
                   include_dirs=[np_inc,
                                 ])
+
     sampler_revpi = \
         Extension('msmtools.estimation.dense.sampler_revpi',
                   sources=['msmtools/estimation/dense/sampler_revpi.pyx',
@@ -141,6 +150,7 @@ def extensions():
              mle_trev_given_pi_sparse_module,
              mle_trev_dense_module,
              mle_trev_sparse_module,
+             mle_trev_sparse_newton_module,
              sampler_rev,
              sampler_revpi,
              kahandot_module
@@ -236,6 +246,7 @@ metadata['package_data'] = {'msmtools.util.matrix': ['testfiles/*'],
                             'msmtools.analysis': ['tests/*'],
                             'msmtools.dtraj.tests': ['testfiles/*'],
                             'msmtools.estimation.tests': ['testfiles/*'],
+                            'msmtools.estimation.sparse.newton': ['testfiles/*'],
                             }
 
 metadata['include_package_data'] = True

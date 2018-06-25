@@ -823,6 +823,8 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
         If set to true, the likelihood history and the pi_change history is returned.
     warn_not_converged : bool, default=True
         Prints a warning if not converged.
+    sparse_newton : bool, default=False
+        If True, use the experimental primal-dual interior-point solver for sparse input/computation method.
 
     Returns
     -------
@@ -929,6 +931,11 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
 
     return_statdist = 'return_statdist' in kwargs
 
+    if not return_statdist:
+        kwargs['return_statdist'] = False
+
+    sparse_newton = kwargs.pop('sparse_newton', False)
+
     if reversible:
         rev_pisym = kwargs.pop('rev_pisym', False)
 
@@ -936,6 +943,9 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
             if sparse_computation:
                 if rev_pisym:
                     result = sparse.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
+                elif sparse_newton:
+                    from msmtools.estimation.sparse.newton.mle_rev import solve_mle_rev
+                    result = solve_mle_rev(C, **kwargs)
                 else:
                     result = sparse.mle_trev.mle_trev(C, **kwargs)
             else:
@@ -944,6 +954,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
                 else:
                     result = dense.mle_trev.mle_trev(C, **kwargs)
         else:
+            kwargs.pop('return_statdist') # pi given, keyword unknown by estimators.
             if sparse_computation:
                 # Sparse, reversible, fixed pi (currently using dense with sparse conversion)
                 result = sparse.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)

@@ -51,8 +51,8 @@ class TestDecomposition(unittest.TestCase):
         q = np.zeros(self.dim)
         q[1:] = 0.5
 
-        p[int(self.dim / 2 - 1)] = 0.001
-        q[int(self.dim / 2 + 1)] = 0.001
+        p[self.dim // 2 - 1] = 0.001
+        q[self.dim // 2 + 1] = 0.001
 
         self.bdc = BirthDeathChain(q, p)
 
