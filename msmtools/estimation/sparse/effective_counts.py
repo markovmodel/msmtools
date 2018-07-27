@@ -187,7 +187,7 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
             data[index] = statistical_inefficiency(_indicator_multitraj(splitseq, i, j),
                                                    truncate_acf=truncate_acf, mact=mact)
             if callback is not None:
-                callback()
+                callback(0)
     res = csr_matrix((data, (I, J)), shape=C.shape)
     return res
 

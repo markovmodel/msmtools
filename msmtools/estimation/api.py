@@ -277,6 +277,10 @@ def effective_count_matrix(dtrajs, lag, average='row', mact=1.0, n_jobs=1, callb
     """
 
     dtrajs = _ensure_dtraj_list(dtrajs)
+    import os
+    # enforce one job on windows.
+    if os.name == 'nt':
+        n_jobs = 1
     return sparse.effective_counts.effective_count_matrix(dtrajs, lag, average=average, mact=mact, n_jobs=n_jobs, callback=callback)
 
 
