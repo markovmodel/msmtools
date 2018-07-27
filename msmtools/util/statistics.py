@@ -220,6 +220,7 @@ def statistical_inefficiency(X, truncate_acf=True, mact=1.0):
     X0 = [x-Xmean for x in X]
     # moments
     x2m = np.mean(xflat ** 2)
+    del xflat, Xmean
     # integrate damped autocorrelation
     corrsum = 0.0
     for lag in range(N):
@@ -228,7 +229,7 @@ def statistical_inefficiency(X, truncate_acf=True, mact=1.0):
         # cache partial sums
         for x in X0:
             Nx = len(x)  # length of this trajectory
-            if (Nx > lag):  # only use trajectories that are long enough
+            if Nx > lag:  # only use trajectories that are long enough
                 prod = x[:Nx-lag] * x[lag:]
                 acf += np.sum(prod)
                 n += Nx-lag

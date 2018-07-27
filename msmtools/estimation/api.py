@@ -220,7 +220,7 @@ def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
 
 
 @shortcut('effective_cmatrix')
-def effective_count_matrix(dtrajs, lag, average='row', mact=1.0):
+def effective_count_matrix(dtrajs, lag, average='row', mact=1.0, n_jobs=1, callback=None):
     """ Computes the statistically effective transition count matrix
 
     Given a list of discrete trajectories, compute the effective number of statistically uncorrelated transition
@@ -260,6 +260,10 @@ def effective_count_matrix(dtrajs, lag, average='row', mact=1.0):
         This is a purely heuristic factor trying to compensate this effect.
         This parameter might be removed in the future when a more robust
         estimation method of the autocorrelation time is used.
+    n_jobs: int, default=1
+        If greater one, the function will be evaluated with multiple processes.
+    callback: callable, default=None
+        will be called for every statistical inefficency computed (number of nonzero elements in count matrix).
 
     See also
     --------
@@ -273,7 +277,11 @@ def effective_count_matrix(dtrajs, lag, average='row', mact=1.0):
     """
 
     dtrajs = _ensure_dtraj_list(dtrajs)
-    return sparse.effective_counts.effective_count_matrix(dtrajs, lag, average=average, mact=mact)
+    import os
+    # enforce one job on windows.
+    if os.name == 'nt':
+        n_jobs = 1
+    return sparse.effective_counts.effective_count_matrix(dtrajs, lag, average=average, mact=mact, n_jobs=n_jobs, callback=callback)
 
 
 ################################################################################

@@ -38,6 +38,7 @@ test:
   requires:
     - pytest
     - pytest-cov
+    - multiprocess
 
 about:
   home: http://github.com/markovmodel/msmtools
