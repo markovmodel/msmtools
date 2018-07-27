@@ -105,7 +105,7 @@ def _transition_indexes(dtrajs, lag):
     return res
 
 
-def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0):
+def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0, n_jobs=1, callback=None):
     """ Computes statistical inefficiencies of sliding-window transition counts at given lag
 
     Consider a discrete trajectory :math`{ x_t }` with :math:`x_t \in {1, ..., n}`. For each starting state :math:`i`,
@@ -134,6 +134,10 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0)
     truncate_acf : bool, optional, default=True
         When the normalized autocorrelation function passes through 0, it is truncated in order to avoid integrating
         random noise
+    n_jobs: int, default=1
+        If greater one, the function will be evaluated with multiple processes.
+    callback: callable, default=None
+        will be called for every statistical inefficency computed (number of nonzero elements in count matrix).
 
     Returns
     -------
@@ -151,18 +155,42 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0)
     # count matrix
     if C is None:
         C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
+    if callback is not None and not callable(callback):
+        raise ValueError('Provided callback is not callable')
     # split sequences
     splitseq = _split_sequences_multitraj(dtrajs, lag)
     # compute inefficiencies
     I, J = C.nonzero()
-    it = (statistical_inefficiency(_indicator_multitraj(splitseq, i, j),
-                                   truncate_acf=truncate_acf, mact=mact)
-          for i, j in zip(I, J))
-    data = np.fromiter(it, dtype=float, count=C.nnz)
+    if n_jobs > 1:
+        try:
+            from multiprocess.pool import Pool
+        except ImportError:
+            raise RuntimeError('using multiple jobs requires the multiprocess library. '
+                               'Install it with conda or pip')
+
+        def wrapper(seqs):
+            res = statistical_inefficiency(seqs, truncate_acf=truncate_acf, mact=mact)
+            if callback is not None:
+                callback()
+            return res
+        it = tuple((_indicator_multitraj(splitseq, i, j), ) for i, j in zip(I, J))
+        from contextlib import closing
+        with closing(Pool(n_jobs)) as pool:
+            result_async = [pool.apply_async(wrapper, args=a) for a in it]
+            res = [x.get() for x in result_async]
+            data = np.array(res)
+    else:
+        data = np.empty(C.nnz)
+        for index, (i, j) in enumerate(zip(I, J)):
+            data[index] = statistical_inefficiency(_indicator_multitraj(splitseq, i, j),
+                                                   truncate_acf=truncate_acf, mact=mact)
+            if callback is not None:
+                callback()
     res = csr_matrix((data, (I, J)), shape=C.shape)
     return res
 
-def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1.0):
+
+def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1.0, n_jobs=1, callback=None):
     """ Computes the statistically effective transition count matrix
 
     Given a list of discrete trajectories, compute the effective number of statistically uncorrelated transition
@@ -208,6 +236,12 @@ def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1
         This parameter might be removed in the future when a more robust
         estimation method of the autocorrelation time is used.
 
+    n_jobs: int, default=1
+        If greater one, the function will be evaluated with multiple processes.
+
+    callback: callable, default=None
+        will be called for every statstical inefficency computed.
+
     See also
     --------
     statistical_inefficiencies
@@ -222,7 +256,8 @@ def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1
     # observed C
     C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
     # statistical inefficiencies
-    si = statistical_inefficiencies(dtrajs, lag, C=C, truncate_acf=truncate_acf, mact=mact)
+    si = statistical_inefficiencies(dtrajs, lag, C=C, truncate_acf=truncate_acf, mact=mact,
+                                    n_jobs=n_jobs, callback=callback)
     # effective element-wise counts
     Ceff = C.multiply(si)
     # averaging
