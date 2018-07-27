@@ -155,12 +155,13 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
     # count matrix
     if C is None:
         C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
-    if callback is not None and not callable(callback):
-        raise ValueError('Provided callback is not callable')
-    else:
-        # multiprocess callback interface takes one argument. Wrap it to avoid requesting a given signature.
-        old_callback = callback
-        callback = lambda x: old_callback()
+    if callback is not None:
+        if not callable(callback):
+            raise ValueError('Provided callback is not callable')
+        else:
+            # multiprocess callback interface takes one argument. Wrap it to avoid requesting a given signature.
+            old_callback = callback
+            callback = lambda x: old_callback()
     # split sequences
     splitseq = _split_sequences_multitraj(dtrajs, lag)
     # compute inefficiencies
