@@ -26,6 +26,13 @@ from msmtools.estimation import count_matrix, effective_count_matrix
 
 """Unit tests for the transition_matrix module"""
 
+have_multiprocess_lib = True
+try:
+    import multiprocess
+    del multiprocess
+except ImportError:
+    have_multiprocess_lib = False
+
 
 class TestEffectiveCountMatrix(unittest.TestCase):
 
@@ -64,6 +71,28 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(Ceff.shape, C.shape)
         assert np.array_equal(C.nonzero(), Ceff.nonzero())
         assert np.all(Ceff.toarray() <= C.toarray())
+
+    @unittest.skipIf(not have_multiprocess_lib, 'multiprocess lib missing')
+    def test_multitraj_njobs(self):
+        dtrajs = [[1, 0, 1, 0, 1, 1, 0, 0, 0, 1], [2], [0, 1, 0, 1]]
+        # lag 1
+        C = count_matrix(dtrajs, 1)
+        Ceff = effective_count_matrix(dtrajs, 1, n_jobs=1)
+        assert np.array_equal(Ceff.shape, C.shape)
+        assert np.array_equal(C.nonzero(), Ceff.nonzero())
+        assert np.all(Ceff.toarray() <= C.toarray())
+
+        Ceff2 = effective_count_matrix(dtrajs, 1, n_jobs=2)
+        assert np.array_equal(Ceff2.shape, C.shape)
+        assert np.array_equal(C.nonzero(), Ceff2.nonzero())
+        assert np.all(Ceff2.toarray() <= C.toarray())
+
+        # lag 2
+        C = count_matrix(dtrajs, 2)
+        Ceff2 = effective_count_matrix(dtrajs, 2)
+        assert np.array_equal(Ceff2.shape, C.shape)
+        assert np.array_equal(C.nonzero(), Ceff2.nonzero())
+        assert np.all(Ceff2.toarray() <= C.toarray())
 
 
 class TestEffectiveCountMatrix_old_impl(unittest.TestCase):
