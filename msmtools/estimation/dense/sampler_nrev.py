@@ -33,7 +33,7 @@ def update_nrev(alpha, P):
     for i in range(N):
         # only pass positive alphas to dirichlet sampling.
         positive = alpha[i, :] > 0
-        P[i, :][positive] = np.random.dirichlet(alpha[i, :][positive])
+        P[i, positive] = np.random.dirichlet(alpha[i, positive])
 
 
 class SamplerNonRev(object):
