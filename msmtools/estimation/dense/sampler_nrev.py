@@ -31,7 +31,9 @@ from msmtools.analysis import stationary_distribution
 def update_nrev(alpha, P):
     N = alpha.shape[0]
     for i in range(N):
-        P[i, :] = np.random.dirichlet(alpha[i, :])   
+        # only pass positive alphas to dirichlet sampling.
+        positive = alpha[i, :] > 0
+        P[i, :][positive] = np.random.dirichlet(alpha[i, :][positive])
 
 
 class SamplerNonRev(object):
@@ -43,7 +45,7 @@ class SamplerNonRev(object):
         """Initial state from single sample"""
         self.P = np.zeros_like(Z)
         self.update()
-        
+
     def update(self, N=1):
         update_nrev(self.alpha, self.P)
 
@@ -54,5 +56,3 @@ class SamplerNonRev(object):
             return self.P, pi
         else:
             return self.P
-        
-    
