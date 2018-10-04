@@ -26,7 +26,6 @@ from __future__ import absolute_import
 import warnings
 import math
 import numpy as np
-import scipy.stats
 import scipy.sparse
 import msmtools.util.types as types
 from six.moves import range
@@ -76,9 +75,10 @@ class MarkovChainSampler(object):
 
         # generate discrete random value generators for each line
         self.rgs = np.ndarray((self.n), dtype=object)
+        from scipy.stats import rv_discrete
         for i in range(self.n):
             nz = np.nonzero(self.P[i])
-            self.rgs[i] = scipy.stats.rv_discrete(values=(nz, self.P[i, nz]))
+            self.rgs[i] = rv_discrete(values=(nz, self.P[i, nz]))
 
     def trajectory(self, N, start=None, stop=None):
         """
@@ -102,9 +102,10 @@ class MarkovChainSampler(object):
             if self.mudist is None:
                 # compute mu, the stationary distribution of P
                 import msmtools.analysis as msmana
+                from scipy.stats import rv_discrete
 
                 mu = msmana.stationary_distribution(self.P)
-                self.mudist = scipy.stats.rv_discrete(values=(list(range(self.n)), mu ))
+                self.mudist = rv_discrete(values=(np.arange(self.n), mu))
             # sample starting point from mu
             start = self.mudist.rvs()
 
