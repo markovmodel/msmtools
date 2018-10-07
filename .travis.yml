@@ -12,11 +12,9 @@ env:
 
 before_install:
 - tools/ci/travis/install_miniconda.sh
-- conda install conda-build conda-verify -qy
-- conda config --add channels conda-forge
+- conda install conda-build conda-verify -qy -c defaults
 
 script:
-- export _PYTHON_SYSCONFIGDATA_NAME='_sysconfigdata_m_linux_x86_64-linux-gnu' 
 - conda build tools/conda-recipe
 
 after_script:                                                                                                                                                                                
