@@ -1,6 +1,7 @@
 package:
-  name: msmtools-dev
-  version: {{ GIT_DESCRIBE_TAG[1:] + '+' + GIT_DESCRIBE_NUMBER + '.' + GIT_DESCRIBE_HASH}}
+  name: msmtools
+  #version: {{ GIT_DESCRIBE_TAG[1:] + '+' + GIT_DESCRIBE_NUMBER + '.' + GIT_DESCRIBE_HASH}}
+  version: 0
 
 source:
   path: ../..
