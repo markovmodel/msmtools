@@ -40,7 +40,7 @@ class TestEstimators(unittest.TestCase):
         est = msmtools.estimation.dense.ratematrix.CrommelinVandenEijndenEstimator(self.T, self.K, self.pi, dt=self.tau, sparsity=self.C0, t_agg=self.t_agg*self.tau, tol=100.0)
         K_est = est.run()
         assert np.allclose(self.K, K_est, rtol=5.0E-3)
-        
+
     def test_api_with_connectivity_with_pi(self):
         K_est = msmtools.estimation.rate_matrix(self.C, dt=self.tau, sparsity=self.C0, t_agg=self.t_agg*self.tau, pi=self.pi, tol=100.0)
         assert np.allclose(self.K, K_est, rtol=5.0E-3)
@@ -79,7 +79,8 @@ class TestEstimators(unittest.TestCase):
 
     def test_warn(self):
         with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
+            warnings.simplefilter('ignore')
+            warnings.simplefilter('always', category=msmtools.estimation.dense.ratematrix.NotConvergedWarning)
             msmtools.estimation.rate_matrix(self.C, dt=self.tau, method='CVE', maxiter=1, on_error='warn')
             assert len(w) == 1
             assert issubclass(w[-1].category, msmtools.estimation.dense.ratematrix.NotConvergedWarning)

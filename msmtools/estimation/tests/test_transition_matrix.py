@@ -219,7 +219,6 @@ class TestErrorPerturbation(unittest.TestCase):
             xn = error_perturbation(Csparse, self.S1)
             assert_allclose(xn, self.x)
 
-        with warnings.catch_warnings(record=True) as w:
             Xn = error_perturbation(Csparse, self.S2)
             assert_allclose(Xn, self.X)
 

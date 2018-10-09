@@ -353,7 +353,8 @@ class TestTimescalesDense(unittest.TestCase):
         ts = np.array([np.inf, np.inf])
 
         with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
+            warnings.simplefilter('ignore')
+            warnings.simplefilter('always', category=SpectralWarning)
             tsn = timescales(self.W)
             assert_allclose(tsn, ts)
             assert issubclass(w[-1].category, SpectralWarning)
@@ -363,7 +364,8 @@ class TestTimescalesDense(unittest.TestCase):
         ts = np.array([np.inf, 0.971044, 0.971044])
 
         with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
+            warnings.simplefilter('ignore')
+            warnings.simplefilter('always', category=ImaginaryEigenValueWarning)
             tsn = timescales(0.5 * self.T + 0.5 * self.P)
             assert_allclose(tsn, ts)
             assert issubclass(w[-1].category, ImaginaryEigenValueWarning)

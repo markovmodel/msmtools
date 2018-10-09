@@ -47,7 +47,7 @@ def create_rate_matrix():
          [0, 3, -5, 2],
          [0, 0, 3, -3]]
 
-    return np.asmatrix(a)
+    return np.array(a)
 
 
 class TestAssessmentDense(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestAssessmentDense(unittest.TestCase):
         self.A = create_rate_matrix()
 
     def test_IsRateMatrix(self):
-        self.assert_(is_rate_matrix(self.A), 'A should be a rate matrix')
+        self.assertTrue(is_rate_matrix(self.A), 'A should be a rate matrix')
 
         # manipulate matrix so it isn't a rate matrix any more
         self.A[0][0] = 3

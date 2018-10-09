@@ -29,19 +29,15 @@ from msmtools.util.birth_death_chain import BirthDeathChain
 from . import assessment
 
 
-def create_rate_matrix():
-    a = [[-3, 3, 0, 0],
-         [3, -5, 2, 0],
-         [0, 3, -5, 2],
-         [0, 0, 3, -3]]
-
-    return np.asmatrix(a)
-
-
 class RateMatrixTest(unittest.TestCase):
 
     def setUp(self):
-        self.A = create_rate_matrix()
+        self.A = np.array(
+            [[-3, 3, 0, 0],
+             [3, -5, 2, 0],
+             [0, 3, -5, 2],
+             [0, 0, 3, -3]]
+        )
 
     def testIsRateMatrix(self):
         self.assertTrue(assessment.is_rate_matrix(self.A), 'A should be a rate matrix')
@@ -68,6 +64,7 @@ class ReversibleTest(unittest.TestCase):
     def testIsReversible(self):
         # create a reversible matrix
         self.assertTrue(assessment.is_reversible(self.T, self.mu), "T should be reversible")
+
 
 if __name__ == "__main__":
     unittest.main()

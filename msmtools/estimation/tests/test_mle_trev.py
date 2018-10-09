@@ -66,10 +66,8 @@ class Test_mle_trev(unittest.TestCase):
             impl_sparse(scipy.sparse.csr_matrix(C), maxiter=1)
             assert issubclass(w[-1].category, msmtools.util.exceptions.NotConvergedWarning)
 
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
             impl_dense(C, maxiter=1)
-            assert len(w) == 1
+            assert len(w) == 2
             assert issubclass(w[-1].category, msmtools.util.exceptions.NotConvergedWarning)
 
     def test_noninteger_counts_sparse(self):
