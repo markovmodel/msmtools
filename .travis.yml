@@ -12,7 +12,7 @@ env:
 
 before_install:
 - tools/ci/travis/install_miniconda.sh
-- conda install conda-build conda-verify -qy -c defaults
+- conda install conda-build=3.15 conda-verify -qy -c defaults
 
 script:
 - conda build tools/conda-recipe
