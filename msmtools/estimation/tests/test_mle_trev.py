@@ -61,9 +61,9 @@ class Test_mle_trev(unittest.TestCase):
     def test_warnings(self):
         C = np.loadtxt(testpath + 'C_1_lag.dat')
         with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
+            warnings.simplefilter('ignore')
+            warnings.simplefilter('always', category=msmtools.util.exceptions.NotConvergedWarning)
             impl_sparse(scipy.sparse.csr_matrix(C), maxiter=1)
-            assert len(w) == 1
             assert issubclass(w[-1].category, msmtools.util.exceptions.NotConvergedWarning)
 
         with warnings.catch_warnings(record=True) as w:

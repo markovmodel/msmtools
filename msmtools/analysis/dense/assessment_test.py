@@ -44,7 +44,7 @@ class RateMatrixTest(unittest.TestCase):
         self.A = create_rate_matrix()
 
     def testIsRateMatrix(self):
-        self.assert_(assessment.is_rate_matrix(self.A), 'A should be a rate matrix')
+        self.assertTrue(assessment.is_rate_matrix(self.A), 'A should be a rate matrix')
 
         # manipulate matrix so it isn't a rate matrix any more
         self.A[0][0] = 3

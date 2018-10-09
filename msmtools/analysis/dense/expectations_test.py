@@ -36,7 +36,7 @@ from six.moves import range
 class TestExpectedCounts(unittest.TestCase):
     def setUp(self):
         self.dim = 100
-        C = np.random.random_integers(0, 50, size=(self.dim, self.dim))
+        C = np.random.randint(0, 50, size=(self.dim, self.dim))
         C = 0.5 * (C + np.transpose(C))
         self.T = C / np.sum(C, axis=1)[:, np.newaxis]
         """Eigenvalues and left eigenvectors, sorted"""
@@ -84,7 +84,7 @@ class TestExpectedCounts(unittest.TestCase):
 class TestExpectedCountsStationary(unittest.TestCase):
     def setUp(self):
         self.dim = 100
-        C = np.random.random_integers(0, 50, size=(self.dim, self.dim))
+        C = np.random.randint(0, 50, size=(self.dim, self.dim))
         C = 0.5 * (C + np.transpose(C))
         self.T = C / np.sum(C, axis=1)[:, np.newaxis]
         """Eigenvalues and left eigenvectors, sorted"""
@@ -116,7 +116,7 @@ class TestExpectedCountsStationary(unittest.TestCase):
 class TestEcMatrixVector(unittest.TestCase):
     def setUp(self):
         self.dim = 100
-        C = np.random.random_integers(0, 50, size=(self.dim, self.dim))
+        C = np.random.randint(0, 50, size=(self.dim, self.dim))
         C = 0.5 * (C + np.transpose(C))
         self.T = C / np.sum(C, axis=1)[:, np.newaxis]
         """Eigenvalues and left eigenvectors, sorted"""
@@ -156,7 +156,7 @@ class TestEcMatrixVector(unittest.TestCase):
 class TestEcGeometricSeries(unittest.TestCase):
     def setUp(self):
         self.dim = 100
-        C = np.random.random_integers(0, 50, size=(self.dim, self.dim))
+        C = np.random.randint(0, 50, size=(self.dim, self.dim))
         C = 0.5 * (C + np.transpose(C))
         self.T = C / np.sum(C, axis=1)[:, np.newaxis]
         """Eigenvalues and left eigenvectors, sorted"""

@@ -120,8 +120,8 @@ def random_nonempty_rows(M, N, density=0.01):
     else:
         rows = np.zeros(N_el, dtype=int)
         rows[0:M] = np.arange(M)
-        rows[M:N_el] = np.random.random_integers(0, M - 1, size=(N_el - M,))
-        cols = np.random.random_integers(0, N - 1, size=(N_el,))
+        rows[M:N_el] = np.random.randint(0, M, size=(N_el - M,))
+        cols = np.random.randint(0, N, size=(N_el,))
         values = np.random.rand(N_el)
         return scipy.sparse.coo_matrix((values, (rows, cols)))
 

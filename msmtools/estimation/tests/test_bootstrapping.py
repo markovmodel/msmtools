@@ -29,18 +29,12 @@ import msmtools.estimation as msmest
 from six.moves import range
 
 
-class Test(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
+class TestBootstrapping(unittest.TestCase):
 
     def validate_counts(self, ntraj, length, n, tau):
         dtrajs = []
         for i in range(ntraj):
-            dtrajs.append(np.random.random_integers(0, n-1, size=length))
+            dtrajs.append(np.random.randint(0, n, size=length))
         for i in range(10):
             C = msmest.bootstrap_counts(dtrajs, tau).toarray()
             assert(np.shape(C) == (n, n))
@@ -53,6 +47,6 @@ class Test(unittest.TestCase):
         self.validate_counts(10, 1000, 100, 100)
         self.validate_counts(1000, 10, 1000, 1)
 
+
 if __name__ == "__main__":
-    # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
