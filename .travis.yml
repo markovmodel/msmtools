@@ -6,16 +6,17 @@ env:
     - PATH=$HOME/miniconda/bin:$PATH
   matrix:
     - python=2.7  CONDA_PY=27  CONDA_NPY=18
-    - python=3.5  CONDA_PY=35  CONDA_NPY=110
     - python=3.6  CONDA_PY=36  CONDA_NPY=111
-    - python=3.7  CONDA_PY=37  CONDA_NPY=114
+    - python=3.7  CONDA_PY=37  CONDA_NPY=115
 
 before_install:
 - tools/ci/travis/install_miniconda.sh
-- conda install conda-build=3.15 conda-verify -qy -c defaults
+- wget https://anaconda.org/conda-forge/python/3.7.0/download/linux-64/python-3.7.0-hd21baee_1004.tar.bz2 -O py37.tbz2
+- conda install py37.tbz2
+- conda install conda-build=3.15 conda-verify -qy -c conda-forge
 
 script:
-- conda build tools/conda-recipe
+- conda build tools/conda-recipe --numpy=$CONDA_NPY
 
-after_script:                                                                                                                                                                                
-- bash <(curl -s https://codecov.io/bash) -f $HOME/coverage.xml -e CONDA_PY 
+after_script:
+- bash <(curl -s https://codecov.io/bash) -f $HOME/coverage.xml -e CONDA_PY
