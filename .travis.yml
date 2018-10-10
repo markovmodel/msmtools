@@ -11,10 +11,10 @@ env:
 
 before_install:
 - tools/ci/travis/install_miniconda.sh
-- conda install conda-build=3.15 python=3.7 conda-verify -qy -c conda-forge/label/gcc7
+- conda install conda-build=3.15 conda-verify -qy
 
 script:
-- conda build tools/conda-recipe --numpy=$CONDA_NPY
+- conda build tools/conda-recipe --numpy=$CONDA_NPY -c conda-forge/label/gcc7
 
 after_script:
 - bash <(curl -s https://codecov.io/bash) -f $HOME/coverage.xml -e CONDA_PY
