@@ -1,13 +1,14 @@
 package:
   name: msmtools
-  version: !!str dev
+  #version: {{ GIT_DESCRIBE_TAG[1:] + '+' + GIT_DESCRIBE_NUMBER + '.' + GIT_DESCRIBE_HASH}}
+  version: 0
 
 source:
   path: ../..
 
 build:
   # this method tests the "installability" of the source distribution
-  script: python setup.py sdist; LDSHARED="$CC -shared" pip install --no-deps --ignore-installed -v  dist/* # [linux]
+  script: python setup.py sdist; LDSHARED="$CC -shared" pip install --no-deps --ignore-installed -v dist/* # [linux]
   #script: LDSHARED="$CC -shared" python setup.py install --single-version-externally-managed --record record.txt # [osx or linux]
   script: python setup.py install --single-version-externally-managed --record record.txt # [win]
 
@@ -17,9 +18,7 @@ requirements:
 
   host:
     - cython >=0.20
-    - numpy 1.11.*  # [win and py36]
-    - numpy 1.8.*  # [not (win and (py35 or py36))]
-    - numpy 1.8.*  # [win and py35]
+    - {{ pin_compatible('numpy') }}
     - python
     - setuptools
     - pip

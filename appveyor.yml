@@ -4,38 +4,26 @@ environment:
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\tools\\ci\\appveyor\\run_with_env.cmd"
+    ARCH: "64"
+    PYTHON: "C:\\Miniconda3-x64"
 
   matrix:
-    - PYTHON: "C:\\Miniconda3"
-      CONDA_PY: "27"
-      CONDA_NUMPY: "18"
+    - CONDA_PY: "27"
+      CONDA_NUMPY: "19"
 
-    - PYTHON: "C:\\Miniconda3-x64"
-      CONDA_PY: "27"
-      CONDA_NUMPY: "18"
-
-    - PYTHON: "C:\\Miniconda3"
-      CONDA_PY: "34"
+    - CONDA_PY: "35"
       CONDA_NUMPY: "112"
 
-    - PYTHON: "C:\\Miniconda3-x64"
-      CONDA_PY: "34"
-      CONDA_NUMPY: "112"
-
-    - PYTHON: "C:\\Miniconda3-x64"
-      CONDA_PY: "36"
-      CONDA_NUMPY: "113"
-
-    - PYTHON: "C:\\Miniconda3"
-      CONDA_PY: "36"
-      CONDA_NUMPY: "113"
+    - CONDA_PY: "36"
+      CONDA_NUMPY: "115"
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%;"
   - conda config --add channels conda-forge
   - conda install conda-build -yq
   # Build the compiled extension and run the project tests
-  - conda build tools/conda-recipe"
+  - "%CMD_IN_ENV% conda build -c conda-forge -q tools/conda-recipe --numpy=%CONDA_NUMPY%"
+
 
 build: false
 

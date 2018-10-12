@@ -120,8 +120,6 @@ impl_dense_Frank = transition_matrix_reversible_fixpi
 
 
 class Test_mle_trev_given_pi(unittest.TestCase):
-    def setUp(self):
-        pass
 
     def test_mle_trev_given_pi(self):
         C = np.loadtxt(testpath + 'C_1_lag.dat')
@@ -169,18 +167,17 @@ class Test_mle_trev_given_pi(unittest.TestCase):
     def test_warnings(self):
         C = np.loadtxt(testpath + 'C_1_lag.dat')
         pi = np.loadtxt(testpath + 'pi.dat')
-
+        ncw = msmtools.util.exceptions.NotConvergedWarning
         with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
+            warnings.simplefilter('ignore')
+            warnings.simplefilter('always', category=ncw)
             impl_sparse(scipy.sparse.csr_matrix(C), pi, maxiter=1)
             assert len(w) == 1
-            assert issubclass(w[-1].category, msmtools.util.exceptions.NotConvergedWarning)
+            assert issubclass(w[-1].category, ncw)
 
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
             impl_dense(C, pi, maxiter=1)
-            assert len(w) == 1
-            assert issubclass(w[-1].category, msmtools.util.exceptions.NotConvergedWarning)
+            assert len(w) == 2
+            assert issubclass(w[-1].category, ncw)
 
 
 if __name__ == '__main__':

@@ -97,11 +97,13 @@ class TestPathways(unittest.TestCase):
             assert_allclose(capacities[i], self.capacities[i])
 
         with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
+            warnings.simplefilter('ignore')
+            warnings.simplefilter('always', category=RuntimeWarning)
             paths, capacities = pathways(self.F, self.A, self.B, fraction=1.0, maxiter=1)
             for i in range(len(paths)):
                 assert_allclose(paths[i], self.paths[i])
                 assert_allclose(capacities[i], self.capacities[i])
+            assert len(w) == 1
             assert issubclass(w[-1].category, RuntimeWarning)
 
     def test_pathways_sparse(self):

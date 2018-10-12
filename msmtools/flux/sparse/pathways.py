@@ -311,10 +311,11 @@ def pathways(F, A, B, fraction=1.0, maxiter=1000, tol=1e-14):
         niter += 1
         """Current flux numerically equals fraction * total flux or is
         greater equal than fraction * total flux"""
-        if (abs(CF/TF - fraction) <= tol) or  (CF/TF >= fraction):
+        if (abs(CF/TF - fraction) <= tol) or (CF/TF >= fraction):
             break
         if niter > maxiter:
             warnings.warn("Maximum number of iterations reached", RuntimeWarning)
+            break
     return paths, capacities
 
 

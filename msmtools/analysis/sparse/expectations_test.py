@@ -81,7 +81,7 @@ class TestExpectedCounts(unittest.TestCase):
         self.k = 20
         self.d = 10000
         """Generate a random kxk dense transition matrix"""
-        C = np.random.random_integers(0, 100, size=(self.k, self.k))
+        C = np.random.randint(0, 100, size=(self.k, self.k))
         C = C + np.transpose(C)  # Symmetric count matrix for real eigenvalues
         T = 1.0 * C / np.sum(C, axis=1)[:, np.newaxis]
         v, L, R = scipy.linalg.eig(T, left=True, right=True)
@@ -130,7 +130,7 @@ class TestExpectedCountsStationary(unittest.TestCase):
         self.k = 20
         self.d = 10000
         """Generate a random kxk dense transition matrix"""
-        C = np.random.random_integers(0, 100, size=(self.k, self.k))
+        C = np.random.randint(0, 100, size=(self.k, self.k))
         C = C + np.transpose(C)  # Symmetric count matrix for real eigenvalues
         T = 1.0 * C / np.sum(C, axis=1)[:, np.newaxis]
         v, L, R = scipy.linalg.eig(T, left=True, right=True)

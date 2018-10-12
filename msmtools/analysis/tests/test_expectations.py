@@ -46,7 +46,7 @@ from msmtools.analysis import expected_counts, expected_counts_stationary
 class TestExpectedCountsDense(unittest.TestCase):
     def setUp(self):
         self.dim = 100
-        C = np.random.random_integers(0, 50, size=(self.dim, self.dim))
+        C = np.random.randint(0, 50, size=(self.dim, self.dim))
         C = 0.5 * (C + np.transpose(C))
         self.T = C / np.sum(C, axis=1)[:, np.newaxis]
         """Eigenvalues and left eigenvectors, sorted"""
@@ -95,7 +95,7 @@ class TestExpectedCountsDense(unittest.TestCase):
 class TestExpectedCountsStationaryDense(unittest.TestCase):
     def setUp(self):
         self.dim = 100
-        C = np.random.random_integers(0, 50, size=(self.dim, self.dim))
+        C = np.random.randint(0, 50, size=(self.dim, self.dim))
         C = 0.5 * (C + np.transpose(C))
         self.T = C / np.sum(C, axis=1)[:, np.newaxis]
         """Eigenvalues and left eigenvectors, sorted"""
@@ -173,7 +173,7 @@ class TestExpectedCountsSparse(unittest.TestCase):
         self.k = 20
         self.d = 10000
         """Generate a random kxk dense transition matrix"""
-        C = np.random.random_integers(0, 100, size=(self.k, self.k))
+        C = np.random.randint(0, 100, size=(self.k, self.k))
         C = C + np.transpose(C)  # Symmetric count matrix for real eigenvalues
         T = 1.0 * C / np.sum(C, axis=1)[:, np.newaxis]
         v, L, R = scipy.linalg.eig(T, left=True, right=True)
@@ -222,7 +222,7 @@ class TestExpectedCountsStationarySparse(unittest.TestCase):
         self.k = 20
         self.d = 10000
         """Generate a random kxk dense transition matrix"""
-        C = np.random.random_integers(0, 100, size=(self.k, self.k))
+        C = np.random.randint(0, 100, size=(self.k, self.k))
         C = C + np.transpose(C)  # Symmetric count matrix for real eigenvalues
         T = 1.0 * C / np.sum(C, axis=1)[:, np.newaxis]
         v, L, R = scipy.linalg.eig(T, left=True, right=True)

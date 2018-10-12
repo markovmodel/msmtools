@@ -47,7 +47,7 @@ def create_rate_matrix():
          [0, 3, -5, 2],
          [0, 0, 3, -3]]
 
-    return np.asmatrix(a)
+    return np.array(a)
 
 
 class TestAssessmentDense(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestAssessmentDense(unittest.TestCase):
         self.A = create_rate_matrix()
 
     def test_IsRateMatrix(self):
-        self.assert_(is_rate_matrix(self.A), 'A should be a rate matrix')
+        self.assertTrue(is_rate_matrix(self.A), 'A should be a rate matrix')
 
         # manipulate matrix so it isn't a rate matrix any more
         self.A[0][0] = 3
@@ -120,8 +120,8 @@ def random_nonempty_rows(M, N, density=0.01):
     else:
         rows = np.zeros(N_el, dtype=int)
         rows[0:M] = np.arange(M)
-        rows[M:N_el] = np.random.random_integers(0, M - 1, size=(N_el - M,))
-        cols = np.random.random_integers(0, N - 1, size=(N_el,))
+        rows[M:N_el] = np.random.randint(0, M, size=(N_el - M,))
+        cols = np.random.randint(0, N, size=(N_el,))
         values = np.random.rand(N_el)
         return scipy.sparse.coo_matrix((values, (rows, cols)))
 
