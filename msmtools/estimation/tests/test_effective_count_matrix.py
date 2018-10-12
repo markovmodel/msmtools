@@ -74,6 +74,7 @@ class TestEffectiveCountMatrix(unittest.TestCase):
 
     @unittest.skipIf(not have_multiprocess_lib, 'multiprocess lib missing')
     def test_multitraj_njobs(self):
+        import _multiprocess
         dtrajs = [[1, 0, 1, 0, 1, 1, 0, 0, 0, 1], [2], [0, 1, 0, 1]]
         # lag 1
         C = count_matrix(dtrajs, 1)
