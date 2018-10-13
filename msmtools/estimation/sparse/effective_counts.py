@@ -61,6 +61,7 @@ def _split_sequences_singletraj(dtraj, nstates, lag):
             res_seqs.append(np.array(sall[i]))
     return res_states, res_seqs
 
+
 def _split_sequences_multitraj(dtrajs, lag):
     """ splits the discrete trajectories into conditional sequences by starting state
 
@@ -84,6 +85,7 @@ def _split_sequences_multitraj(dtrajs, lag):
             res[states[i]].append(seqs[i])
     return res
 
+
 def _indicator_multitraj(ss, i, j):
     """ Returns conditional sequence for transition i -> j given all conditional sequences """
     iseqs = ss[i]
@@ -95,6 +97,7 @@ def _indicator_multitraj(ss, i, j):
         res.append(x)
     return res
 
+
 def _transition_indexes(dtrajs, lag):
     """ for each state, returns a list of target states to which a transition is observed at lag tau """
     C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
@@ -105,8 +108,28 @@ def _transition_indexes(dtrajs, lag):
     return res
 
 
+def _wrapper(*args):
+    seqs, truncate_acf, mact = args[0]
+    return statistical_inefficiency(seqs, truncate_acf=truncate_acf, mact=mact)
+
+class _arguments_generator(object):
+    def __init__(self, I, J, splitted_seqs, truncate_acf, mact):
+        self.I = I
+        self.J = J
+        self.splitted_seqs = splitted_seqs
+        self.truncate_acf = truncate_acf
+        self.mact = mact
+
+    def __len__(self):
+        return len(self.I)
+
+    def __iter__(self):
+        for n, (i, j) in enumerate(zip(self.I, self.J)):
+            yield (_indicator_multitraj(self.splitted_seqs, i, j), self.truncate_acf, self.mact)
+
+@profile
 def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0, n_jobs=1, callback=None):
-    """ Computes statistical inefficiencies of sliding-window transition counts at given lag
+    r""" Computes statistical inefficiencies of sliding-window transition counts at given lag
 
     Consider a discrete trajectory :math`{ x_t }` with :math:`x_t \in {1, ..., n}`. For each starting state :math:`i`,
     we collect the target sequence
@@ -158,42 +181,59 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
     if callback is not None:
         if not callable(callback):
             raise ValueError('Provided callback is not callable')
-        else:
-            # multiprocess callback interface takes one argument. Wrap it to avoid requesting a given signature.
-            old_callback = callback
-            callback = lambda x: old_callback()
     # split sequences
     splitseq = _split_sequences_multitraj(dtrajs, lag)
     # compute inefficiencies
     I, J = C.nonzero()
     if n_jobs > 1:
         try:
-            from multiprocess.pool import Pool
+            from multiprocess.pool import Pool, MapResult
         except ImportError:
             raise RuntimeError('using multiple jobs requires the multiprocess library. '
                                'Install it with conda or pip')
 
-        def wrapper(seqs):
-            return statistical_inefficiency(seqs, truncate_acf=truncate_acf, mact=mact)
-        it = tuple((_indicator_multitraj(splitseq, i, j), ) for i, j in zip(I, J))
+        class my_map_result(MapResult):
+            # we need this because MapResult only performs callback upon finishing everything.
+            def _set(self, i, success_result):
+                success, result = success_result
+                if success:
+                    self._value[i * self._chunksize:(i + 1) * self._chunksize] = result
+                    self._number_left -= 1
+                    if self._callback:
+                        self._callback(len(result))
+                    if self._number_left == 0:
+                        del self._cache[self._job]
+                        self._event.set()
+                else:
+                    self._success = False
+                    self._value = result
+                    if self._error_callback:
+                        self._error_callback(self._value)
+                    del self._cache[self._job]
+                    self._event.set()
+
         from contextlib import closing
-        with closing(Pool(n_jobs)) as pool:
-            result_async = [pool.apply_async(wrapper, args=a, callback=callback) for a in it]
-            res = [x.get() for x in result_async]
-            data = np.array(res)
+        import mock
+        with mock.patch('multiprocess.pool.MapResult', my_map_result):
+            with closing(Pool(n_jobs)) as pool:
+                result_async = pool.map_async(_wrapper,
+                                              _arguments_generator(I, J, splitseq, truncate_acf=truncate_acf, mact=truncate_acf),
+                                              callback=callback)
+
+                data = np.array(result_async.get())
     else:
         data = np.empty(C.nnz)
         for index, (i, j) in enumerate(zip(I, J)):
             data[index] = statistical_inefficiency(_indicator_multitraj(splitseq, i, j),
                                                    truncate_acf=truncate_acf, mact=mact)
             if callback is not None:
-                callback(0)
+                callback(1)
     res = csr_matrix((data, (I, J)), shape=C.shape)
     return res
 
 
 def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1.0, n_jobs=1, callback=None):
-    """ Computes the statistically effective transition count matrix
+    r""" Computes the statistically effective transition count matrix
 
     Given a list of discrete trajectories, compute the effective number of statistically uncorrelated transition
     counts at the given lag time. First computes the full sliding-window counts :math:`c_{ij}(tau)`. Then uses

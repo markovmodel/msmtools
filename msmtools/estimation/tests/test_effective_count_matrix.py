@@ -84,6 +84,7 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.all(Ceff.toarray() <= C.toarray())
 
         Ceff2 = effective_count_matrix(dtrajs, 1, n_jobs=2)
+        np.testing.assert_equal(Ceff2.toarray(), Ceff.toarray())
         assert np.array_equal(Ceff2.shape, C.shape)
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
