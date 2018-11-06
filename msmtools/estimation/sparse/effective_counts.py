@@ -127,7 +127,7 @@ class _arguments_generator(object):
         for n, (i, j) in enumerate(zip(self.I, self.J)):
             yield (_indicator_multitraj(self.splitted_seqs, i, j), self.truncate_acf, self.mact)
 
-@profile
+#@profile
 def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0, n_jobs=1, callback=None):
     r""" Computes statistical inefficiencies of sliding-window transition counts at given lag
 
