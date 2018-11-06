@@ -221,7 +221,7 @@ def count_matrix(dtraj, lag, sliding=True, sparse_return=True, nstates=None):
 
 @shortcut('effective_cmatrix')
 def effective_count_matrix(dtrajs, lag, average='row', mact=1.0, n_jobs=1, callback=None):
-    """ Computes the statistically effective transition count matrix
+    r""" Computes the statistically effective transition count matrix
 
     Given a list of discrete trajectories, compute the effective number of statistically uncorrelated transition
     counts at the given lag time. First computes the full sliding-window counts :math:`c_{ij}(tau)`. Then uses

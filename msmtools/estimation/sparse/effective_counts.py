@@ -100,14 +100,13 @@ def _indicator_multitraj(ss, i, j):
 
 def _wrapper(*args):
     # writes results of statistical_inefficiency to destination memmap (array_fn)
-    seqs, truncate_acf, mact, I, J, array_fn, offset = args[0]
+    seqs, truncate_acf, mact, I, J, array_fn, start, stop = args[0]
     array = np.memmap(array_fn, mode='r+', dtype=np.float64)
     partial = np.empty(len(I))
     for n, (i, j) in enumerate(zip(I, J)):
          s = _indicator_multitraj(seqs, i, j)
          partial[n] = statistical_inefficiency(s, truncate_acf=truncate_acf, mact=mact)
-    assign_to = slice(offset, offset+len(partial))
-    array[assign_to] = partial
+    array[start:stop] = partial
 
 
 class _arguments_generator(object):
@@ -134,8 +133,11 @@ class _arguments_generator(object):
             for i in range(0, len(self.I), n):
                 yield self.I[i:i + n], self.J[i:i+n]
 
+        start = 0
         for n, (I, J) in enumerate(chunks(self.n_blocks())):
-            yield (self.splitted_seqs, self.truncate_acf, self.mact, I, J, self.array, n)
+            stop = start + len(I)
+            yield (self.splitted_seqs, self.truncate_acf, self.mact, I, J, self.array, start, stop)
+            start = stop
 
 
 def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0, n_jobs=1, callback=None):
@@ -209,6 +211,7 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
         # to avoid pickling partial results, we store these in a numpy.memmap
         ntf = tempfile.NamedTemporaryFile(delete=False)
         arr = np.memmap(ntf.name, dtype=np.float64, mode='w+', shape=C.nnz)
+        arr[:] = np.nan
         gen = _arguments_generator(I, J, splitseq, truncate_acf=truncate_acf, mact=truncate_acf,
                                    array=ntf.name, njobs=n_jobs)
         if callback:
@@ -222,6 +225,8 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
 
             [t.get() for t in result_async]
             data = np.array(arr[:])
+            print(np.where(np.logical_not(np.isfinite(data))))
+            assert np.all(np.isfinite(data))
         import os
         os.unlink(ntf.name)
     else:
