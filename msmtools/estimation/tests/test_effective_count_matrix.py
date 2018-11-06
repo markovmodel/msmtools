@@ -19,6 +19,7 @@
 import unittest
 
 import numpy as np
+import os
 from os.path import abspath, join
 from os import pardir
 
@@ -39,9 +40,6 @@ class TestEffectiveCountMatrix(unittest.TestCase):
     def setUp(self):
         testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
         self.dtraj_long = np.loadtxt(testpath + 'dtraj.dat', dtype=int)
-
-    def tearDown(self):
-        pass
 
     def test_singletraj(self):
         # lag 1
@@ -97,6 +95,7 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
 
+    @unittest.skipIf(os.getenv('CI', False), 'need physical processors >=2, dont have on CI')
     def test_njobs_speedup(self):
         artificial_dtraj = [np.random.randint(0, 100, size=10000) for _ in range(10)]
         import time
