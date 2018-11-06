@@ -32,7 +32,7 @@ from msmtools.estimation.sparse.count_matrix import count_matrix_coo2_mult
 from msmtools.dtraj.api import number_of_states
 from scipy.sparse.csr import csr_matrix
 
-__author__ = 'noe'
+__author__ = 'noe, marscher'
 
 
 def _split_sequences_singletraj(dtraj, nstates, lag):
@@ -98,16 +98,6 @@ def _indicator_multitraj(ss, i, j):
     return res
 
 
-def _transition_indexes(dtrajs, lag):
-    """ for each state, returns a list of target states to which a transition is observed at lag tau """
-    C = count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True)
-    res = []
-    for i in range(C.shape[0]):
-        I,J = C[i].nonzero()
-        res.append(J)
-    return res
-
-
 def _wrapper(*args):
     seqs, truncate_acf, mact = args[0]
     return statistical_inefficiency(seqs, truncate_acf=truncate_acf, mact=mact)
@@ -122,6 +112,11 @@ class _arguments_generator(object):
 
     def __len__(self):
         return len(self.I)
+
+    def n_blocks(self):
+        k = 4
+        n = max(len(self.I) // (k*self.njobs - 1), 1)
+        return n
 
     def __iter__(self):
         for n, (i, j) in enumerate(zip(self.I, self.J)):
@@ -159,7 +154,8 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
     n_jobs: int, default=1
         If greater one, the function will be evaluated with multiple processes.
     callback: callable, default=None
-        will be called for every statistical inefficency computed (number of nonzero elements in count matrix).
+        will be called for every statistical inefficiency computed (number of nonzero elements in count matrix).
+        If n_jobs is greater one, the callback will be invoked per finished batch.
 
     Returns
     -------
@@ -191,35 +187,22 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
             raise RuntimeError('using multiple jobs requires the multiprocess library. '
                                'Install it with conda or pip')
 
-        class my_map_result(MapResult):
-            # we need this because MapResult only performs callback upon finishing everything.
-            def _set(self, i, success_result):
-                success, result = success_result
-                if success:
-                    self._value[i * self._chunksize:(i + 1) * self._chunksize] = result
-                    self._number_left -= 1
-                    if self._callback:
-                        self._callback(len(result))
-                    if self._number_left == 0:
-                        del self._cache[self._job]
-                        self._event.set()
-                else:
-                    self._success = False
-                    self._value = result
-                    if self._error_callback:
-                        self._error_callback(self._value)
-                    del self._cache[self._job]
-                    self._event.set()
-
         from contextlib import closing
-        import mock
-        with mock.patch('multiprocess.pool.MapResult', my_map_result):
-            with closing(Pool(n_jobs)) as pool:
-                result_async = pool.map_async(_wrapper,
-                                              _arguments_generator(I, J, splitseq, truncate_acf=truncate_acf, mact=truncate_acf),
-                                              callback=callback)
-                               for args in _arguments_generator(I, J, splitseq, truncate_acf=truncate_acf, mact=truncate_acf,
-                                                                   array=ntf.name, njobs=n_jobs) ]
+        import tempfile
+
+        # to avoid pickling partial results, we store these in a numpy.memmap
+        ntf = tempfile.NamedTemporaryFile(delete=False)
+        arr = np.memmap(ntf.name, dtype=np.float64, mode='w+', shape=C.nnz)
+        gen = _arguments_generator(I, J, splitseq, truncate_acf=truncate_acf, mact=truncate_acf,
+                                   array=ntf.name, njobs=n_jobs)
+        if callback:
+            x = gen.n_blocks()
+            _callback = lambda _: callback(x)
+        else:
+            _callback = callback
+        with closing(Pool(n_jobs)) as pool:
+            result_async = [pool.apply_async(_wrapper, (args,), callback=_callback)
+                            for args in gen]
 
                 data = np.array(result_async.get())
     else:
@@ -283,7 +266,8 @@ def effective_count_matrix(dtrajs, lag, average='row', truncate_acf=True, mact=1
         If greater one, the function will be evaluated with multiple processes.
 
     callback: callable, default=None
-        will be called for every statstical inefficency computed.
+        will be called for every statistical inefficiency computed (number of nonzero elements in count matrix).
+        If n_jobs is greater one, the callback will be invoked per finished batch.
 
     See also
     --------

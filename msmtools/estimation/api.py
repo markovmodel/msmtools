@@ -260,15 +260,16 @@ def effective_count_matrix(dtrajs, lag, average='row', mact=1.0, n_jobs=1, callb
         This is a purely heuristic factor trying to compensate this effect.
         This parameter might be removed in the future when a more robust
         estimation method of the autocorrelation time is used.
-    n_jobs: int, default=1
+    n_jobs : int, default=1
         If greater one, the function will be evaluated with multiple processes.
-    callback: callable, default=None
-        will be called for every statistical inefficency computed (number of nonzero elements in count matrix).
+    callback : callable, default=None
+        will be called for every statistical inefficiency computed (number of nonzero elements in count matrix).
+        If n_jobs is greater one, the callback will be invoked per finished batch.
 
     See also
     --------
     statistical_inefficiencies
-        is used for computing the statistical inefficiences of sliding window transition counts
+        is used for computing the statistical inefficiencies of sliding window transition counts
 
     References
     ----------
