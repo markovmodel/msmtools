@@ -99,16 +99,27 @@ def _indicator_multitraj(ss, i, j):
 
 
 def _wrapper(*args):
-    seqs, truncate_acf, mact = args[0]
-    return statistical_inefficiency(seqs, truncate_acf=truncate_acf, mact=mact)
+    # writes results of statistical_inefficiency to destination memmap (array_fn)
+    seqs, truncate_acf, mact, I, J, array_fn, offset = args[0]
+    array = np.memmap(array_fn, mode='r+', dtype=np.float64)
+    partial = np.empty(len(I))
+    for n, (i, j) in enumerate(zip(I, J)):
+         s = _indicator_multitraj(seqs, i, j)
+         partial[n] = statistical_inefficiency(s, truncate_acf=truncate_acf, mact=mact)
+    assign_to = slice(offset, offset+len(partial))
+    array[assign_to] = partial
+
 
 class _arguments_generator(object):
-    def __init__(self, I, J, splitted_seqs, truncate_acf, mact):
+    # splits I and J in blocks to serve n_jobs processes.
+    def __init__(self, I, J, splitted_seqs, truncate_acf, mact, array, njobs):
         self.I = I
         self.J = J
         self.splitted_seqs = splitted_seqs
         self.truncate_acf = truncate_acf
         self.mact = mact
+        self.array = array
+        self.njobs = njobs
 
     def __len__(self):
         return len(self.I)
@@ -119,8 +130,13 @@ class _arguments_generator(object):
         return n
 
     def __iter__(self):
-        for n, (i, j) in enumerate(zip(self.I, self.J)):
-            yield (_indicator_multitraj(self.splitted_seqs, i, j), self.truncate_acf, self.mact)
+        def chunks(n):
+            for i in range(0, len(self.I), n):
+                yield self.I[i:i + n], self.J[i:i+n]
+
+        for n, (I, J) in enumerate(chunks(self.n_blocks())):
+            yield (self.splitted_seqs, self.truncate_acf, self.mact, I, J, self.array, n)
+
 
 def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0, n_jobs=1, callback=None):
     r""" Computes statistical inefficiencies of sliding-window transition counts at given lag
@@ -204,7 +220,10 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
             result_async = [pool.apply_async(_wrapper, (args,), callback=_callback)
                             for args in gen]
 
-                data = np.array(result_async.get())
+            [t.get() for t in result_async]
+            data = np.array(arr[:])
+        import os
+        os.unlink(ntf.name)
     else:
         data = np.empty(C.nnz)
         for index, (i, j) in enumerate(zip(I, J)):
