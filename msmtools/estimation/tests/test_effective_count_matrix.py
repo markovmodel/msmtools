@@ -96,6 +96,25 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
 
+    def test_njobs_speedup(self):
+        artificial_dtraj = [np.random.randint(0, 100, size=10000) for _ in range(10)]
+        import time
+        class timing(object):
+            def __enter__(self):
+                self.start = time.time()
+                return self
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                self.stop = time.time()
+                self.diff = self.stop - self.start
+
+        lag = 100
+        with timing() as serial:
+            effective_count_matrix(artificial_dtraj, lag=lag)
+        for n_jobs in (2, 3, 4):
+            with timing() as parallel:
+                effective_count_matrix(artificial_dtraj, lag=lag, n_jobs=n_jobs)
+            self.assertLess(parallel.diff, serial.diff / n_jobs + 0.5, msg='does not scale for njobs=%s' % n_jobs)
+
 
 class TestEffectiveCountMatrix_old_impl(unittest.TestCase):
 
