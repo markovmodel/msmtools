@@ -127,7 +127,6 @@ class _arguments_generator(object):
         for n, (i, j) in enumerate(zip(self.I, self.J)):
             yield (_indicator_multitraj(self.splitted_seqs, i, j), self.truncate_acf, self.mact)
 
-#@profile
 def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0, n_jobs=1, callback=None):
     r""" Computes statistical inefficiencies of sliding-window transition counts at given lag
 
@@ -219,6 +218,8 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
                 result_async = pool.map_async(_wrapper,
                                               _arguments_generator(I, J, splitseq, truncate_acf=truncate_acf, mact=truncate_acf),
                                               callback=callback)
+                               for args in _arguments_generator(I, J, splitseq, truncate_acf=truncate_acf, mact=truncate_acf,
+                                                                   array=ntf.name, njobs=n_jobs) ]
 
                 data = np.array(result_async.get())
     else:
