@@ -11,16 +11,16 @@ environment:
     - CONDA_PY: "27"
       CONDA_NUMPY: "19"
 
-    - CONDA_PY: "35"
-      CONDA_NUMPY: "112"
-
     - CONDA_PY: "36"
+      CONDA_NUMPY: "114"
+
+    - CONDA_PY: "37"
       CONDA_NUMPY: "115"
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%;"
   - conda config --add channels conda-forge
-  - conda install conda-build -yq
+  - conda install conda-build -yq -c defaults
   # Build the compiled extension and run the project tests
   - "%CMD_IN_ENV% conda build -c conda-forge -q tools/conda-recipe --numpy=%CONDA_NUMPY%"
 
