@@ -19,6 +19,7 @@
 import unittest
 
 import numpy as np
+import os
 from os.path import abspath, join
 from os import pardir
 
@@ -39,9 +40,6 @@ class TestEffectiveCountMatrix(unittest.TestCase):
     def setUp(self):
         testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
         self.dtraj_long = np.loadtxt(testpath + 'dtraj.dat', dtype=int)
-
-    def tearDown(self):
-        pass
 
     def test_singletraj(self):
         # lag 1
@@ -84,6 +82,8 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.all(Ceff.toarray() <= C.toarray())
 
         Ceff2 = effective_count_matrix(dtrajs, 1, n_jobs=2)
+        np.testing.assert_equal(Ceff2.toarray(), Ceff.toarray())
+        np.testing.assert_allclose(Ceff2.toarray(), Ceff.toarray())
         assert np.array_equal(Ceff2.shape, C.shape)
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
@@ -94,6 +94,28 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(Ceff2.shape, C.shape)
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
+
+    @unittest.skipIf(os.getenv('CI', False), 'need physical processors >=2, dont have on CI')
+    def test_njobs_speedup(self):
+        artificial_dtraj = [np.random.randint(0, 100, size=10000) for _ in range(10)]
+        import time
+        class timing(object):
+            def __enter__(self):
+                self.start = time.time()
+                return self
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                self.stop = time.time()
+                self.diff = self.stop - self.start
+
+        lag = 100
+        with timing() as serial:
+            ceff = effective_count_matrix(artificial_dtraj, lag=lag)
+        for n_jobs in (2, 3, 4):
+            with timing() as parallel:
+                ceff_parallel = effective_count_matrix(artificial_dtraj, lag=lag, n_jobs=n_jobs)
+            self.assertLess(parallel.diff, serial.diff / n_jobs + 0.5, msg='does not scale for njobs=%s' % n_jobs)
+            np.testing.assert_allclose(ceff_parallel.toarray(), ceff.toarray(), atol=1e-14,
+                                       err_msg='different result for njobs=%s' % n_jobs)
 
 
 class TestEffectiveCountMatrix_old_impl(unittest.TestCase):
@@ -117,8 +139,10 @@ class TestEffectiveCountMatrix_old_impl(unittest.TestCase):
         f = pkg_resources.resource_filename('msmtools.estimation', 'tests/testfiles/dwell.npz')
         ref_dtraj = np.load(f)['dtraj_T100K_dt10_n6good'].astype('int32')
         Ceff = effective_count_matrix(ref_dtraj, lag=10, average='row', mact=1.0).toarray()
+        Ceff2 = effective_count_matrix(ref_dtraj, lag=10, average='row', mact=1.0, n_jobs=2).toarray()
 
         np.testing.assert_allclose(Ceff, Ceff_ref, atol=1e-15, rtol=1e-8)
+        np.testing.assert_allclose(Ceff2, Ceff_ref, atol=1e-15, rtol=1e-8)
 
 
 if __name__ == "__main__":
