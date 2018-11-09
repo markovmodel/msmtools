@@ -64,7 +64,6 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.all(Ceff.toarray() <= C.toarray())
 
     def test_multitraj_njobs(self):
-        import _multiprocess
         dtrajs = [[1, 0, 1, 0, 1, 1, 0, 0, 0, 1], [2], [0, 1, 0, 1]]
         # lag 1
         C = count_matrix(dtrajs, 1)
@@ -86,7 +85,8 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(Ceff2.shape, C.shape)
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
-
+    
+    @unittest.skipIf(os.getenv('CI', False), 'need physical cores')
     def test_njobs_speedup(self):
         artificial_dtraj = [np.random.randint(0, 100, size=10000) for _ in range(10)]
         import time
