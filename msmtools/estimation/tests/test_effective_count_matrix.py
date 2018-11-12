@@ -27,13 +27,6 @@ from msmtools.estimation import count_matrix, effective_count_matrix
 
 """Unit tests for the transition_matrix module"""
 
-have_multiprocess_lib = True
-try:
-    import multiprocess
-    del multiprocess
-except ImportError:
-    have_multiprocess_lib = False
-
 
 class TestEffectiveCountMatrix(unittest.TestCase):
 
@@ -70,9 +63,7 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(C.nonzero(), Ceff.nonzero())
         assert np.all(Ceff.toarray() <= C.toarray())
 
-    @unittest.skipIf(not have_multiprocess_lib, 'multiprocess lib missing')
     def test_multitraj_njobs(self):
-        import _multiprocess
         dtrajs = [[1, 0, 1, 0, 1, 1, 0, 0, 0, 1], [2], [0, 1, 0, 1]]
         # lag 1
         C = count_matrix(dtrajs, 1)
@@ -94,8 +85,8 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(Ceff2.shape, C.shape)
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
-
-    @unittest.skipIf(os.getenv('CI', False), 'need physical processors >=2, dont have on CI')
+    
+    @unittest.skipIf(os.getenv('CI', False), 'need physical cores')
     def test_njobs_speedup(self):
         artificial_dtraj = [np.random.randint(0, 100, size=10000) for _ in range(10)]
         import time

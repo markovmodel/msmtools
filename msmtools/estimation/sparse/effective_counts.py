@@ -199,12 +199,7 @@ def statistical_inefficiencies(dtrajs, lag, C=None, truncate_acf=True, mact=2.0,
     # compute inefficiencies
     I, J = C.nonzero()
     if n_jobs > 1:
-        try:
-            from multiprocess.pool import Pool, MapResult
-        except ImportError:
-            raise RuntimeError('using multiple jobs requires the multiprocess library. '
-                               'Install it with conda or pip')
-
+        from multiprocessing.pool import Pool, MapResult
         from contextlib import closing
         import tempfile
 
