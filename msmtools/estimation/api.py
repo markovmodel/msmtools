@@ -25,7 +25,6 @@ r"""
 
 """
 from __future__ import absolute_import
-from six.moves import range
 
 __docformat__ = "restructuredtext en"
 
@@ -953,22 +952,22 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
                 if rev_pisym:
                     result = sparse.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
                 elif sparse_newton:
-                    from msmtools.estimation.sparse.newton.mle_rev import solve_mle_rev
+                    from msmtools.estimation.sparse.mle.newton import solve_mle_rev
                     result = solve_mle_rev(C, **kwargs)
                 else:
-                    result = sparse.mle_trev.mle_trev(C, **kwargs)
+                    result = dense.mle.mle_trev.mle_trev(C, **kwargs)
             else:
                 if rev_pisym:
                     result = dense.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
                 else:
-                    result = dense.mle_trev.mle_trev(C, **kwargs)
+                    result = dense.mle.mle_trev.mle_trev(C, **kwargs)
         else:
             kwargs.pop('return_statdist') # pi given, keyword unknown by estimators.
             if sparse_computation:
                 # Sparse, reversible, fixed pi (currently using dense with sparse conversion)
-                result = sparse.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
+                result = sparse.mle.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
             else:
-                result = dense.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
+                result = dense.mle.mle_trev_given_pi.mle_trev_given_pi(C, mu, **kwargs)
     else:  # nonreversible estimation
         if mu is None:
             if sparse_computation:
@@ -979,7 +978,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
                 result = dense.transition_matrix.transition_matrix_non_reversible(C)
             # Both methods currently do not have an iterate of pi, so we compute it here for consistency.
             if return_statdist:
-                from msmtools.analysis import stationary_distribution
+                from ..analysis import stationary_distribution
                 mu = stationary_distribution(result)
         else:
             raise NotImplementedError('nonreversible mle with fixed stationary distribution not implemented.')
@@ -1289,7 +1288,7 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
         _showSparseConversionWarning()
         C = C.toarray()
 
-    from .dense.tmatrix_sampler import TransitionMatrixSampler
+    from msmtools.estimation.dense.tmat_sampling.tmatrix_sampler import TransitionMatrixSampler
     sampler = TransitionMatrixSampler(C, reversible=reversible, mu=mu, P0=T0,
                                       nsteps=nsteps, prior=prior)
     return sampler

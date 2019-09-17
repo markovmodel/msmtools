@@ -131,7 +131,7 @@ class TestPCCA(unittest.TestCase):
     def test_pcca_large(self):
         import os
 
-        P = np.loadtxt(os.path.split(__file__)[0] + '/../tests/P_rev_251x251.dat')
+        P = np.loadtxt(os.path.split(__file__)[0] + '/../../P_rev_251x251.dat')
         # n=2
         chi = pcca(P, 2)
         assert (np.alltrue(chi >= 0))

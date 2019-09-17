@@ -31,7 +31,7 @@ int isnan(double var)
 
 #undef NDEBUG
 #include <assert.h>
-#include "../../util/sigint_handler.h"
+#include "sigint_handler.h"
 #include "_mle_trev_given_pi.h"
 
 static double distsq(const int n, const double *const a, const double *const b)
@@ -53,9 +53,9 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
   double d_sq, norm, C_ij;
   int i, j, err, iteration;
   double *lam, *lam_new, *temp;
-  
+
   sigint_on();
-  
+
   lam= (double*)malloc(n*sizeof(double));
   lam_new= (double*)malloc(n*sizeof(double));
   if(!(lam && lam_new)) { err=1; goto error; }
@@ -74,14 +74,14 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
     if(lam_new[i]==0) { err=3; goto error; }
   }
 
-  /* iterate lambdas */  
+  /* iterate lambdas */
   iteration = 0;
   do {
     /* swap buffers */
     temp = lam;
     lam = lam_new;
     lam_new = temp;
-    
+
     err = 0;
 
 #pragma omp parallel for private(i,C_ij)
@@ -92,9 +92,9 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
         if(C_ij==0) continue;
         lam_new[j] += C_ij / ((mu[j]*lam[i])/(mu[i]*lam[j])+1);
       }
-      if(isnan(lam_new[j]) && err==0) err=2; 
+      if(isnan(lam_new[j]) && err==0) err=2;
     }
-    
+
     if(err!=0) goto error;
     iteration += 1;
     d_sq = distsq(n,lam,lam_new);
@@ -121,13 +121,13 @@ int _mle_trev_given_pi_dense(double * const T, const double * const C, const dou
     if(norm>1.0) T(i,i) = 0.0; else T(i,i) = 1.0-norm;
   }
 
-  if(iteration==maxiter) { err=5; goto error; } 
+  if(iteration==maxiter) { err=5; goto error; }
 
   free(lam);
   free(lam_new);
   sigint_off();
   return 0;
-  
+
 error:
   free(lam);
   free(lam_new);

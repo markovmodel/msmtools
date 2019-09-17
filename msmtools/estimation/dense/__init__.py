@@ -21,6 +21,6 @@ from __future__ import absolute_import
 from . import bootstrapping
 from . import transition_matrix
 from . import covariance
-from . import mle_trev
-from . import mle_trev_given_pi
-from . import tmatrix_sampler
+
+from .mle import mle_trev, mle_trev_given_pi
+from .tmat_sampling import tmatrix_sampler

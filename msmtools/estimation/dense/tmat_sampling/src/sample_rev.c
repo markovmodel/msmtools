@@ -367,7 +367,7 @@ void _update_sparse(double* C, double* sumC, double* X, double* sumX, int* I, in
 }
 
 
-static void _update_sparse_speedtest(double* C, double* sumC, double* X, double* sumX, int* I, int* J, int n, int n_idx, int n_step)
+void _update_sparse_speedtest(double* C, double* sumC, double* X, double* sumX, int* I, int* J, int n, int n_idx, int n_step)
 {
     int iter;
     int k;

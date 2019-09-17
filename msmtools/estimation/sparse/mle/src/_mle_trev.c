@@ -22,7 +22,7 @@
 #include <string.h>
 #undef NDEBUG
 #include <assert.h>
-#include "../../util/sigint_handler.h"
+#include "sigint_handler.h"
 #include "_mle_trev.h"
 
 #ifdef _MSC_VER

@@ -45,7 +45,7 @@ Topic :: Scientific/Engineering :: Mathematics
 Topic :: Scientific/Engineering :: Physics
 
 """
-from setup_util import getSetuptoolsError, lazy_cythonize, detect_openmp
+from setup_util import getSetuptoolsError, detect_openmp
 
 try:
     from setuptools import setup, Extension
@@ -245,7 +245,11 @@ metadata = dict(
 def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
     config = Configuration(None, '', top_path)
-    config.set_options(delegate_options_to_subpackages=True,)
+    config.set_options(ignore_setup_xxx_py=True,
+        assume_default_configuration=True,
+        delegate_options_to_subpackages=True,
+        #quiet=True,
+                       )
     config.add_subpackage('msmtools')
     return config
 

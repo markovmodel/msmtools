@@ -28,7 +28,7 @@ import numpy as np
 import ctypes
 cimport numpy as np
 
-from ...analysis import statdist, is_connected
+from msmtools.analysis import statdist, is_connected
 # from .. sparse import transition_matrix
 # from msmtools.estimation import is_connected
 

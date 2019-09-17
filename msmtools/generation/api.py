@@ -27,7 +27,7 @@ import warnings
 import math
 import numpy as np
 import scipy.sparse
-import msmtools.util.types as types
+from ..util import types
 from six.moves import range
 
 __all__ = ['transition_matrix_metropolis_1d',
@@ -101,10 +101,10 @@ class MarkovChainSampler(object):
         if start is None:
             if self.mudist is None:
                 # compute mu, the stationary distribution of P
-                import msmtools.analysis as msmana
+                from ..analysis import stationary_distribution
                 from scipy.stats import rv_discrete
 
-                mu = msmana.stationary_distribution(self.P)
+                mu = stationary_distribution(self.P)
                 self.mudist = rv_discrete(values=(np.arange(self.n), mu))
             # sample starting point from mu
             start = self.mudist.rvs()

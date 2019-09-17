@@ -31,7 +31,7 @@ int isnan(double var)
 
 #undef NDEBUG
 #include <assert.h>
-#include "../../util/sigint_handler.h"
+#include "sigint_handler.h"
 #include "_mle_trev_given_pi.h"
 
 static double distsq(const int n, const double *const a, const double *const b)
@@ -81,7 +81,7 @@ int _mle_trev_given_pi_sparse(
     j = j_indices[t];
     if(i<j) continue;
     lam_new[i] += 0.5*CCt_data[t];
-    if(i!=j) 
+    if(i!=j)
       lam_new[j] += 0.5*CCt_data[t];
   }
   for(i=0; i<len_mu; i++) if(lam_new[i]==0) { err=3; goto error; }
@@ -126,7 +126,7 @@ int _mle_trev_given_pi_sparse(
       }
   }
 
-  if(iteration==maxiter) { err=5; goto error; } 
+  if(iteration==maxiter) { err=5; goto error; }
 
   free(lam);
   free(lam_new);

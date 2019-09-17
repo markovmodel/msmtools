@@ -28,9 +28,8 @@ import msmtools.util.exceptions
 from os.path import abspath, join
 from os import pardir
 
-from msmtools.estimation.sparse.mle_trev import mle_trev as impl_sparse
-from msmtools.estimation.dense.mle_trev import mle_trev as impl_dense
-#from msmtools.estimation.dense.transition_matrix import estimate_transition_matrix_reversible as impl_dense
+from msmtools.estimation.sparse.mle.mle_trev import mle_trev as impl_sparse
+from msmtools.estimation.dense.mle.mle_trev import mle_trev as impl_dense
 from msmtools.estimation import tmatrix as apicall
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'

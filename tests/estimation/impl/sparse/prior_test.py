@@ -31,7 +31,7 @@ from scipy.sparse import csr_matrix
 
 from msmtools.estimation.sparse import prior
 
-from tests.numeric import allclose_sparse
+from msmtools.util.numeric import allclose_sparse
 
 
 class TestPrior(unittest.TestCase):

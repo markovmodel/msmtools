@@ -31,7 +31,7 @@ static int isnan(double var)
 
 #undef NDEBUG
 #include <assert.h>
-#include "../../util/sigint_handler.h"
+#include "sigint_handler.h"
 #include "_mle_trev.h"
 
 static double relative_error(const int n, const double *const a, const double *const b)
@@ -53,18 +53,18 @@ static double relative_error(const int n, const double *const a, const double *c
 #define CCt(i,j) (CCt[(i)*dim+(j)])
 #define T(i,j) (T[(i)*dim+(j)])
 
-int _mle_trev_dense(double * const T, const double * const CCt, 
+int _mle_trev_dense(double * const T, const double * const CCt,
                     const double * const sum_C, const int dim,
                     const double maxerr, const int maxiter,
                     double * const mu,
                     double eps_mu)
 {
-  double rel_err, x_norm, value;
+  double rel_err, x_norm;
   int i, j, err, iteration;
   double *sum_x, *sum_x_new, *temp;
-  
+
   sigint_on();
-  
+
   sum_x= (double*)malloc(dim*sizeof(double));
   sum_x_new= (double*)malloc(dim*sizeof(double));
   if(!(sum_x && sum_x_new)) { err=1; goto error; }
@@ -74,7 +74,7 @@ int _mle_trev_dense(double * const T, const double * const CCt,
 
   /* initialize sum_x_new */
   x_norm = 0;
-  for(i=0; i<dim; i++) { 
+  for(i=0; i<dim; i++) {
     sum_x_new[i]=0;
 	for(j=0; j<dim; j++) {
 	   sum_x_new[i] += CCt(i,j);
@@ -92,7 +92,7 @@ int _mle_trev_dense(double * const T, const double * const CCt,
     sum_x_new = temp;
 
 	x_norm = 0;
-    for(i=0; i<dim; i++) { 
+    for(i=0; i<dim; i++) {
       sum_x_new[i] = 0;
 	  for(j=0; j<dim; j++) {
          sum_x_new[i] += CCt(i,j) / (sum_C[i]/sum_x[i] + sum_C[j]/sum_x[j]);
@@ -124,7 +124,7 @@ int _mle_trev_dense(double * const T, const double * const CCt,
     }
   }
 
-  if(iteration==maxiter) { err=5; goto error; } 
+  if(iteration==maxiter) { err=5; goto error; }
 
   memcpy(mu, sum_x_new, dim*sizeof(double));
   free(sum_x_new);

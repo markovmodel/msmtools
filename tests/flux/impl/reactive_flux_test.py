@@ -25,7 +25,7 @@ from __future__ import absolute_import
 from __future__ import division
 import unittest
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from msmtools.flux import api as msmapi
 import msmtools.analysis as msmana
@@ -62,7 +62,7 @@ class TestReactiveFluxFunctions(unittest.TestCase):
 
         self.ref_paths = [[0, 1, 4], [0, 2, 4], [0, 1, 2, 4]]
         self.ref_pathfluxes = np.array([0.00720338983051, 0.00308716707022, 0.000514527845036])
-        
+
         self.ref_paths_95percent = [[0, 1, 4], [0, 2, 4]]
         self.ref_pathfluxes_95percent = np.array([0.00720338983051, 0.00308716707022])
         self.ref_majorflux_95percent = np.array([[0., 0.00720339, 0.00308717, 0., 0.],

@@ -24,8 +24,8 @@ r"""Cython implementation of iterative likelihood maximization.
 import numpy
 cimport numpy
 
-from ...analysis import is_connected
-from ...util.exceptions import NotConvergedWarning
+from msmtools.analysis import is_connected
+from msmtools.util.exceptions import NotConvergedWarning
 
 numpy.import_array()
 

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Transition matrix sampling module. Provides a common class for sampling of 
+r"""Transition matrix sampling module. Provides a common class for sampling of
 
 i) non-reversible transition matrices
 ii) reverisble transition matrices
@@ -37,6 +37,7 @@ import numpy as np
 from . sampler_nrev import SamplerNonRev
 from . sampler_rev import SamplerRev
 from . sampler_revpi import SamplerRevPi
+
 
 class TransitionMatrixSampler(object):
 
@@ -63,7 +64,7 @@ class TransitionMatrixSampler(object):
                 nsteps = 1  # just force to 1, because this is independent sampling
                 self.sampler = SamplerNonRev(C-1.0)
             else:
-                msg = """Non reversible sampling with fixed stationary vector not implemented"""
+                msg = "Non reversible sampling with fixed stationary vector not implemented"
                 raise ValueError(msg)
 
         # remember number of steps to decorrelate between samples

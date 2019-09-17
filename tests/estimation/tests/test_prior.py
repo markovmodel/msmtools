@@ -30,7 +30,7 @@ from tests.numeric import assert_allclose
 
 from scipy.sparse import csr_matrix
 
-from tests.numeric import allclose_sparse
+from msmtools.util.numeric import allclose_sparse
 from msmtools.estimation import prior_neighbor, prior_const, prior_rev
 
 

@@ -28,8 +28,8 @@ import msmtools.util.exceptions
 from os.path import abspath, join
 from os import pardir
 
-from msmtools.estimation.dense.mle_trev_given_pi import mle_trev_given_pi as impl_dense
-from msmtools.estimation.sparse.mle_trev_given_pi import mle_trev_given_pi as impl_sparse
+from msmtools.estimation.dense.mle.mle_trev_given_pi import mle_trev_given_pi as impl_dense
+from msmtools.estimation.sparse.mle.mle_trev_given_pi import mle_trev_given_pi as impl_sparse
 
 from msmtools.estimation import tmatrix as apicall
 from msmtools.analysis import statdist, is_transition_matrix

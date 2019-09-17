@@ -32,7 +32,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 from tests.numeric import assert_allclose
-from msmtools.estimation.sparse.newton.mle_rev import solve_mle_rev
+from msmtools.estimation.sparse.mle.newton.mle_rev import solve_mle_rev
 
 testpath = abspath(join(abspath(__file__), pardir)) + '/testfiles/'
 

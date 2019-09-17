@@ -26,13 +26,14 @@ from __future__ import absolute_import, print_function
 import numpy as np
 import scipy.sparse
 
-from . import objective_sparse
 from . import objective_dense
-from msmtools.estimation.sparse.newton.linsolve import mydot
+from . import objective_sparse
+
+from msmtools.estimation.sparse.mle.newton.linsolve import mydot
 # from linsolve import factor_aug as factor
 # from linsolve import solve_factorized_aug as solve_factorized
-from msmtools.estimation.sparse.newton.linsolve_sparse import factor_aug as factor
-from msmtools.estimation.sparse.newton.linsolve_sparse import solve_factorized_aug as solve_factorized
+from msmtools.estimation.sparse.mle.newton.linsolve_sparse import factor_aug as factor
+from msmtools.estimation.sparse.mle.newton.linsolve_sparse import solve_factorized_aug as solve_factorized
 
 from six.moves import range
 

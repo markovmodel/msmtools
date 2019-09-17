@@ -7,15 +7,15 @@ def configuration(parent_package='', top_path=None):
 
     config.add_extension('mle_trev',
                          sources=['mle_trev.pyx',
-                                  'src/_mle_trev_given_pi.c',
+                                  'src/_mle_trev.c',
                                   ],
-                         include_dirs=['mle/src/', np.get_include()]
+                         include_dirs=['src/', np.get_include()]
                          )
 
     config.add_extension('mle_trev_given_pi',
                          sources=['mle_trev_given_pi.pyx',
-                                  '_mle_trev_given_pi.c'],
+                                  'src/_mle_trev_given_pi.c'],
                          #depends=['msmtools/util/sigint_handler.h'],
-                         include_dirs=['mle/src/', np.get_include()])
+                         include_dirs=['src/', np.get_include()])
 
     return config

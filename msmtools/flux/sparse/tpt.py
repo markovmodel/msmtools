@@ -185,7 +185,7 @@ def total_flux(flux, A):
     """Extract rows corresponding to A"""
     W = flux.tocsr()
     W = W[list(A), :]
-    """Extract columns corresonding to X\A"""
+    r"""Extract columns corresonding to X\A"""
     W = W.tocsc()
     W = W[:, list(notA)]
 
