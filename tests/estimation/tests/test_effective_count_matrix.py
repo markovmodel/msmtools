@@ -85,7 +85,7 @@ class TestEffectiveCountMatrix(unittest.TestCase):
         assert np.array_equal(Ceff2.shape, C.shape)
         assert np.array_equal(C.nonzero(), Ceff2.nonzero())
         assert np.all(Ceff2.toarray() <= C.toarray())
-    
+
     @unittest.skipIf(os.getenv('CI', False), 'need physical cores')
     def test_njobs_speedup(self):
         artificial_dtraj = [np.random.randint(0, 100, size=10000) for _ in range(10)]
@@ -126,8 +126,7 @@ class TestEffectiveCountMatrix_old_impl(unittest.TestCase):
                               1.13816439e+02,   2.51960055e+02,   1.33451946e+03],
                              [1.57044024e+01,   3.26168358e+01,   1.12346879e+02,
                               4.34287128e+02,   1.88573632e+03,   2.35837843e+04]])
-        import pkg_resources
-        f = pkg_resources.resource_filename('msmtools.estimation', 'tests/testfiles/dwell.npz')
+        f = os.path.join(os.path.split(__file__)[0], 'testfiles/dwell.npz')
         ref_dtraj = np.load(f)['dtraj_T100K_dt10_n6good'].astype('int32')
         Ceff = effective_count_matrix(ref_dtraj, lag=10, average='row', mact=1.0).toarray()
         Ceff2 = effective_count_matrix(ref_dtraj, lag=10, average='row', mact=1.0, n_jobs=2).toarray()
