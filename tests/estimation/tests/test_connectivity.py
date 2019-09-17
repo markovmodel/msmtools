@@ -21,7 +21,6 @@ r"""Unit tests for the connectivity API functions
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import unittest
 
@@ -30,7 +29,6 @@ from tests.numeric import assert_allclose
 import scipy.sparse
 
 from msmtools.estimation import connected_sets, largest_connected_set, largest_connected_submatrix, is_connected
-from six.moves import range
 
 ################################################################################
 # Dense

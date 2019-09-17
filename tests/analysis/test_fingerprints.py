@@ -21,7 +21,6 @@ r"""Unit test for the fingerprint API-functions
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import unittest
 

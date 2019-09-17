@@ -22,8 +22,6 @@
 .. moduleauthor:: Benjamin Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 
 import unittest
 import numpy as np
@@ -34,7 +32,6 @@ from scipy.sparse.dia import dia_matrix
 from msmtools.util.birth_death_chain import BirthDeathChain
 
 from msmtools.analysis import is_rate_matrix, is_reversible, is_transition_matrix, is_connected
-from six.moves import range
 
 ################################################################################
 # Dense

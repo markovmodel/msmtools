@@ -21,7 +21,6 @@ r"""Unit tests for the committor API-function
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import unittest
 import numpy as np
@@ -30,7 +29,6 @@ from tests.numeric import assert_allclose
 from msmtools.analysis import committor
 
 from msmtools.util.birth_death_chain import BirthDeathChain
-from six.moves import range
 
 
 class TestCommittorDense(unittest.TestCase):

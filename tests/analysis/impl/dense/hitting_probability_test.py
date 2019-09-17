@@ -21,7 +21,6 @@ r"""Unit test, dense implementation of hitting probabilities
 .. moduleauthor:: F.Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 import unittest
 
 import numpy as np

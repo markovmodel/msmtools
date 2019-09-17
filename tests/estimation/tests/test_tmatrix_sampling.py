@@ -23,8 +23,6 @@ r"""Unit tests for the transition_matrix module
 .. moduleauthor:: Frank Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from six.moves import range
 
 import unittest
 

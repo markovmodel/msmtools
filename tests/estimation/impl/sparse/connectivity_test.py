@@ -21,7 +21,6 @@ r"""Unit tests for the connectivity module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import unittest
 
@@ -30,7 +29,6 @@ from tests.numeric import assert_allclose
 import scipy.sparse
 
 from msmtools.estimation.sparse import connectivity
-from six.moves import range
 
 
 class TestConnectedSets(unittest.TestCase):

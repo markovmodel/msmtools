@@ -21,8 +21,6 @@ r"""Unit test for decomposition functions in api.py
 .. moduleauthor:: Benjamin Trendelkamp-Schroer<benjamin DOT trendelkamp-schorer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 import unittest
 import warnings
 

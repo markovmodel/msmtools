@@ -17,8 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """This module provides unit tests for the assessment module"""
-from __future__ import absolute_import
-from __future__ import division
 import unittest
 
 import numpy as np
@@ -28,7 +26,6 @@ import scipy.sparse
 from scipy.sparse.dia import dia_matrix
 
 from msmtools.analysis.sparse import assessment
-from six.moves import range
 
 
 def normalize_rows(A):

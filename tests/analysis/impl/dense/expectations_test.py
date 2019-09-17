@@ -21,8 +21,6 @@ r"""This module provides unit tests for the expectations module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 
 import unittest
 import numpy as np
@@ -30,7 +28,6 @@ from tests.numeric import assert_allclose
 from scipy.linalg import eig
 
 from msmtools.analysis.dense import expectations
-from six.moves import range
 
 
 class TestExpectedCounts(unittest.TestCase):

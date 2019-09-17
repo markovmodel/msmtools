@@ -21,7 +21,6 @@ r"""Unit test for the fingerprint module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import unittest
 
@@ -34,7 +33,6 @@ from msmtools.analysis.sparse.decomposition import rdl_decomposition, timescales
 from msmtools.analysis.sparse.fingerprints import fingerprint_correlation, fingerprint_relaxation, fingerprint
 from msmtools.analysis.sparse.fingerprints import correlation_decomp, correlation_matvec, correlation
 from msmtools.analysis.sparse.fingerprints import relaxation_decomp, relaxation_matvec, relaxation
-from six.moves import range
 
 
 class TestFingerprint(unittest.TestCase):

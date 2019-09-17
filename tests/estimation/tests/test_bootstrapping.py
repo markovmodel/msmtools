@@ -21,12 +21,9 @@ Created on Jul 25, 2014
 
 @author: noe
 '''
-from __future__ import absolute_import
-from __future__ import division
 import unittest
 import numpy as np
 import msmtools.estimation as msmest
-from six.moves import range
 
 
 class TestBootstrapping(unittest.TestCase):

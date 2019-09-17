@@ -21,7 +21,6 @@ r"""Test package for the decomposition module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import, division
 import unittest
 
 import numpy as np

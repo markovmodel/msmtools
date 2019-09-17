@@ -21,9 +21,6 @@ Created on Jun 3, 2014
 
 @author: marscher
 '''
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import division
 import unittest
 import numpy as np
 from msmtools.util.birth_death_chain import BirthDeathChain

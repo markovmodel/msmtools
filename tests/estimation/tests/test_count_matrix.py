@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """Unit tests for the count_matrix module"""
-from __future__ import absolute_import
 
 import unittest
 
