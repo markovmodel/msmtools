@@ -9,11 +9,9 @@ def configuration(parent_package='', top_path=None):
 
     config.add_extension('sampler_rev',
                          sources=['sampler_rev.pyx',
-                                  'src/sample_rev.c',
-                                  ],
+                                  'src/sample_rev.c'],
                          include_dirs=['src/', np.get_include()],
-                         libraries=['rnglib'],
-                         )
+                         libraries=['rnglib'])
 
     config.add_extension('sampler_revpi',
                          sources=['sampler_revpi.pyx',

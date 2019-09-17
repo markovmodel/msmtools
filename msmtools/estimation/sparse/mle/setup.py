@@ -21,8 +21,8 @@ def configuration(parent_package='', top_path=None):
 
     config.add_extension('newton.objective_sparse',
                          sources=['newton/objective_sparse.pyx'],
-                         include_dirs=[np.get_include()]
-                         )
+                         include_dirs=[np.get_include()])
+
     config.add_subpackage('newton')
 
     return config
