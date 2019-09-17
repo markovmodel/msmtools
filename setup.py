@@ -89,13 +89,9 @@ metadata = dict(
     platforms=["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
     classifiers=[c for c in CLASSIFIERS.split('\n') if c],
     keywords='Markov State Model Algorithms',
-    # packages are found if their folder contains an __init__.py,
-    #packages=find_packages(),
-    #cmdclass=get_cmdclass(),
     # runtime dependencies
     install_requires=['numpy>=1.6.0',
                       'scipy>=0.11',
-                      'six',
                       'decorator',
                       ],
     zip_safe=False,
