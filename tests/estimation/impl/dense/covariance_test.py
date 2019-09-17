@@ -26,7 +26,7 @@ from __future__ import division
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from msmtools.estimation.dense.covariance import tmatrix_cov, dirichlet_covariance, error_perturbation
 

@@ -27,7 +27,7 @@ from __future__ import division
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from msmtools.analysis.dense.mean_first_passage_time import mfpt, mfpt_between_sets
 

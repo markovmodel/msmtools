@@ -19,10 +19,10 @@
 from __future__ import absolute_import
 import unittest
 
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 import scipy.sparse
 
-from . import transition_matrix
+from msmtools.estimation.sparse import transition_matrix
 
 """Unit tests for the transition_matrix module"""
 

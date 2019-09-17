@@ -25,7 +25,7 @@ from __future__ import absolute_import
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from msmtools.analysis.dense.hitting_probability import hitting_probability
 

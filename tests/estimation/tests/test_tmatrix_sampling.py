@@ -29,10 +29,8 @@ from six.moves import range
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
-import scipy.sparse
 
-from scipy.special import beta, betainc
+from scipy.special import betainc
 from scipy.integrate import quad
 
 from msmtools.estimation import sample_tmatrix, tmatrix_sampler

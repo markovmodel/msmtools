@@ -21,7 +21,7 @@ from __future__ import absolute_import, division
 import unittest
 import numpy as np
 from msmtools.util.birth_death_chain import BirthDeathChain
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from msmtools.analysis.dense.stationary_vector import stationary_distribution_from_eigenvector
 from msmtools.analysis.dense.stationary_vector import stationary_distribution_from_backward_iteration

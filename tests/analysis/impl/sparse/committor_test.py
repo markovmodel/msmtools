@@ -26,9 +26,7 @@ from __future__ import division
 import unittest
 import numpy as np
 from msmtools.util.birth_death_chain import BirthDeathChain
-from msmtools.util.numeric import assert_allclose
-
-from scipy.sparse import diags
+from tests.numeric import assert_allclose
 
 from msmtools.analysis.sparse import committor
 from six.moves import range

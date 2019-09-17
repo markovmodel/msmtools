@@ -27,7 +27,7 @@ import unittest
 import warnings
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from scipy.linalg import eig, eigvals
 

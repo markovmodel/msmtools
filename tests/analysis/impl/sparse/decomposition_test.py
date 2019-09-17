@@ -27,8 +27,7 @@ import unittest
 
 import numpy as np
 from msmtools.util.birth_death_chain import BirthDeathChain
-from msmtools.util.numeric import assert_allclose
-
+from tests.numeric import assert_allclose
 from scipy.linalg import eig, eigvals
 
 from msmtools.analysis.sparse.decomposition import eigenvalues, eigenvectors, rdl_decomposition

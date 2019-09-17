@@ -20,7 +20,7 @@ from __future__ import absolute_import
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 import scipy.sparse
 
 from msmtools.estimation import log_likelihood

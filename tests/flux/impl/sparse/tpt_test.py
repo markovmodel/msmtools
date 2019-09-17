@@ -27,12 +27,11 @@ from __future__ import division
 import unittest
 import numpy as np
 from msmtools.util.birth_death_chain import BirthDeathChain
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from scipy.sparse import csr_matrix
 
-from . import tpt
-from six.moves import range
+from msmtools.flux.sparse import tpt
 
 
 class TestRemoveNegativeEntries(unittest.TestCase):

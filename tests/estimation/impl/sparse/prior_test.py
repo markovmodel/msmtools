@@ -25,13 +25,13 @@ from __future__ import absolute_import
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from scipy.sparse import csr_matrix
 
-from . import prior
+from msmtools.estimation.sparse import prior
 
-from msmtools.util.numeric import allclose_sparse
+from tests.numeric import allclose_sparse
 
 
 class TestPrior(unittest.TestCase):

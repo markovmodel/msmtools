@@ -28,7 +28,7 @@ import unittest
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 from msmtools.flux import pathways
 from six.moves import range
 

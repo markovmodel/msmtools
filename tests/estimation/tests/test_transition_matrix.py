@@ -22,7 +22,7 @@ import unittest
 import warnings
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 import scipy.sparse
 
 from msmtools.estimation import transition_matrix, tmatrix_cov, error_perturbation

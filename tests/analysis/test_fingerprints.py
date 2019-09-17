@@ -26,7 +26,7 @@ from __future__ import absolute_import
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 
 from msmtools.analysis import rdl_decomposition, timescales
 from msmtools.analysis import fingerprint_correlation, fingerprint_relaxation

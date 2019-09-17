@@ -26,7 +26,7 @@ from __future__ import absolute_import
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 import scipy.sparse
 
 from msmtools.estimation import connected_sets, largest_connected_set, largest_connected_submatrix, is_connected

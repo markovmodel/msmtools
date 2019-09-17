@@ -20,10 +20,10 @@ from __future__ import absolute_import
 import unittest
 
 import numpy as np
-from msmtools.util.numeric import assert_allclose
+from tests.numeric import assert_allclose
 import scipy.sparse
 
-from . import likelihood
+from msmtools.estimation.sparse import likelihood
 
 """Unit tests for the transition_matrix module"""
 
