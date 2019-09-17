@@ -22,11 +22,9 @@ analysis of Markov models.
 __moduleauthor__ = "Benjamin Trendelkamp-Schroer, Frank Noe"
 
 """
-from __future__ import absolute_import
 import numpy as np
 
 from scipy.sparse import diags, coo_matrix, csr_matrix
-from six.moves import range
 
 
 def remove_negative_entries(A):

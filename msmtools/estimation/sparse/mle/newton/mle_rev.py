@@ -21,7 +21,6 @@ r"""
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import, print_function
 
 import numpy as np
 import scipy.sparse
@@ -35,7 +34,6 @@ from msmtools.estimation.sparse.mle.newton.linsolve import mydot
 from msmtools.estimation.sparse.mle.newton.linsolve_sparse import factor_aug as factor
 from msmtools.estimation.sparse.mle.newton.linsolve_sparse import solve_factorized_aug as solve_factorized
 
-from six.moves import range
 
 __all__ = ['solve_mle_rev',]
 

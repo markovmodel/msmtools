@@ -25,8 +25,6 @@ Matrices are represented by scipy.sparse matrices throughout this module.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 
 import numpy as np
 import scipy.sparse.linalg

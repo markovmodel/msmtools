@@ -29,13 +29,11 @@ We store them either as single column ascii files or as ndarrays of shape (n,) i
 .. moduleauthor:: F. Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import numpy as np
 
 from msmtools.util.annotators import shortcut
 from msmtools.util.types import ensure_dtraj_list as _ensure_dtraj_list
-from six.moves import range
 
 __docformat__ = "restructuredtext en"
 

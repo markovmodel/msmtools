@@ -21,7 +21,6 @@ r"""Implementation of IO for dense and sparse matrices
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import os
 import numpy as np

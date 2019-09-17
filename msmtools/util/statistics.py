@@ -22,8 +22,6 @@ Created on Jul 25, 2014
 @author: noe
 '''
 
-from __future__ import absolute_import, division
-from six.moves import range
 
 import numpy as np
 import math

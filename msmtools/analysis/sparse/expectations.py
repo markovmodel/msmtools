@@ -22,7 +22,6 @@ expectation values for a given transition matrix.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import numpy as np
 

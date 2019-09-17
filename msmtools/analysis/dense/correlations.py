@@ -21,12 +21,10 @@ Created on 29.11.2013
 
 .. moduleauthor:: marscher, noe
 '''
-from __future__ import absolute_import
 
 import numpy as np
 
 from .decomposition import rdl_decomposition
-from six.moves import range
 
 
 def time_correlation_by_diagonalization(P, pi, obs1, obs2=None, time=1, rdl=None):

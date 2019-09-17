@@ -21,9 +21,7 @@ r"""This module implements effective transition counts
 .. moduleauthor:: F. Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import, division
 
-from six.moves import range
 import numpy as np
 import scipy.sparse
 

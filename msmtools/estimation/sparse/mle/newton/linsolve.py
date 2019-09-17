@@ -21,14 +21,12 @@ r"""
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import numpy as np
 from scipy.linalg import solve, lu_factor, lu_solve, cho_factor, cho_solve, eigvalsh
 from scipy.sparse import issparse, diags, csr_matrix, bmat
 from scipy.sparse.linalg import splu, SuperLU, minres
 
-from six.moves import range
 
 def mydot(A, B):
     r"""Dot-product that can handle dense and sparse arrays
@@ -62,7 +60,7 @@ def mysolve(LU, b):
     if isinstance(LU, SuperLU):
         return LU.solve(b)
     else:
-        return lu_solve(LU, b)    
+        return lu_solve(LU, b)
 
 ###############################################################################
 # Solve via full system
@@ -71,12 +69,12 @@ def mysolve(LU, b):
 def factor_full(z, DPhival, G, A):
     return DPhival
 
-def solve_full(z, Fval, DPhival, G, A):    
+def solve_full(z, Fval, DPhival, G, A):
     M, N=G.shape
     P, N=A.shape
 
     """Total number of inequality constraints"""
-    m=M    
+    m=M
 
     """Primal variable"""
     x=z[0:N]
@@ -92,7 +90,7 @@ def solve_full(z, Fval, DPhival, G, A):
 
     """Dual infeasibility"""
     rd = Fval[0:N]
-    
+
     """Primal infeasibility"""
     rp1 = Fval[N:N+P]
     rp2 = Fval[N+P:N+P+M]
@@ -106,14 +104,14 @@ def solve_full(z, Fval, DPhival, G, A):
     """Condensed system"""
     if issparse(DPhival):
         if not issparse(A):
-            A = csr_matrix(A)        
+            A = csr_matrix(A)
         H = DPhival + mydot(G.T, mydot(SIG, G))
         J = bmat([[H, A.T], [A, None]])
     else:
         if issparse(A):
             A = A.toarray()
         J = np.zeros((N+P, N+P))
-        J[0:N, 0:N] = DPhival + mydot(G.T, mydot(SIG, G))            
+        J[0:N, 0:N] = DPhival + mydot(G.T, mydot(SIG, G))
         J[0:N, N:] = A.T
         J[N:, 0:N] = A
 
@@ -133,9 +131,9 @@ def solve_full(z, Fval, DPhival, G, A):
     dPc = np.ones(J_new.shape[0])
     ind = (dJ_new > 0.0)
     dPc[ind] = 1.0/dJ_new[ind]
-    Pc = diags(dPc, 0)    
+    Pc = diags(dPc, 0)
     dxnu, info = minres(J_new, b_new, tol=1e-8, M=Pc)
-    
+
     # dxnu = solve(J, b)
     dx = dxnu[0:N]
     dnu = dxnu[N:]
@@ -145,13 +143,13 @@ def solve_full(z, Fval, DPhival, G, A):
     dl = -mydot(SIG, ds) - rc/s
 
     dz = np.hstack((dx, dnu, dl, ds))
-    return dz 
+    return dz
 
 ###############################################################################
 # Solve via augmented system
 ###############################################################################
 
-def factor_aug(z, DPhival, G, A):    
+def factor_aug(z, DPhival, G, A):
     M, N = G.shape
     P, N = A.shape
     """Multiplier for inequality constraints"""
@@ -166,18 +164,18 @@ def factor_aug(z, DPhival, G, A):
     """Condensed system"""
     if issparse(DPhival):
         if not issparse(A):
-            A = csr_matrix(A)        
+            A = csr_matrix(A)
         H = DPhival + mydot(G.T, mydot(SIG, G))
         J = bmat([[H, A.T], [A, None]])
     else:
         if issparse(A):
             A = A.toarray()
         J = np.zeros((N+P, N+P))
-        J[0:N, 0:N] = DPhival + mydot(G.T, mydot(SIG, G))            
+        J[0:N, 0:N] = DPhival + mydot(G.T, mydot(SIG, G))
         J[0:N, N:] = A.T
         J[N:, 0:N] = A
 
-    LU = myfactor(J)    
+    LU = myfactor(J)
     return LU
 
 def solve_factorized_aug(z, Fval, LU, G, A):
@@ -185,7 +183,7 @@ def solve_factorized_aug(z, Fval, LU, G, A):
     P, N=A.shape
 
     """Total number of inequality constraints"""
-    m = M    
+    m = M
 
     """Primal variable"""
     x = z[0:N]
@@ -201,7 +199,7 @@ def solve_factorized_aug(z, Fval, LU, G, A):
 
     """Dual infeasibility"""
     rd = Fval[0:N]
-    
+
     """Primal infeasibility"""
     rp1 = Fval[N:N+P]
     rp2 = Fval[N+P:N+P+M]
@@ -230,7 +228,7 @@ def solve_factorized_aug(z, Fval, LU, G, A):
 ###############################################################################
 # Solve via normal equations (Schur complement)
 ###############################################################################
-    
+
 def factor_schur(z, DPhival, G, A):
     M, N = G.shape
     P, N = A.shape
@@ -266,7 +264,7 @@ def solve_factorized_schur(z, Fval, LU, G, A):
     P, N=A.shape
 
     """Total number of inequality constraints"""
-    m = M    
+    m = M
 
     """Primal variable"""
     x = z[0:N]
@@ -282,7 +280,7 @@ def solve_factorized_schur(z, Fval, LU, G, A):
 
     """Dual infeasibility"""
     rd = Fval[0:N]
-    
+
     """Primal infeasibility"""
     rp1 = Fval[N:N+P]
     rp2 = Fval[N+P:N+P+M]
@@ -301,18 +299,18 @@ def solve_factorized_schur(z, Fval, LU, G, A):
     LU_S, LU_H = LU
 
     """Assemble right hand side for normal equation"""
-    b = r2 - mydot(A, mysolve(LU_H, r1))  
+    b = r2 - mydot(A, mysolve(LU_H, r1))
 
     """Solve for dnu"""
     dnu = mysolve(LU_S, b)
-       
+
     """Solve for dx"""
-    dx = mysolve(LU_H, -(r1 + mydot(A.T, dnu)))    
-    
+    dx = mysolve(LU_H, -(r1 + mydot(A.T, dnu)))
+
     """Obtain search directions for l and s"""
     ds = -rp2 - mydot(G, dx)
     dl = -mydot(SIG, ds) - rc/s
 
     dz = np.hstack((dx, dnu, dl, ds))
     return dz
-    
+

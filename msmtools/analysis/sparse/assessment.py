@@ -19,7 +19,6 @@
 """
     Sparse assessment module of msm analysis package
 """
-from __future__ import absolute_import
 
 from scipy.sparse.csgraph import connected_components
 from scipy.sparse.sputils import isdense

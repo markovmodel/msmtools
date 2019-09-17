@@ -28,8 +28,6 @@ from given data
 .. moduleauthor:: Frank Noe <frank DOT noe AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 
 import math
 import numpy as np

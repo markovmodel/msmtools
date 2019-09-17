@@ -22,14 +22,12 @@ backward comittors using sparse linear algebra.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 import numpy as np
 
 from scipy.sparse import eye, coo_matrix, diags
 from scipy.sparse.linalg import spsolve
 
 from .stationary_vector import stationary_distribution
-from six.moves import range
 
 
 def forward_committor(T, A, B):

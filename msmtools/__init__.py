@@ -36,7 +36,6 @@ Low-level functions for estimation and analysis of transition matrices and io.
 
 
 """
-from __future__ import absolute_import
 
 from . import analysis
 from . import estimation

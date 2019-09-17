@@ -21,17 +21,15 @@ r"""
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import numpy as np
 from scipy.sparse import issparse, csr_matrix, diags
 from scipy.sparse.linalg import minres, aslinearoperator, LinearOperator
 
-from six.moves import range
 
 class AugmentedSystem(LinearOperator):
 
-    def __init__(self, J, G, SIG, A):        
+    def __init__(self, J, G, SIG, A):
         self.N1 = J.shape[0]
         self.N2 = A.shape[0]
         N = self.N1 + self.N2
@@ -43,8 +41,8 @@ class AugmentedSystem(LinearOperator):
         self.A = A
         self.AT = A.T.tocsr()
         self.diag = np.hstack((J.diagonal() + self.E.diagonal(),
-                               np.zeros(self.N2)))                        
-        
+                               np.zeros(self.N2)))
+
     def _matvec(self, x):
         N1 = self.N1
         N2 = self.N2
@@ -90,13 +88,13 @@ def factor_aug(z, DPhival, G, A):
     G : (M, N) ndarray or sparse matrix
         Inequality constraints
     A : (P, N) ndarray or sparse matrix
-        Equality constraints  
+        Equality constraints
 
     Returns
     -------
     J : LinearOperator
         Augmented system
-    
+
     """
     M, N = G.shape
     P, N = A.shape
@@ -125,7 +123,7 @@ def factor_aug(z, DPhival, G, A):
     T = diags(sign, 0)
 
     A_new = A.dot(T)
-    
+
     W = AugmentedSystem(DPhival, G, SIG, A_new)
     return W
 
@@ -134,7 +132,7 @@ def solve_factorized_aug(z, Fval, LU, G, A):
     P, N=A.shape
 
     """Total number of inequality constraints"""
-    m=M    
+    m=M
 
     """Primal variable"""
     x=z[0:N]
@@ -150,7 +148,7 @@ def solve_factorized_aug(z, Fval, LU, G, A):
 
     """Dual infeasibility"""
     rd = Fval[0:N]
-    
+
     """Primal infeasibility"""
     rp1 = Fval[N:N+P]
     rp2 = Fval[N+P:N+P+M]
@@ -172,8 +170,8 @@ def solve_factorized_aug(z, Fval, LU, G, A):
     sign = np.zeros(N+P)
     sign[0:N//2] = 1.0
     sign[N//2:] = -1.0
-    T = diags(sign, 0)        
-   
+    T = diags(sign, 0)
+
     """Change rhs"""
     b_new = mydot(T, b)
 
@@ -181,9 +179,9 @@ def solve_factorized_aug(z, Fval, LU, G, A):
     dPc = np.ones(W.shape[0])
     ind = (dW > 0.0)
     dPc[ind] = 1.0/dW[ind]
-    Pc = diags(dPc, 0)    
+    Pc = diags(dPc, 0)
     dxnu, info = minres(W, b_new, tol=1e-10, M=Pc)
-    
+
     # dxnu = solve(J, b)
     dx = dxnu[0:N]
     dnu = dxnu[N:]
@@ -195,4 +193,4 @@ def solve_factorized_aug(z, Fval, LU, G, A):
     dl = -mydot(SIG, ds) - rc/s
 
     dz = np.hstack((dx, dnu, dl, ds))
-    return dz 
+    return dz

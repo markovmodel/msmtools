@@ -21,7 +21,6 @@ r"""This module implements the countmatrix estimation functionality
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import numpy as np
 import scipy.sparse

@@ -21,14 +21,12 @@ Created on Jan 8, 2014
 
 @author: noe
 '''
-from __future__ import absolute_import
 
 import warnings
 import math
 import numpy as np
 import scipy.sparse
 from ..util import types
-from six.moves import range
 
 __all__ = ['transition_matrix_metropolis_1d',
            'generate_traj',

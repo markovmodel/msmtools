@@ -61,7 +61,6 @@ Sampling trajectory indexes
    sample_indexes_by_sequence
 
 """
-from __future__ import absolute_import
 import warnings as _w
 _w.warn('msmtools.dtraj package is deprecated and will be removed in a newer version.')
 

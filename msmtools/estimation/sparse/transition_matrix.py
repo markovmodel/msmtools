@@ -17,8 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """This module implements the transition matrix functionality"""
-from __future__ import absolute_import
-from __future__ import division
 
 import numpy as np
 import scipy.sparse

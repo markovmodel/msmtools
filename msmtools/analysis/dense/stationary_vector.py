@@ -22,7 +22,6 @@ vectors of stochastic matrices
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import, division
 import numpy as np
 from scipy.linalg import eig, lu_factor, lu_solve
 

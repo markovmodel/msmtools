@@ -36,5 +36,4 @@ Metropolis-Hastings chain
    generate_traj
 
 """
-from __future__ import absolute_import
 from .api import *

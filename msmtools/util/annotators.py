@@ -33,7 +33,6 @@ class Bar(Foo):
 
 Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
 """
-from __future__ import absolute_import
 from functools import wraps
 import warnings
 from decorator import decorator, decorate
