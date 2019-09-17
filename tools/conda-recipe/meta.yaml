@@ -8,7 +8,7 @@ source:
 
 build:
   # this method tests the "installability" of the source distribution
-  script: python setup.py sdist; LDSHARED="$CC -shared" pip install --no-deps --ignore-installed -v dist/* # [linux]
+  script: python setup.py sdist; pip install --no-deps --ignore-installed -v dist/* # [linux]
   #script: LDSHARED="$CC -shared" python setup.py install --single-version-externally-managed --record record.txt # [osx or linux]
   script: python setup.py install --single-version-externally-managed --record record.txt # [win]
 
@@ -17,7 +17,7 @@ requirements:
     - {{ compiler('c') }}
 
   host:
-    - cython >=0.20
+    - cython
     - {{ pin_compatible('numpy') }}
     - python
     - setuptools
@@ -29,11 +29,10 @@ requirements:
     - python
     - scipy
     - setuptools
-    - six
 
 test:
   source_files:
-    - setup.cfg
+    - tests/
   requires:
     - pytest
     - pytest-cov

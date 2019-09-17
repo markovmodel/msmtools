@@ -8,9 +8,6 @@ environment:
     PYTHON: "C:\\Miniconda3-x64"
 
   matrix:
-    - CONDA_PY: "27"
-      CONDA_NUMPY: "19"
-
     - CONDA_PY: "36"
       CONDA_NUMPY: "114"
 
