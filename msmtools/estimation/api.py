@@ -952,10 +952,10 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
                 if rev_pisym:
                     result = sparse.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
                 elif sparse_newton:
-                    from msmtools.estimation.sparse.mle.newton import solve_mle_rev
+                    from msmtools.estimation.sparse.mle.newton.mle_rev import solve_mle_rev
                     result = solve_mle_rev(C, **kwargs)
                 else:
-                    result = dense.mle.mle_trev.mle_trev(C, **kwargs)
+                    result = sparse.mle.mle_trev.mle_trev(C, **kwargs)
             else:
                 if rev_pisym:
                     result = dense.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
