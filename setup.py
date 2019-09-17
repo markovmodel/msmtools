@@ -48,7 +48,7 @@ Topic :: Scientific/Engineering :: Physics
 from setup_util import getSetuptoolsError, lazy_cythonize, detect_openmp
 
 try:
-    from setuptools import setup, Extension, find_packages
+    from setuptools import setup, Extension
     from pkg_resources import VersionConflict
 except ImportError as ie:
     print(getSetuptoolsError())
@@ -230,8 +230,8 @@ metadata = dict(
     classifiers=[c for c in CLASSIFIERS.split('\n') if c],
     keywords='Markov State Model Algorithms',
     # packages are found if their folder contains an __init__.py,
-    packages=find_packages(),
-    cmdclass=get_cmdclass(),
+    #packages=find_packages(),
+    #cmdclass=get_cmdclass(),
     # runtime dependencies
     install_requires=['numpy>=1.6.0',
                       'scipy>=0.11',
@@ -241,18 +241,13 @@ metadata = dict(
     zip_safe=False,
 )
 
-# include testing data
-metadata['package_data'] = {'msmtools.util.matrix': ['testfiles/*'],
-                            'msmtools.analysis': ['tests/*'],
-                            'msmtools.dtraj.tests': ['testfiles/*'],
-                            'msmtools.estimation.tests': ['testfiles/*'],
-                            'msmtools.estimation.sparse.newton': ['testfiles/*'],
-                            }
 
-metadata['include_package_data'] = True
-
-# this is only metadata and not used by setuptools
-metadata['requires'] = ['numpy', 'scipy']
+def configuration(parent_package='', top_path=None):
+    from numpy.distutils.misc_util import Configuration
+    config = Configuration(None, '', top_path)
+    config.set_options(delegate_options_to_subpackages=True,)
+    config.add_subpackage('msmtools')
+    return config
 
 # not installing?
 if len(sys.argv) == 1 or (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
@@ -265,13 +260,16 @@ else:
     metadata['setup_requires'] = ['numpy>=1.6.0',
                                   ]
 
+    metadata['configuration'] = configuration
+
     # when on git, we require cython
     if os.path.exists('.git'):
         warnings.warn('using git, require cython')
         metadata['setup_requires'] += ['cython>=0.22']
 
     # only require numpy and extensions in case of building/installing
-    metadata['ext_modules'] = lazy_cythonize(extensions)
+    #metadata['ext_modules'] = lazy_cythonize(extensions)
 
 if __name__ == '__main__':
+    from numpy.distutils.core import setup
     setup(**metadata)
