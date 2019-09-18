@@ -13,3 +13,6 @@ recursive-include msmtools *.pyx *.c *.h
 
 include README*
 include LICENSE*
+
+include pyproject.toml
+
