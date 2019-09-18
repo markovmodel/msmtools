@@ -1,4 +1,3 @@
-
 # This file is part of MSMTools.
 #
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Freie Universitaet Berlin (GER)
@@ -21,18 +20,9 @@ utility functions for python setup
 """
 import contextlib
 import os
-import shutil
 import sys
 import tempfile
-
-import setuptools
-
-
-@contextlib.contextmanager
-def TemporaryDirectory():
-    n = tempfile.mkdtemp()
-    yield n
-    shutil.rmtree(n)
+from distutils.errors import LinkError, CompileError
 
 
 @contextlib.contextmanager
@@ -62,13 +52,14 @@ def stdchannel_redirected(stdchannel, dest_filename, fake=False):
         if dest_file is not None:
             dest_file.close()
 
+
 # From http://stackoverflow.com/questions/
 # 7018879/disabling-output-when-compiling-with-distutils
 def has_function(compiler, funcname, headers):
     if not isinstance(headers, (tuple, list)):
         headers = [headers]
-    with TemporaryDirectory() as tmpdir, stdchannel_redirected(sys.stderr, os.devnull), \
-             stdchannel_redirected(sys.stdout, os.devnull):
+    with tempfile.TemporaryDirectory() as tmpdir, stdchannel_redirected(sys.stderr, os.devnull), \
+                                                  stdchannel_redirected(sys.stdout, os.devnull):
         try:
             fname = os.path.join(tmpdir, 'funcname.c')
             f = open(fname, 'w')
@@ -80,7 +71,7 @@ def has_function(compiler, funcname, headers):
             f.close()
             objects = compiler.compile([fname], output_dir=tmpdir)
             compiler.link_executable(objects, os.path.join(tmpdir, 'a.out'))
-        except (setuptools.distutils.errors.CompileError, setuptools.distutils.errors.LinkError):
+        except (CompileError, LinkError):
             return False
         except:
             import traceback
@@ -88,10 +79,11 @@ def has_function(compiler, funcname, headers):
             return False
         return True
 
+
 def detect_openmp(compiler):
     from distutils.log import debug
     from copy import deepcopy
-    compiler = deepcopy(compiler) # avoid side-effects
+    compiler = deepcopy(compiler)  # avoid side-effects
     has_openmp = has_function(compiler, 'omp_get_num_threads', headers='omp.h')
     debug('[OpenMP] compiler %s has builtin support', compiler)
     additional_libs = []

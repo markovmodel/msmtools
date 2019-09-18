@@ -24,7 +24,6 @@ MSMTools contains an API to estimate and analyze Markov state models.
 DOCLINES = __doc__.split("\n")
 
 import sys
-import os
 import versioneer
 import warnings
 
@@ -45,8 +44,6 @@ Topic :: Scientific/Engineering :: Mathematics
 Topic :: Scientific/Engineering :: Physics
 
 """
-from setup_util import detect_openmp
-
 
 def get_cmdclass():
     versioneer_cmds = versioneer.get_cmdclass()
@@ -55,6 +52,7 @@ def get_cmdclass():
     class BuildExt(build_ext):
         def build_extensions(self):
             # setup OpenMP support
+            from setup_util import detect_openmp
             openmp_enabled, additional_libs = detect_openmp(self.compiler)
             if openmp_enabled:
                 warnings.warn('enabled openmp')
@@ -102,33 +100,22 @@ def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
     config = Configuration(None, '', top_path)
     config.set_options(ignore_setup_xxx_py=True,
-        assume_default_configuration=True,
-        delegate_options_to_subpackages=True,
-        #quiet=True,
+                       assume_default_configuration=True,
+                       delegate_options_to_subpackages=True,
+                       # quiet=True,
                        )
     config.add_subpackage('msmtools')
     return config
 
+
 # not installing?
 if len(sys.argv) == 1 or (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
-                          sys.argv[1] in ('--help-commands',
-                                          '--version',
-                                          'clean'))):
+                                                  sys.argv[1] in ('--help-commands',
+                                                                  '--version',
+                                                                  'clean'))):
     pass
 else:
-    # setuptools>=2.2 can handle setup_requires
-    metadata['setup_requires'] = ['numpy>=1.6.0',
-                                  ]
-
     metadata['configuration'] = configuration
-
-    # when on git, we require cython
-    if os.path.exists('.git'):
-        warnings.warn('using git, require cython')
-        metadata['setup_requires'] += ['cython>=0.22']
-
-    # only require numpy and extensions in case of building/installing
-    #metadata['ext_modules'] = lazy_cythonize(extensions)
 
 if __name__ == '__main__':
     from numpy.distutils.core import setup
