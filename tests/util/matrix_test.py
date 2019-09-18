@@ -27,7 +27,7 @@ import unittest
 import numpy as np
 import scipy.sparse
 
-from msmtools.util.matrix import matrix
+from msmtools.util import matrix
 
 ################################################################################
 # util
