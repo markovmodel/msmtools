@@ -14,9 +14,8 @@ pytest_args = ("-v --pyargs {test_pkg} "
                "--cov-report=xml:{dest_report} "
                #"--doctest-modules "
                "--junit-xml={junit_xml} "
-               "-c {pytest_cfg}"
                .format(test_pkg=test_pkg, cover_pkg=cover_pkg,
-                       junit_xml=junit_xml, pytest_cfg='setup.cfg',
+                       junit_xml=junit_xml,
                        dest_report=os.path.join(os.path.expanduser('~/'), 'coverage.xml'),
                        )
                .split(' '))
