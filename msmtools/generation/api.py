@@ -21,14 +21,12 @@ Created on Jan 8, 2014
 
 @author: noe
 '''
-from __future__ import absolute_import
 
 import warnings
 import math
 import numpy as np
 import scipy.sparse
-import msmtools.util.types as types
-from six.moves import range
+from ..util import types
 
 __all__ = ['transition_matrix_metropolis_1d',
            'generate_traj',
@@ -101,10 +99,10 @@ class MarkovChainSampler(object):
         if start is None:
             if self.mudist is None:
                 # compute mu, the stationary distribution of P
-                import msmtools.analysis as msmana
+                from ..analysis import stationary_distribution
                 from scipy.stats import rv_discrete
 
-                mu = msmana.stationary_distribution(self.P)
+                mu = stationary_distribution(self.P)
                 self.mudist = rv_discrete(values=(np.arange(self.n), mu))
             # sample starting point from mu
             start = self.mudist.rvs()

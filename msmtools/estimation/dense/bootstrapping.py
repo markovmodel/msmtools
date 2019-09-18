@@ -21,14 +21,10 @@ Created on Jul 23, 2014
 
 @author: noe
 '''
-from __future__ import absolute_import
-from __future__ import division
 
 import numpy as np
 import scipy
 import random
-import six
-from six.moves import range
 
 
 # By FN
@@ -116,7 +112,7 @@ def bootstrap_counts_singletraj(dtraj, lagtime, n):
     """
     # check if length is sufficient
     L = len(dtraj)
-    if (lagtime > L):
+    if lagtime > L:
         raise ValueError(
             'Cannot sample counts with lagtime ' + str(lagtime) + ' from a trajectory with length ' + str(L))
     # sample
@@ -124,7 +120,7 @@ def bootstrap_counts_singletraj(dtraj, lagtime, n):
     J = I + lagtime
 
     # return state pairs
-    return (dtraj[I], dtraj[J])
+    return dtraj[I], dtraj[J]
 
 
 def bootstrap_counts(dtrajs, lagtime, corrlength=None):
@@ -135,7 +131,7 @@ def bootstrap_counts(dtrajs, lagtime, corrlength=None):
     """
     from scipy.stats import rv_discrete
     # if we have just one trajectory, put it into a one-element list:
-    if (isinstance(dtrajs[0], six.integer_types)):
+    if not isinstance(dtrajs, list):
         dtrajs = [dtrajs]
     ntraj = len(dtrajs)
 

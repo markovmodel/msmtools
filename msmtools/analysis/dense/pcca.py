@@ -22,14 +22,11 @@
 modified from ZIBMolPy which can also be found on Github:
 https://github.com/CMD-at-ZIB/ZIBMolPy/blob/master/ZIBMolPy_package/ZIBMolPy/algorithms.py
 '''
-from __future__ import absolute_import
-from __future__ import division
 
 import warnings
 import numpy as np
 from scipy.sparse import issparse
 import math
-from six.moves import range
 
 
 def _pcca_connected_isa(evec, n_clusters):

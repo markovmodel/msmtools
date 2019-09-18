@@ -8,9 +8,6 @@ environment:
     PYTHON: "C:\\Miniconda3-x64"
 
   matrix:
-    - CONDA_PY: "27"
-      CONDA_NUMPY: "19"
-
     - CONDA_PY: "36"
       CONDA_NUMPY: "114"
 
@@ -21,8 +18,6 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%;"
   - conda install conda-build -yq -c defaults
   # Build the compiled extension and run the project tests
-  - "%CMD_IN_ENV% conda build -c conda-forge -q tools/conda-recipe --numpy=%CONDA_NUMPY%"
-
+  - conda build -c conda-forge -q tools/conda-recipe --numpy=%CONDA_NUMPY%"
 
 build: false
-

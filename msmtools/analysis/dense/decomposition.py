@@ -25,20 +25,18 @@ Dense matrices are represented by numpy.ndarrays throughout this module.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 
 import numpy as np
 import numbers
 import warnings
 
-from scipy.linalg import eig, eigh, eigvals, eigvalsh, solve, lu_factor, lu_solve
+from scipy.linalg import eig, eigh, eigvals, eigvalsh, solve
 
-from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
-from six.moves import range
+from ...util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
 
 from .stationary_vector import stationary_distribution
 from .assessment import is_reversible
+
 
 def eigenvalues(T, k=None, reversible=False, mu=None):
     r"""Compute eigenvalues of given transition matrix.
@@ -95,6 +93,7 @@ def eigenvalues(T, k=None, reversible=False, mu=None):
     else:
         return evals
 
+
 def eigenvalues_rev(T, k=None, mu=None):
     r"""Compute eigenvalues of reversible transition matrix.
 
@@ -132,6 +131,7 @@ def eigenvalues_rev(T, k=None, mu=None):
     """ symmetric eigenvalue problem """
     evals = eigvalsh(S)
     return evals
+
 
 def eigenvectors(T, k=None, right=True, reversible=False, mu=None):
     r"""Compute eigenvectors of transition matrix.
@@ -185,6 +185,7 @@ def eigenvectors(T, k=None, right=True, reversible=False, mu=None):
         ind = np.asarray(k)
         return eigvec[:, ind]
 
+
 def eigenvectors_nrev(T, right=True):
     r"""Compute eigenvectors of transition matrix.
 
@@ -221,6 +222,7 @@ def eigenvectors_nrev(T, right=True):
         eigvec = L[:, perm]
     return eigvec
 
+
 def eigenvectors_rev(T, right=True, mu=None):
     r"""Compute eigenvectors of reversible transition matrix.
 
@@ -254,6 +256,7 @@ def eigenvectors_rev(T, right=True, mu=None):
         return eigvec / smu[:, np.newaxis]
     else:
         return eigvec * smu[:, np.newaxis]
+
 
 def rdl_decomposition(T, k=None, reversible=False, norm='standard', mu=None):
     r"""Compute the decomposition into left and right eigenvectors.
@@ -315,6 +318,7 @@ def rdl_decomposition(T, k=None, reversible=False, norm='standard', mu=None):
         return R, D, L
     else:
         return R[:, 0:k], D[0:k, 0:k], L[0:k, :]
+
 
 def rdl_decomposition_nrev(T, norm='standard'):
     r"""Decomposition into left and right eigenvectors.
@@ -392,6 +396,7 @@ def rdl_decomposition_nrev(T, norm='standard'):
 
     else:
         raise ValueError("Keyword 'norm' has to be either 'standard' or 'reversible'")
+
 
 def rdl_decomposition_rev(T, norm='reversible', mu=None):
     r"""Decomposition into left and right eigenvectors for reversible
@@ -472,6 +477,7 @@ def rdl_decomposition_rev(T, norm='reversible', mu=None):
         return R, D, L.T
     else:
         raise ValueError("Keyword 'norm' has to be either 'standard' or 'reversible'")
+
 
 def timescales(T, tau=1, k=None, reversible=False, mu=None):
     r"""Compute implied time scales of given transition matrix

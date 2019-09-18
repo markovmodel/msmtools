@@ -21,13 +21,11 @@ r"""This module contains sparse implementation of the fingerprint module
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
 
 import numpy as np
 
 from .decomposition import rdl_decomposition, timescales_from_eigenvalues
 from .decomposition import stationary_distribution as statdist
-from six.moves import range
 
 ################################################################################
 # Fingerprints

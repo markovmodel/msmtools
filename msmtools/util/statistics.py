@@ -22,15 +22,13 @@ Created on Jul 25, 2014
 @author: noe
 '''
 
-from __future__ import absolute_import, division
-from six.moves import range
 
 import numpy as np
 import math
 import itertools
 import warnings
 
-from msmtools.util import types
+from . import types
 
 
 def _confidence_interval_1d(data, alpha):
@@ -173,7 +171,7 @@ def _maxlength(X):
 
 
 def statistical_inefficiency(X, truncate_acf=True, mact=1.0):
-    """ Estimates the statistical inefficiency from univariate time series X
+    r""" Estimates the statistical inefficiency from univariate time series X
 
     The statistical inefficiency [1]_ is a measure of the correlatedness of samples in a signal.
     Given a signal :math:`{x_t}` with :math:`N` samples and statistical inefficiency :math:`I \in (0,1]`, there are

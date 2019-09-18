@@ -16,10 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import print_function
-import six
-from six.moves import range
 __author__ = 'noe'
 
 import numpy as np
@@ -128,7 +124,7 @@ def is_float_array(l):
     return False
 
 def is_string(s):
-    return isinstance(s, six.string_types)
+    return isinstance(s, str)
 
 def is_iterable(I):
     return isinstance(I, collections.Iterable)
@@ -138,7 +134,7 @@ def is_list(S):
     return isinstance(S, (list, tuple))
 
 def is_list_of_string(S):
-    return isinstance(S, (list, tuple)) and (all(isinstance(s, six.string_types) for s in S))
+    return all(is_string(s) for s in S)
 
 def ensure_dtraj(dtraj):
     r"""Makes sure that dtraj is a discrete trajectory (array of int)

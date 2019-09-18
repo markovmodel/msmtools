@@ -19,13 +19,12 @@
 """
     Sparse assessment module of msm analysis package
 """
-from __future__ import absolute_import
 
 from scipy.sparse.csgraph import connected_components
 from scipy.sparse.sputils import isdense
 from scipy.sparse.construct import diags
 
-from msmtools.util.numeric import allclose_sparse
+from ...util.numeric import allclose_sparse
 
 import numpy as np
 

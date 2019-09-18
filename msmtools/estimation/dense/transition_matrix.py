@@ -21,8 +21,6 @@ Created on Jan 13, 2014
 
 @author: noe
 '''
-from __future__ import absolute_import
-from __future__ import division
 
 import numpy as np
 
@@ -78,7 +76,7 @@ def transition_matrix_reversible_pisym(C, return_statdist=False, **kwargs):
     """
     # nonreversible estimate
     T_nonrev = transition_matrix_non_reversible(C)
-    from msmtools.analysis import stationary_distribution
+    from ...analysis import stationary_distribution
     pi = stationary_distribution(T_nonrev)
     # correlation matrix
     X = pi[:, None] * T_nonrev

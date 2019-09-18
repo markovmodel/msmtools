@@ -23,8 +23,6 @@ dynamical fingerprints, expectations and correlations
 .. moduleauthor:: M.Scherer <m.scherer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from six.moves import range
 
 import numpy as np
 

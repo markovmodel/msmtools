@@ -22,14 +22,11 @@ expectation values for a given transition matrix.
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 
 import numpy as np
 
 from .decomposition import rdl_decomposition
 from .stationary_vector import stationary_distribution
-from six.moves import range
 
 
 def expected_counts(p0, T, n):

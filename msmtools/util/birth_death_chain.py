@@ -21,13 +21,10 @@ r"""Birth death chain for testing
 .. moduleauthor:: B.Trendelkamp-Schroer <benjamin DOT trendelkamp-schroer AT fu-berlin DOT de>
 
 """
-from __future__ import absolute_import
-from __future__ import division
 
 import numpy as np
 
 from scipy.sparse import diags
-from six.moves import range
 
 
 class BirthDeathChain(object):

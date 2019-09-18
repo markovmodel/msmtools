@@ -30,11 +30,11 @@ Discrete trajectory io
 .. autosummary::
    :toctree: generated/
 
-   read_discrete_trajectory - read microstate trajectoryfrom ascii file
+   read_discrete_trajectory - read microstate trajectory from ascii file
    read_dtraj
    write_discrete_trajectory - write microstate trajectory to ascii file
    write_dtraj
-   load_discrete_trajectory - read microstate trajectoryfrom biqqnary file
+   load_discrete_trajectory - read microstate trajectory from biqqnary file
    load_dtraj
    save_discrete_trajectory -  write microstate trajectory to binary file
    save_dtraj
@@ -61,5 +61,5 @@ Sampling trajectory indexes
    sample_indexes_by_sequence
 
 """
-from __future__ import absolute_import
+
 from .api import *

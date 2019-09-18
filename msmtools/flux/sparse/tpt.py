@@ -22,11 +22,9 @@ analysis of Markov models.
 __moduleauthor__ = "Benjamin Trendelkamp-Schroer, Frank Noe"
 
 """
-from __future__ import absolute_import
 import numpy as np
 
 from scipy.sparse import diags, coo_matrix, csr_matrix
-from six.moves import range
 
 
 def remove_negative_entries(A):
@@ -182,10 +180,10 @@ def total_flux(flux, A):
     A = set(A)
     notA = X.difference(A)
 
-    """Extract rows corresponding to A"""
+    # Extract rows corresponding to A
     W = flux.tocsr()
     W = W[list(A), :]
-    """Extract columns corresonding to X\A"""
+    # Extract columns corresponding to X\A
     W = W.tocsc()
     W = W[:, list(notA)]
 

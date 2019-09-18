@@ -24,7 +24,6 @@ MSMTools contains an API to estimate and analyze Markov state models.
 DOCLINES = __doc__.split("\n")
 
 import sys
-import os
 import versioneer
 import warnings
 
@@ -45,156 +44,15 @@ Topic :: Scientific/Engineering :: Mathematics
 Topic :: Scientific/Engineering :: Physics
 
 """
-from setup_util import getSetuptoolsError, lazy_cythonize, detect_openmp
-
-try:
-    from setuptools import setup, Extension, find_packages
-    from pkg_resources import VersionConflict
-except ImportError as ie:
-    print(getSetuptoolsError())
-    sys.exit(23)
-
-###############################################################################
-# Extensions
-###############################################################################
-def extensions():
-    """How do we handle cython:
-    1. when on git, require cython during setup time (do not distribute
-    generated .c files via git)
-     a) cython present -> fine
-     b) no cython present -> install it on the fly. Extensions have to have .pyx suffix
-    This is solved via a lazy evaluation of the extension list. This is needed,
-    because build_ext is being called before cython will be available.
-    https://bitbucket.org/pypa/setuptools/issue/288/cannot-specify-cython-under-setup_requires
-
-    2. src dist install (have pre-converted c files and pyx files)
-     a) cython present -> fine
-     b) no cython -> use .c files
-    """
-    USE_CYTHON = False
-    try:
-        from Cython.Build import cythonize
-        USE_CYTHON = True
-    except ImportError:
-        warnings.warn('Cython not found. Using pre cythonized files.')
-
-    from numpy import get_include as _np_inc
-    np_inc = _np_inc()
-
-    exts = []
-
-    mle_trev_given_pi_dense_module = \
-        Extension('msmtools.estimation.dense.mle_trev_given_pi',
-                  sources=['msmtools/estimation/dense/mle_trev_given_pi.pyx',
-                           'msmtools/estimation/dense/_mle_trev_given_pi.c'],
-                  depends=['msmtools/util/sigint_handler.h'],
-                  include_dirs=['msmtools/estimation/dense', np_inc])
-
-    mle_trev_given_pi_sparse_module = \
-        Extension('msmtools.estimation.sparse.mle_trev_given_pi',
-                  sources=['msmtools/estimation/sparse/mle_trev_given_pi.pyx',
-                           'msmtools/estimation/sparse/_mle_trev_given_pi.c'],
-                  depends=['msmtools/util/sigint_handler.h'],
-                  include_dirs=['msmtools/estimation/dense', np_inc])
-
-    mle_trev_dense_module = \
-        Extension('msmtools.estimation.dense.mle_trev',
-                  sources=['msmtools/estimation/dense/mle_trev.pyx',
-                           'msmtools/estimation/dense/_mle_trev.c'],
-                  depends=['msmtools/util/sigint_handler.h'],
-                  include_dirs=[np_inc])
-
-    mle_trev_sparse_module = \
-        Extension('msmtools.estimation.sparse.mle_trev',
-                  sources=['msmtools/estimation/sparse/mle_trev.pyx',
-                           'msmtools/estimation/sparse/_mle_trev.c'],
-                  depends=['msmtools/util/sigint_handler.h'],
-                  include_dirs=[np_inc,
-                                ])
-    rnglib_src = ['msmtools/estimation/dense/rnglib/rnglib.c',
-                  'msmtools/estimation/dense/rnglib/ranlib.c']
-
-    mle_trev_sparse_newton_module = \
-        Extension('msmtools.estimation.sparse.newton.objective_sparse',
-                  sources=['msmtools/estimation/sparse/newton/objective_sparse.pyx'],
-                  libraries=['m'] if sys.platform != 'win32' else [],
-                  include_dirs=[np_inc,
-                                ]
-                  )
-
-    sampler_rev = \
-        Extension('msmtools.estimation.dense.sampler_rev',
-                  sources=['msmtools/estimation/dense/sampler_rev.pyx',
-                           'msmtools/estimation/dense/sample_rev.c',
-                           ] + rnglib_src,
-                  include_dirs=[np_inc,
-                                ])
-
-    sampler_revpi = \
-        Extension('msmtools.estimation.dense.sampler_revpi',
-                  sources=['msmtools/estimation/dense/sampler_revpi.pyx',
-                           'msmtools/estimation/dense/sample_revpi.c',
-                          ] + rnglib_src,
-                  include_dirs=[np_inc,
-                                ])
-
-    kahandot_module = \
-        Extension('msmtools.util.kahandot',
-                  sources = ['msmtools/util/kahandot_src/kahandot.pyx',
-                             'msmtools/util/kahandot_src/_kahandot.c'],
-                  depends = ['msmtools/util/kahandot_src/_kahandot.h'],
-                  include_dirs=[np_inc,
-                                ])
-
-    exts += [mle_trev_given_pi_dense_module,
-             mle_trev_given_pi_sparse_module,
-             mle_trev_dense_module,
-             mle_trev_sparse_module,
-             mle_trev_sparse_newton_module,
-             sampler_rev,
-             sampler_revpi,
-             kahandot_module
-            ]
-
-    if USE_CYTHON: # if we have cython available now, cythonize module
-        exts = cythonize(exts)
-    else:
-        # replace pyx files by their pre generated c code.
-        for e in exts:
-            new_src = []
-            for s in e.sources:
-                new_src.append(s.replace('.pyx', '.c'))
-            e.sources = new_src
-
-    return exts
 
 
 def get_cmdclass():
-    versioneer_cmds = versioneer.get_cmdclass()
+    from numpy.distutils.command.build_ext import build_ext
 
-    sdist_class = versioneer_cmds['sdist']
-    class sdist(sdist_class):
-        """ensure cython files are compiled to c, when distributing"""
-
-        def run(self):
-            # only run if .git is present
-            if not os.path.exists('.git'):
-                return
-
-            try:
-                from Cython.Build import cythonize
-                print("cythonizing sources")
-                cythonize(extensions())
-            except ImportError:
-                warnings.warn('sdist cythonize failed')
-            return sdist_class.run(self)
-
-    versioneer_cmds['sdist'] = sdist
-
-    from setuptools.command.build_ext import build_ext
     class BuildExt(build_ext):
         def build_extensions(self):
             # setup OpenMP support
+            from setup_util import detect_openmp
             openmp_enabled, additional_libs = detect_openmp(self.compiler)
             if openmp_enabled:
                 warnings.warn('enabled openmp')
@@ -211,8 +69,9 @@ def get_cmdclass():
 
             build_ext.build_extensions(self)
 
-    versioneer_cmds['build_ext'] = BuildExt
-    return versioneer_cmds
+    cmd = versioneer.get_cmdclass()
+    cmd['build_ext'] = BuildExt
+    return cmd
 
 
 metadata = dict(
@@ -229,49 +88,36 @@ metadata = dict(
     platforms=["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
     classifiers=[c for c in CLASSIFIERS.split('\n') if c],
     keywords='Markov State Model Algorithms',
-    # packages are found if their folder contains an __init__.py,
-    packages=find_packages(),
-    cmdclass=get_cmdclass(),
     # runtime dependencies
     install_requires=['numpy>=1.6.0',
                       'scipy>=0.11',
-                      'six',
                       'decorator',
                       ],
+    setup_requires=['numpy', 'cython'],
     zip_safe=False,
+    cmdclass=get_cmdclass(),
 )
 
-# include testing data
-metadata['package_data'] = {'msmtools.util.matrix': ['testfiles/*'],
-                            'msmtools.analysis': ['tests/*'],
-                            'msmtools.dtraj.tests': ['testfiles/*'],
-                            'msmtools.estimation.tests': ['testfiles/*'],
-                            'msmtools.estimation.sparse.newton': ['testfiles/*'],
-                            }
 
-metadata['include_package_data'] = True
+def configuration(parent_package='', top_path=None):
+    from numpy.distutils.misc_util import Configuration
+    config = Configuration(None, '', top_path)
+    config.set_options(ignore_setup_xxx_py=True,
+                       assume_default_configuration=True,
+                       delegate_options_to_subpackages=True,
+                       # quiet=True,
+                       )
+    config.add_subpackage('msmtools')
+    return config
 
-# this is only metadata and not used by setuptools
-metadata['requires'] = ['numpy', 'scipy']
 
 # not installing?
-if len(sys.argv) == 1 or (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
-                          sys.argv[1] in ('--help-commands',
-                                          '--version',
-                                          'clean'))):
-    pass
-else:
-    # setuptools>=2.2 can handle setup_requires
-    metadata['setup_requires'] = ['numpy>=1.6.0',
-                                  ]
-
-    # when on git, we require cython
-    if os.path.exists('.git'):
-        warnings.warn('using git, require cython')
-        metadata['setup_requires'] += ['cython>=0.22']
-
-    # only require numpy and extensions in case of building/installing
-    metadata['ext_modules'] = lazy_cythonize(extensions)
+if not(len(sys.argv) == 1 or (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
+                                                  sys.argv[1] in ('--help-commands',
+                                                                  '--version',
+                                                                  'clean')))):
+    metadata['configuration'] = configuration
 
 if __name__ == '__main__':
+    from numpy.distutils.core import setup
     setup(**metadata)
