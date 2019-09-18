@@ -28,7 +28,7 @@ or install latest devel branch with pip::
 
 Support and development
 -----------------------
-For bug reports/sugguestions/complains please file an issue on
+For bug reports/suggestions/complains please file an issue on
 `GitHub <http://github.com/markovmodel/msmtools>`__.
 
 Or start a discussion on our mailing list: pyemma-users@lists.fu-berlin.de
