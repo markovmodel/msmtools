@@ -13,7 +13,7 @@ before_install:
 - conda install conda-build=3.15 conda-verify -qy
 
 script:
-- conda build tools/conda-recipe --numpy=$CONDA_NPY -c conda-forge/label/gcc7
+- conda build tools/conda-recipe --numpy=$CONDA_NPY -c conda-forge
 
 after_script:
 - bash <(curl -s https://codecov.io/bash) -f $HOME/coverage.xml -e CONDA_PY
