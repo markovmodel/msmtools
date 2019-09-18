@@ -180,10 +180,10 @@ def total_flux(flux, A):
     A = set(A)
     notA = X.difference(A)
 
-    """Extract rows corresponding to A"""
+    # Extract rows corresponding to A
     W = flux.tocsr()
     W = W[list(A), :]
-    r"""Extract columns corresonding to X\A"""
+    # Extract columns corresponding to X\A
     W = W.tocsc()
     W = W[:, list(notA)]
 
