@@ -1,13 +1,10 @@
 import os
 import sys
 
-import pytest
-
 test_pkg = 'msmtools'
 cover_pkg = test_pkg
 
 junit_xml = os.path.join(os.getenv('CIRCLE_TEST_REPORTS', '.'), 'junit.xml')
-
 
 pytest_args = ("-v --pyargs {test_pkg} "
                "--cov={cover_pkg} "
@@ -19,8 +16,9 @@ pytest_args = ("-v --pyargs {test_pkg} "
                        dest_report=os.path.join(os.path.expanduser('~/'), 'coverage.xml'),
                        )
                .split(' '))
-print("args:", pytest_args)
-res = pytest.main(pytest_args)
 
-sys.exit(res)
-
+if __name__ == '__main__':
+    print("args:", pytest_args)
+    import pytest
+    res = pytest.main(pytest_args)
+    sys.exit(res)
