@@ -87,7 +87,7 @@ def transition_matrix_reversible_pisym(C, return_statdist=False, **kwargs):
     """
     # nonreversible estimate
     T_nonrev = transition_matrix_non_reversible(C)
-    from msmtools.analysis import stationary_distribution
+    from ...analysis import stationary_distribution
     pi = stationary_distribution(T_nonrev)
     # correlation matrix
     X = scipy.sparse.diags(pi).dot(T_nonrev)

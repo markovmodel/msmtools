@@ -24,8 +24,7 @@ r"""Cython implementation of iterative likelihood maximization.
 import numpy
 cimport numpy
 
-from msmtools.analysis import is_connected
-from msmtools.util.exceptions import NotConvergedWarning
+
 
 numpy.import_array()
 
@@ -42,7 +41,8 @@ cdef extern from "_mle_trev.h":
 def mle_trev(C, double maxerr=1.0E-12, int maxiter=int(1.0E6),
              warn_not_converged=True, return_statdist=False,
              eps_mu=1.0E-15):
-
+  from ....analysis import is_connected
+  from ....util.exceptions import NotConvergedWarning
   assert maxerr > 0, 'maxerr must be positive'
   assert maxiter > 0, 'maxiter must be positive'
   assert C.shape[0] == C.shape[1], 'C must be a square matrix.'

@@ -28,11 +28,9 @@ import scipy.sparse
 from . import objective_dense
 from . import objective_sparse
 
-from msmtools.estimation.sparse.mle.newton.linsolve import mydot
-# from linsolve import factor_aug as factor
-# from linsolve import solve_factorized_aug as solve_factorized
-from msmtools.estimation.sparse.mle.newton.linsolve_sparse import factor_aug as factor
-from msmtools.estimation.sparse.mle.newton.linsolve_sparse import solve_factorized_aug as solve_factorized
+from .linsolve import mydot
+from .linsolve_sparse import factor_aug as factor
+from .linsolve_sparse import solve_factorized_aug as solve_factorized
 
 
 __all__ = ['solve_mle_rev',]

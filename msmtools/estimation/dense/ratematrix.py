@@ -23,11 +23,14 @@ import logging
 import warnings
 import numpy as np
 import scipy as sp
-import scipy.linalg
 import scipy.sparse
+
 from scipy.optimize import fmin_l_bfgs_b
 from scipy.special import exprel
-from msmtools.util.kahandot import kdot, ksum
+from ...util.kahandot import kdot, ksum
+
+from ...estimation import transition_matrix
+from ...analysis import stationary_distribution
 
 
 __all__ = [
@@ -232,8 +235,6 @@ class PseudoGeneratorEstimator(_RateMatrixEstimator):
         super(PseudoGeneratorEstimator, self).__init__(C, dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
 
     def run(self, maxiter=100000, on_error='raise'):
-        from msmtools.estimation import transition_matrix
-        from msmtools.analysis import stationary_distribution
         if self.pi is None:
             self.T = transition_matrix(self.C, reversible=True)
             self.pi = stationary_distribution(self.T)
@@ -249,8 +250,6 @@ class TruncatedLogarithmEstimator(_RateMatrixEstimator):
         super(TruncatedLogarithmEstimator, self).__init__(C, dt, sparsity=sparsity, t_agg=t_agg, pi=pi, tol=tol, maxiter=maxiter, on_error=on_error)
 
     def run(self, maxiter=100000, on_error='raise'):
-        from msmtools.estimation import transition_matrix
-        from msmtools.analysis import stationary_distribution
         if self.pi is None:
             self.T = transition_matrix(self.C, reversible=True)
             self.pi = stationary_distribution(self.T)
@@ -588,7 +587,7 @@ def estimate_rate_matrix(C, dt=1.0, method='KL', sparsity=None,
         What to do then an error happend. When 'raise' is given, raise
         an exception. When 'warn' is given, produce a (Python) warning.
 
-    Retruns
+    Returns
     -------
     K : (N,N) ndarray
         the optimal rate matrix

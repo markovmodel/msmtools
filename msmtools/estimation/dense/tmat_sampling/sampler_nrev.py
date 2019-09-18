@@ -24,7 +24,7 @@ r"""Transition matrix sampling for non-reversible stochastic matrices.
 
 import numpy as np
 
-from msmtools.analysis import stationary_distribution
+from ....analysis import stationary_distribution
 
 
 def update_nrev(alpha, P):

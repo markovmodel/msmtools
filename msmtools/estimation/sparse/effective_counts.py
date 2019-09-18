@@ -25,9 +25,10 @@ r"""This module implements effective transition counts
 import numpy as np
 import scipy.sparse
 
-from msmtools.util.statistics import statistical_inefficiency
-from msmtools.estimation.sparse.count_matrix import count_matrix_coo2_mult
-from msmtools.dtraj.api import number_of_states
+from ...util.statistics import statistical_inefficiency
+from .count_matrix import count_matrix_coo2_mult
+from ...dtraj import number_of_states
+
 from scipy.sparse.csr import csr_matrix
 
 __author__ = 'noe, marscher'

@@ -1,4 +1,3 @@
-
 # This file is part of MSMTools.
 #
 # Copyright (c) 2015, 2014 Computational Molecular Biology Group, Freie Universitaet Berlin (GER)
@@ -32,9 +31,10 @@ import warnings
 
 from scipy.sparse import diags
 
-from msmtools.util.exceptions import ImaginaryEigenValueWarning, SpectralWarning
+from ...util.exceptions import ImaginaryEigenValueWarning, SpectralWarning
 from .stationary_vector import stationary_distribution
 from .assessment import is_reversible
+
 
 def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
     r"""Compute the eigenvalues of a sparse transition matrix.
@@ -75,13 +75,14 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
         if reversible:
             try:
                 v = eigenvalues_rev(T, k, ncv=ncv, mu=mu)
-            except:  # use fallback code, but cast to real
+            except ValueError:  # use fallback code, but cast to real
                 v = scipy.sparse.linalg.eigs(T, k=k, which='LM', return_eigenvectors=False, ncv=ncv).real
         else:
             v = scipy.sparse.linalg.eigs(T, k=k, which='LM', return_eigenvectors=False, ncv=ncv)
 
     ind = np.argsort(np.abs(v))[::-1]
     return v[ind]
+
 
 def eigenvalues_rev(T, k, ncv=None, mu=None):
     r"""Compute the eigenvalues of a reversible, sparse transition matrix.
@@ -122,11 +123,12 @@ def eigenvalues_rev(T, k, ncv=None, mu=None):
     """ symmetrize T """
     smu = np.sqrt(mu)
     D = diags(smu, 0)
-    Dinv = diags(1.0/smu, 0)
+    Dinv = diags(1.0 / smu, 0)
     S = (D.dot(T)).dot(Dinv)
     """Compute eigenvalues using a solver for symmetric/hermititan eigenproblems"""
     evals = scipy.sparse.linalg.eigsh(S, k=k, ncv=ncv, which='LM', return_eigenvectors=False)
     return evals
+
 
 def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
     r"""Compute eigenvectors of given transition matrix.
@@ -172,6 +174,7 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
             eigvec = eigenvectors_nrev(T, k, right=right, ncv=ncv)
             return eigvec
 
+
 def eigenvectors_nrev(T, k, right=True, ncv=None):
     r"""Compute eigenvectors of transition matrix.
 
@@ -202,6 +205,7 @@ def eigenvectors_nrev(T, k, right=True, ncv=None):
         ind = np.argsort(np.abs(val))[::-1]
         return vecs[:, ind]
 
+
 def eigenvectors_rev(T, k, right=True, ncv=None, mu=None):
     r"""Compute eigenvectors of reversible transition matrix.
 
@@ -230,7 +234,7 @@ def eigenvectors_rev(T, k, right=True, ncv=None, mu=None):
     """ symmetrize T """
     smu = np.sqrt(mu)
     D = diags(smu, 0)
-    Dinv = diags(1.0/smu, 0)
+    Dinv = diags(1.0 / smu, 0)
     S = (D.dot(T)).dot(Dinv)
     """Compute eigenvalues, eigenvecs using a solver for
     symmetric/hermititan eigenproblems"""
@@ -243,6 +247,7 @@ def eigenvectors_rev(T, k, right=True, ncv=None, mu=None):
         return eigvec / smu[:, np.newaxis]
     else:
         return eigvec * smu[:, np.newaxis]
+
 
 def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=None):
     r"""Compute the decomposition into left and right eigenvectors.
@@ -294,6 +299,7 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=Non
         return rdl_decomposition_rev(T, k, norm=norm, ncv=ncv, mu=mu)
     else:
         return rdl_decomposition_nrev(T, k, norm=norm, ncv=ncv)
+
 
 def rdl_decomposition_nrev(T, k, norm='standard', ncv=None):
     r"""Compute the decomposition into left and right eigenvectors.
@@ -385,6 +391,7 @@ def rdl_decomposition_nrev(T, k, norm='standard', ncv=None):
     else:
         raise ValueError("Keyword 'norm' has to be either 'standard' or 'reversible'")
 
+
 def rdl_decomposition_rev(T, k, norm='reversible', ncv=None, mu=None):
     r"""Compute the decomposition into left and right eigenvectors.
 
@@ -425,7 +432,7 @@ def rdl_decomposition_rev(T, k, norm='reversible', ncv=None, mu=None):
     """ symmetrize T """
     smu = np.sqrt(mu)
     Dpi = diags(smu, 0)
-    Dinv = diags(1.0/smu, 0)
+    Dinv = diags(1.0 / smu, 0)
     S = (Dpi.dot(T)).dot(Dinv)
     """Compute eigenvalues, eigenvecs using a solver for
     symmetric/hermititan eigenproblems"""
@@ -448,7 +455,7 @@ def rdl_decomposition_rev(T, k, norm='reversible', ncv=None, mu=None):
     R[:, 0] = R[:, 0] / tmp
 
     """Ensure that L[:, 0] is probability vector"""
-    L[:, 0] = L[:, 0] *  tmp
+    L[:, 0] = L[:, 0] * tmp
 
     if norm == 'reversible':
         return R, D, L.T
@@ -464,6 +471,7 @@ def rdl_decomposition_rev(T, k, norm='reversible', ncv=None, mu=None):
         return R, D, L.T
     else:
         raise ValueError("Keyword 'norm' has to be either 'standard' or 'reversible'")
+
 
 def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
     r"""Compute implied time scales of given transition matrix

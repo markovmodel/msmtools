@@ -28,9 +28,8 @@ import numpy as np
 import ctypes
 cimport numpy as np
 
-from msmtools.analysis import statdist, is_connected
-# from .. sparse import transition_matrix
-# from msmtools.estimation import is_connected
+from ....analysis import statdist, is_connected
+
 
 cdef extern from "sample_rev.h":
     void _update(double* C, double* sumC, double* X, int n, int n_step)
@@ -138,10 +137,3 @@ class SamplerRev(object):
             return P, pi
         else:
             return P
-
-
-
-
-
-
-

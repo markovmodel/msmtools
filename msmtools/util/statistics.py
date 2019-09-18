@@ -28,7 +28,7 @@ import math
 import itertools
 import warnings
 
-from msmtools.util import types
+from . import types
 
 
 def _confidence_interval_1d(data, alpha):

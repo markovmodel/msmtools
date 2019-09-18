@@ -24,9 +24,10 @@ r"""Cython implementation of iterative likelihood maximization.
 
 import numpy
 cimport numpy
-import msmtools.estimation
 import warnings
-import msmtools.util.exceptions
+
+from ....util.exceptions import NotConvergedWarning
+from ....analysis import is_connected
 
 
 cdef extern from "_mle_trev_given_pi.h":
@@ -45,7 +46,7 @@ def mle_trev_given_pi(
   assert eps >= 0, 'eps must be non-negative'
   if eps>0:
      warnings.warn('A regularization parameter value eps!=0 is not necessary for convergence. The parameter will be removed in future versions.', DeprecationWarning)
-  assert msmtools.estimation.is_connected(C, directed=False), 'C must be (weakly) connected'
+  assert is_connected(C, directed=False), 'C must be (weakly) connected'
 
   cdef numpy.ndarray[double, ndim=2, mode="c"] c_C = C.astype(numpy.float64, order='C', copy=False)
   cdef numpy.ndarray[double, ndim=1, mode="c"] c_mu = mu.astype(numpy.float64, order='C', copy=False)
@@ -53,7 +54,7 @@ def mle_trev_given_pi(
   assert c_C.shape[0]==c_C.shape[1]==c_mu.shape[0], 'Dimensions of C and mu don\'t agree.'
 
   cdef numpy.ndarray[double, ndim=2, mode="c"] T = numpy.zeros_like(c_C, dtype=numpy.float64, order='C')
-  
+
   err = _mle_trev_given_pi_dense(
         <double*> numpy.PyArray_DATA(T),
         <double*> numpy.PyArray_DATA(c_C),
@@ -71,7 +72,7 @@ def mle_trev_given_pi(
   elif err == -4:
     raise Exception('Some element of pi is zero.')
   elif err == -5:
-    warnings.warn('Reversible transition matrix estimation with fixed stationary distribution didn\'t converge.', msmtools.util.exceptions.NotConvergedWarning)
+    warnings.warn('Reversible transition matrix estimation with fixed stationary distribution didn\'t converge.', NotConvergedWarning)
 
   return T
 

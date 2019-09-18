@@ -30,18 +30,17 @@ __docformat__ = "restructuredtext en"
 import warnings
 
 import numpy as np
-
-from scipy.sparse import csr_matrix
 from scipy.sparse import coo_matrix
+from scipy.sparse import csr_matrix
 from scipy.sparse import issparse
 from scipy.sparse.sputils import isdense
+
 from . import dense
 from . import sparse
-
-from msmtools.util.annotators import shortcut
-from msmtools.dtraj.api import count_states as _count_states
-from msmtools.dtraj.api import number_of_states as _number_of_states
-from msmtools.util.types import ensure_dtraj_list as _ensure_dtraj_list
+from ..dtraj.api import count_states as _count_states
+from ..dtraj.api import number_of_states as _number_of_states
+from ..util.annotators import shortcut
+from ..util.types import ensure_dtraj_list as _ensure_dtraj_list
 
 __author__ = "Benjamin Trendelkamp-Schroer, Martin Scherer, Frank Noe"
 __copyright__ = "Copyright 2014, Computational Molecular Biology Group, FU-Berlin"
@@ -951,7 +950,7 @@ def transition_matrix(C, reversible=False, mu=None, method='auto', **kwargs):
                 if rev_pisym:
                     result = sparse.transition_matrix.transition_matrix_reversible_pisym(C, **kwargs)
                 elif sparse_newton:
-                    from msmtools.estimation.sparse.mle.newton.mle_rev import solve_mle_rev
+                    from .sparse.mle.newton.mle_rev import solve_mle_rev
                     result = solve_mle_rev(C, **kwargs)
                 else:
                     result = sparse.mle.mle_trev.mle_trev(C, **kwargs)
@@ -1287,7 +1286,7 @@ def tmatrix_sampler(C, reversible=False, mu=None, T0=None, nsteps=None, prior='s
         _showSparseConversionWarning()
         C = C.toarray()
 
-    from msmtools.estimation.dense.tmat_sampling.tmatrix_sampler import TransitionMatrixSampler
+    from .dense.tmat_sampling.tmatrix_sampler import TransitionMatrixSampler
     sampler = TransitionMatrixSampler(C, reversible=reversible, mu=mu, P0=T0,
                                       nsteps=nsteps, prior=prior)
     return sampler

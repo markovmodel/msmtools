@@ -31,10 +31,10 @@ import numpy as _np
 from scipy.sparse import issparse as _issparse
 from scipy.sparse import csr_matrix as _csr_matrix
 
-from msmtools.util.annotators import shortcut
+from ..util.annotators import shortcut
 
 # type-checking
-from msmtools.util import types as _types
+from ..util import types as _types
 
 from . import dense
 from . import sparse
@@ -62,7 +62,6 @@ __all__ = ['is_transition_matrix',
            'mfpt',
            'committor',
            'hitting_probability',
-           'pcca',
            'pcca_sets',
            'pcca_assignments',
            'pcca_distributions',
@@ -1447,42 +1446,6 @@ def _pcca_object(T, m):
         T = T.toarray()
     T = _types.ensure_ndarray(T, ndim=2, uniform=True, kind='numeric')
     return dense.pcca.PCCA(T, m)
-
-
-def pcca(T, m):
-    r"""Compute meta-stable sets using PCCA++ _[1] and return the membership of all states to these sets.
-
-    Parameters
-    ----------
-    T : (n, n) ndarray or scipy.sparse matrix
-        Transition matrix
-    m : int
-        Number of metastable sets
-
-    Returns
-    -------
-    clusters : (n, m) ndarray
-        Membership vectors. clusters[i, j] contains the membership of state i to metastable state j
-
-    Notes
-    -----
-    Perron cluster center analysis assigns each microstate a vector of
-    membership probabilities. This assignement is performed using the
-    right eigenvectors of the transition matrix. Membership
-    probabilities are computed via numerical optimization of the
-    entries of a membership matrix.
-
-    References
-    ----------
-    .. [1] Roeblitz, S and M Weber. 2013. Fuzzy spectral clustering by
-        PCCA+: application to Markov state models and data
-        classification. Advances in Data Analysis and Classification 7
-        (2): 147-179
-
-    """
-    warnings.warn('pcca method is deprecated because of its unspecific naming and will be removed soon. '+
-                  'Use pcca_memberships in the future.', DeprecationWarning)
-    return pcca_memberships(T, m)
 
 
 def pcca_memberships(T, m):

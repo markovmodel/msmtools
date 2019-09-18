@@ -32,8 +32,8 @@ We store them either as single column ascii files or as ndarrays of shape (n,) i
 
 import numpy as np
 
-from msmtools.util.annotators import shortcut
-from msmtools.util.types import ensure_dtraj_list as _ensure_dtraj_list
+from ..util.annotators import shortcut
+from ..util.types import ensure_dtraj_list as _ensure_dtraj_list
 
 __docformat__ = "restructuredtext en"
 

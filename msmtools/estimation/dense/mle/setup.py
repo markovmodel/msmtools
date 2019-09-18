@@ -15,7 +15,6 @@ def configuration(parent_package='', top_path=None):
     config.add_extension('mle_trev_given_pi',
                          sources=['mle_trev_given_pi.pyx',
                                   'src/_mle_trev_given_pi.c'],
-                         #depends=['msmtools/util/sigint_handler.h'],
                          include_dirs=['src/', np.get_include()])
 
     return config

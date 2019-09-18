@@ -59,7 +59,7 @@ def count_matrix_coo2_mult(dtrajs, lag, sliding=True, sparse=True, nstates=None)
     """
     # Determine number of states
     if nstates is None:
-        from msmtools.dtraj import number_of_states
+        from ...dtraj import number_of_states
         nstates = number_of_states(dtrajs)
     rows = []
     cols = []
