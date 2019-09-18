@@ -45,10 +45,10 @@ Topic :: Scientific/Engineering :: Physics
 
 """
 
-def get_cmdclass():
-    versioneer_cmds = versioneer.get_cmdclass()
 
-    from setuptools.command.build_ext import build_ext
+def get_cmdclass():
+    from numpy.distutils.command.build_ext import build_ext
+
     class BuildExt(build_ext):
         def build_extensions(self):
             # setup OpenMP support
@@ -69,8 +69,9 @@ def get_cmdclass():
 
             build_ext.build_extensions(self)
 
-    versioneer_cmds['build_ext'] = BuildExt
-    return versioneer_cmds
+    cmd = versioneer.get_cmdclass()
+    cmd['build_ext'] = BuildExt
+    return cmd
 
 
 metadata = dict(
