@@ -92,7 +92,9 @@ metadata = dict(
                       'scipy>=0.11',
                       'decorator',
                       ],
+    setup_requires=['numpy', 'cython'],
     zip_safe=False,
+    cmdclass=get_cmdclass(),
 )
 
 
@@ -109,12 +111,10 @@ def configuration(parent_package='', top_path=None):
 
 
 # not installing?
-if len(sys.argv) == 1 or (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
+if not(len(sys.argv) == 1 or (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
                                                   sys.argv[1] in ('--help-commands',
                                                                   '--version',
-                                                                  'clean'))):
-    pass
-else:
+                                                                  'clean')))):
     metadata['configuration'] = configuration
 
 if __name__ == '__main__':
