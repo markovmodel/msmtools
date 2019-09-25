@@ -74,7 +74,7 @@ def eigenvalues(T, k=None, reversible=False, mu=None):
     if reversible:
         try:
             evals = eigenvalues_rev(T, k=k, mu=mu)
-        except:
+        except ValueError:
             evals = eigvals(T).real  # use fallback code but cast to real
     else:
         evals = eigvals(T)  # nonreversible
@@ -313,6 +313,9 @@ def rdl_decomposition(T, k=None, reversible=False, norm='standard', mu=None):
         R, D, L = rdl_decomposition_rev(T, norm=norm, mu=mu)
     else:
         R, D, L = rdl_decomposition_nrev(T, norm=norm)
+
+    if reversible or norm == 'reversible':
+        D = D.real
 
     if k is None:
         return R, D, L

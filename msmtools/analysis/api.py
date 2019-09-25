@@ -718,7 +718,7 @@ def mfpt(T, target, origin=None, tau=1, mu=None):
 
 
 def hitting_probability(T, target):
-    """
+    r"""
     Computes the hitting probabilities for all states to the target states.
 
     The hitting probability of state i to the target set A is defined as the minimal,
@@ -732,7 +732,7 @@ def hitting_probability(T, target):
     ----------
     T : (M, M) ndarray or scipy.sparse matrix
         Transition matrix
-    B : array_like
+    target: array_like
         List of integer state labels for the target set
 
     Returns
