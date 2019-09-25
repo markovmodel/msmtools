@@ -296,9 +296,13 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=Non
         else:
             norm = 'standard'
     if reversible:
-        return rdl_decomposition_rev(T, k, norm=norm, ncv=ncv, mu=mu)
+        R, D, L = rdl_decomposition_rev(T, k, norm=norm, ncv=ncv, mu=mu)
     else:
-        return rdl_decomposition_nrev(T, k, norm=norm, ncv=ncv)
+        R, D, L = rdl_decomposition_nrev(T, k, norm=norm, ncv=ncv)
+
+    if reversible or norm == 'reversible':
+        D = D.real
+    return R, D, L
 
 
 def rdl_decomposition_nrev(T, k, norm='standard', ncv=None):

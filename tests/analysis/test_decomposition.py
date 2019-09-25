@@ -32,7 +32,7 @@ from scipy.linalg import eig, eigvals
 from msmtools.util.exceptions import SpectralWarning, ImaginaryEigenValueWarning
 from msmtools.util.birth_death_chain import BirthDeathChain
 
-from msmtools.analysis import stationary_distribution, eigenvalues, eigenvectors
+from msmtools.analysis import stationary_distribution, eigenvalues, eigenvectors, is_reversible
 from msmtools.analysis import rdl_decomposition, timescales
 
 ################################################################################
@@ -162,6 +162,7 @@ class TestDecompositionDense(unittest.TestCase):
 
     def test_rdl_decomposition(self):
         P = self.bdc.transition_matrix()
+        assert is_reversible(P)
         mu = self.bdc.stationary_distribution()
 
         """Non-reversible"""
@@ -194,6 +195,7 @@ class TestDecompositionDense(unittest.TestCase):
 
         """k=None"""
         Rn, Dn, Ln = rdl_decomposition(P, norm='reversible')
+        assert Dn.dtype in (np.float32, np.float64)
         Xn = np.dot(Ln, Rn)
         """Right-eigenvectors"""
         assert_allclose(np.dot(P, Rn), np.dot(Rn, Dn))

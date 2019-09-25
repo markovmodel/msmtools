@@ -28,3 +28,5 @@ from . import effective_counts
 from . import likelihood
 from . import transition_matrix
 from . import prior
+
+from .mle import mle_trev, mle_trev_given_pi
