@@ -62,8 +62,7 @@ class TransitionMatrixSampler(object):
                 nsteps = 1  # just force to 1, because this is independent sampling
                 self.sampler = SamplerNonRev(C-1.0)
             else:
-                msg = "Non reversible sampling with fixed stationary vector not implemented"
-                raise ValueError(msg)
+                raise ValueError('Non reversible sampling with fixed stationary vector not implemented')
 
         # remember number of steps to decorrelate between samples
         self.nsteps = nsteps
