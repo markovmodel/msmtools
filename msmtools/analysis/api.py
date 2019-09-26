@@ -353,6 +353,21 @@ def stationary_distribution(T):
     return mu
 
 
+def _check_k(T, k):
+    # ensure k is not exceeding shape of transition matrix
+    if k is None:
+        return
+    n = T.shape[0]
+    if _issparse(T):
+        # for sparse matrices we can compute an eigendecomposition of n - 1
+        new_k = min(n - 1, k)
+    else:
+        new_k = min(n, k)
+    if new_k < k:
+        warnings.warn('truncated eigendecomposition to contain %s components' % new_k, category=UserWarning)
+    return new_k
+
+
 def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
     r"""Find eigenvalues of the transition matrix.
 
@@ -399,6 +414,7 @@ def eigenvalues(T, k=None, ncv=None, reversible=False, mu=None):
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
+    k =_check_k(T, k)
     if _issparse(T):
         return sparse.decomposition.eigenvalues(T, k, ncv=ncv, reversible=reversible, mu=mu)
     else:
@@ -457,6 +473,7 @@ def timescales(T, tau=1, k=None, ncv=None, reversible=False, mu=None):
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
+    k =_check_k(T, k)
     if _issparse(T):
         return sparse.decomposition.timescales(T, tau=tau, k=k, ncv=ncv,
                                                reversible=reversible, mu=mu)
@@ -537,17 +554,15 @@ def eigenvectors(T, k=None, right=True, ncv=None, reversible=False, mu=None):
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
+    k = _check_k(T, k)
     if _issparse(T):
-        if right:
-            return sparse.decomposition.eigenvectors(T, k=k, right=right, ncv=ncv)
-        else:
-            return sparse.decomposition.eigenvectors(T, k=k, right=right, ncv=ncv).T
-
+        ev = sparse.decomposition.eigenvectors(T, k=k, right=right, ncv=ncv, reversible=reversible, mu=mu)
     else:
-        if right:
-            return dense.decomposition.eigenvectors(T, k=k, right=right)
-        else:
-            return dense.decomposition.eigenvectors(T, k=k, right=right).T
+        ev = dense.decomposition.eigenvectors(T, k=k, right=right, reversible=reversible, mu=mu)
+
+    if not right:
+        ev = ev.T
+    return ev
 
 
 def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=None):
@@ -624,6 +639,7 @@ def rdl_decomposition(T, k=None, norm='auto', ncv=None, reversible=False, mu=Non
 
     """
     T = _types.ensure_ndarray_or_sparse(T, ndim=2, uniform=True, kind='numeric')
+    k = _check_k(T, k)
     if _issparse(T):
         return sparse.decomposition.rdl_decomposition(T, k=k, norm=norm, ncv=ncv,
                                                       reversible=reversible, mu=mu)
