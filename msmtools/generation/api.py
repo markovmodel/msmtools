@@ -42,7 +42,7 @@ class MarkovChainSampler(object):
 
     """
 
-    def __init__(self, P, dt=1):
+    def __init__(self, P, dt=1, random_state=None):
         """
         Constructs a sampling object with transition matrix P. The results will be produced every dt'th time step
 
@@ -71,12 +71,26 @@ class MarkovChainSampler(object):
         # initialize mu
         self.mudist = None
 
+        self.random_state = random_state
+
         # generate discrete random value generators for each line
-        self.rgs = np.ndarray((self.n), dtype=object)
+        self.rgs = np.ndarray(self.n, dtype=object)
         from scipy.stats import rv_discrete
-        for i in range(self.n):
-            nz = np.nonzero(self.P[i])
-            self.rgs[i] = rv_discrete(values=(nz, self.P[i, nz]))
+        for i, row in enumerate(self.P):
+            nz = row.nonzero()[0]
+            self.rgs[i] = rv_discrete(values=(nz, row[nz]))
+
+    def _get_start_state(self):
+        if self.mudist is None:
+            # compute mu, the stationary distribution of P
+            from ..analysis import stationary_distribution
+            from scipy.stats import rv_discrete
+
+            mu = stationary_distribution(self.P)
+            self.mudist = rv_discrete(values=(np.arange(self.n), mu))
+        # sample starting point from mu
+        start = self.mudist.rvs(random_state=self.random_state)
+        return start
 
     def trajectory(self, N, start=None, stop=None):
         """
@@ -97,22 +111,12 @@ class MarkovChainSampler(object):
         stop = types.ensure_int_vector_or_None(stop, require_order=False)
 
         if start is None:
-            if self.mudist is None:
-                # compute mu, the stationary distribution of P
-                from ..analysis import stationary_distribution
-                from scipy.stats import rv_discrete
-
-                mu = stationary_distribution(self.P)
-                self.mudist = rv_discrete(values=(np.arange(self.n), mu))
-            # sample starting point from mu
-            start = self.mudist.rvs()
+          start = self._get_start_state()
 
         # evaluate stopping set
-        stopat = np.ndarray((self.n), dtype=bool)
-        stopat[:] = False
-        if (stop is not None):
-            for s in np.array(stop):
-                stopat[s] = True
+        stopat = np.zeros(self.n, dtype=bool)
+        if stop is not None:
+            stopat[np.array(stop)] = True
 
         # result
         traj = np.zeros(N, dtype=int)
@@ -122,9 +126,10 @@ class MarkovChainSampler(object):
             return traj[:1]
         # else run until end or stopping state
         for t in range(1, N):
-            traj[t] = self.rgs[traj[t - 1]].rvs()
+            traj[t] = self.rgs[traj[t - 1]].rvs(random_state=self.random_state)
             if stopat[traj[t]]:
-                return traj[:t+1]
+                traj = np.resize(traj, t + 1)
+                break
         # return
         return traj
 
@@ -149,7 +154,7 @@ class MarkovChainSampler(object):
         return trajs
 
 
-def generate_traj(P, N, start=None, stop=None, dt=1):
+def generate_traj(P, N, start=None, stop=None, dt=1, random_state=None):
     """
     Generates a realization of the Markov chain with transition matrix P.
 
@@ -167,6 +172,10 @@ def generate_traj(P, N, start=None, stop=None, dt=1):
     dt : int
         trajectory will be saved every dt time steps.
         Internally, the dt'th power of P is taken to ensure a more efficient simulation.
+    random_state : None or int or numpy.random.RandomState instance, optional
+        This parameter defines the RandomState object to use for drawing random variates.
+        If None, the global np.random state is used. If integer, it is used to seed the local RandomState instance.
+        Default is None.
 
     Returns
     -------
@@ -174,11 +183,11 @@ def generate_traj(P, N, start=None, stop=None, dt=1):
         A discrete trajectory with length N/dt
 
     """
-    sampler = MarkovChainSampler(P, dt=dt)
+    sampler = MarkovChainSampler(P, dt=dt, random_state=random_state)
     return sampler.trajectory(N, start=start, stop=stop)
 
 
-def generate_trajs(P, M, N, start=None, stop=None, dt=1):
+def generate_trajs(P, M, N, start=None, stop=None, dt=1, random_state=None):
     """
     Generates multiple realizations of the Markov chain with transition matrix P.
 
@@ -198,6 +207,10 @@ def generate_trajs(P, M, N, start=None, stop=None, dt=1):
     dt : int
         trajectory will be saved every dt time steps.
         Internally, the dt'th power of P is taken to ensure a more efficient simulation.
+    random_state : None or int or numpy.random.RandomState instance, optional
+        This parameter defines the RandomState object to use for drawing random variates.
+        If None, the global np.random state is used. If integer, it is used to seed the local RandomState instance.
+        Default is None.
 
     Returns
     -------
@@ -205,7 +218,7 @@ def generate_trajs(P, M, N, start=None, stop=None, dt=1):
         A discrete trajectory with length N/dt
 
     """
-    sampler = MarkovChainSampler(P, dt=dt)
+    sampler = MarkovChainSampler(P, dt=dt, random_state=random_state)
     return sampler.trajectories(M, N, start=start, stop=stop)
 
 
@@ -235,12 +248,12 @@ def transition_matrix_metropolis_1d(E, d=1.0):
 
     """
     # check input
-    if (d <= 0 or d > 1):
+    if d <= 0 or d > 1:
         raise ValueError('Diffusivity must be in (0,1]. Trying to set the invalid value', str(d))
     # init
     n = len(E)
     P = np.zeros((n, n))
-    # set offdiagonals
+    # set off diagonals
     P[0, 1] = 0.5 * d * min(1.0, math.exp(-(E[1] - E[0])))
     for i in range(1, n - 1):
         P[i, i - 1] = 0.5 * d * min(1.0, math.exp(-(E[i - 1] - E[i])))
