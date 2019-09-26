@@ -172,12 +172,15 @@ def generate_traj(P, N, start=None, stop=None, dt=1, random_state=None):
     dt : int
         trajectory will be saved every dt time steps.
         Internally, the dt'th power of P is taken to ensure a more efficient simulation.
+    random_state : None or int or numpy.random.RandomState instance, optional
+        This parameter defines the RandomState object to use for drawing random variates.
+        If None, the global np.random state is used. If integer, it is used to seed the local RandomState instance.
+        Default is None.
 
     Returns
     -------
     traj_sliced : (N/dt, ) ndarray
         A discrete trajectory with length N/dt
-        :param random_state:
 
     """
     sampler = MarkovChainSampler(P, dt=dt, random_state=random_state)
@@ -204,6 +207,10 @@ def generate_trajs(P, M, N, start=None, stop=None, dt=1, random_state=None):
     dt : int
         trajectory will be saved every dt time steps.
         Internally, the dt'th power of P is taken to ensure a more efficient simulation.
+    random_state : None or int or numpy.random.RandomState instance, optional
+        This parameter defines the RandomState object to use for drawing random variates.
+        If None, the global np.random state is used. If integer, it is used to seed the local RandomState instance.
+        Default is None.
 
     Returns
     -------
