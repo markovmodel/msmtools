@@ -65,6 +65,14 @@ class TestTrajGeneration(unittest.TestCase):
         piest = msmest.count_states(ss) / float(N)
         np.testing.assert_allclose(piest, pi, atol=0.025)
 
+    def test_transitionmatrix(self):
+        # test if transition matrix can be reconstructed
+        N = 5000
+        trajs = msmgen.generate_traj(self.P, N, random_state=self.random_state)
+        C = msmest.count_matrix(trajs, 1, sparse_return=False)
+        T = msmest.transition_matrix(C)
+        np.testing.assert_allclose(T, self.P, atol=.01)
+
     def test_stop_eq_start(self):
         M = 10
         N = 10

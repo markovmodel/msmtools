@@ -68,28 +68,17 @@ class MarkovChainSampler(object):
             self.P = np.array(P)
         self.n = self.P.shape[0]
 
-        # initialize mu
-        self.mudist = None
-
+        if random_state is None:
+            random_state = np.random.RandomState()
         self.random_state = random_state
 
-        # generate discrete random value generators for each line
-        self.rgs = np.ndarray(self.n, dtype=object)
-        from scipy.stats import rv_discrete
-        for i, row in enumerate(self.P):
-            nz = row.nonzero()[0]
-            self.rgs[i] = rv_discrete(values=(nz, row[nz]))
-
     def _get_start_state(self):
-        if self.mudist is None:
-            # compute mu, the stationary distribution of P
-            from ..analysis import stationary_distribution
-            from scipy.stats import rv_discrete
+        # compute mu, the stationary distribution of P
+        from ..analysis import stationary_distribution
 
-            mu = stationary_distribution(self.P)
-            self.mudist = rv_discrete(values=(np.arange(self.n), mu))
-        # sample starting point from mu
-        start = self.mudist.rvs(random_state=self.random_state)
+        mu = stationary_distribution(self.P)
+        start = self.random_state.choice(self.n, p=mu)
+
         return start
 
     def trajectory(self, N, start=None, stop=None):
@@ -113,24 +102,19 @@ class MarkovChainSampler(object):
         if start is None:
           start = self._get_start_state()
 
-        # evaluate stopping set
-        stopat = np.zeros(self.n, dtype=bool)
-        if stop is not None:
-            stopat[np.array(stop)] = True
-
         # result
         traj = np.zeros(N, dtype=int)
         traj[0] = start
         # already at stopping state?
-        if stopat[traj[0]]:
+        if traj[0] == stop:
             return traj[:1]
         # else run until end or stopping state
         for t in range(1, N):
-            traj[t] = self.rgs[traj[t - 1]].rvs(random_state=self.random_state)
-            if stopat[traj[t]]:
+            traj[t] = self.random_state.choice(self.n, p=self.P[traj[t - 1]])
+            if traj[t] == stop:
                 traj = np.resize(traj, t + 1)
                 break
-        # return
+
         return traj
 
     def trajectories(self, M, N, start=None, stop=None):
