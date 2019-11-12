@@ -21,7 +21,7 @@ __author__ = 'noe'
 import numpy as np
 import scipy.sparse as scisp
 import numbers
-import collections
+import collections.abc
 
 # ======================================================================================================================
 # BASIC TYPE CHECKS
@@ -127,7 +127,7 @@ def is_string(s):
     return isinstance(s, str)
 
 def is_iterable(I):
-    return isinstance(I, collections.Iterable)
+    return isinstance(I, collections.abc.Iterable)
 
 def is_list(S):
     # FIXME: name states check for list, but checks for tuple __and__ list. Thats confusing.
