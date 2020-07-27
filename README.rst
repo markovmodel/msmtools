@@ -1,3 +1,7 @@
+**This package will soon be no longer or only very sparsely maintained in favor of** `scikit-time <https://github.com/scikit-time/scikit-time>`__.
+
+
+
 MSMTools
 ========
 
