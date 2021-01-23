@@ -28,7 +28,7 @@
 #include "sample_rev.h"
 #include "util.h"
 
-#define _square(x) x*x
+double _square(x) { return x*x; }
 
 
 int _accept_step(double log_prob_old, double log_prob_new)
@@ -62,7 +62,7 @@ double _update_step(double v0, double v1, double v2, double c0, double c1, doubl
     double b = (c1 - c0) * v2 + (c2 - c0) * v1;
     double c = -c0 * v1 * v2;
     double v_bar = 0.5 * ( -b + sqrt( b * b - 4 * a * c ) ) / a;
-    double h = c1 / _square((v_bar + v1) ) + c2 / _square((v_bar + v2)) - c0 / _square(v_bar);
+    double h = c1 / _square(v_bar + v1) + c2 / _square(v_bar + v2) - c0 / _square(v_bar);
     double k = -h * v_bar * v_bar;
     double theta = -1.0 / ( h * v_bar );
     //
