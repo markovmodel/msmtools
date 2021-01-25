@@ -14,7 +14,7 @@ before_install:
 - conda install conda-build conda-verify -qy
 
 script:
-- conda mambabuild tools/conda-recipe --numpy=$CONDA_NPY -c conda-forge
+- conda mambabuild tools/conda-recipe --numpy=$CONDA_NPY -c conda-forge -qy
 
 after_script:
 - bash <(curl -s https://codecov.io/bash) -f $HOME/coverage.xml -e CONDA_PY
