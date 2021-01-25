@@ -11,12 +11,12 @@ environment:
     - CONDA_PY: "36"
       CONDA_NUMPY: "114"
 
-    - CONDA_PY: "37"
+    - CONDA_PY: "39"
       CONDA_NUMPY: "115"
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%;"
-  - conda install boa
+  - conda install boa -c conda-forge
   # Build the compiled extension and run the project tests
   - conda mambabuild -c conda-forge -q tools/conda-recipe --numpy=%CONDA_NUMPY%"
 
