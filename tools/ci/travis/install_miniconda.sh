@@ -9,6 +9,8 @@ function install_miniconda {
 	bash mc.sh -b -f -p $TARGET
 	# taken from conda-smithy
 	conda config --remove channels defaults
+	conda config --set always_yes true
+	conda config --set quiet true
 	conda config --add channels defaults
 	conda config --add channels conda-forge
 	conda config --set show_channel_urls true
