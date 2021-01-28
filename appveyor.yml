@@ -15,7 +15,7 @@ environment:
       CONDA_NUMPY: "115"
 
 install:
-  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%;"
+  - CALL "%PYTHON%\\Scripts\\activate.bat"
   - conda config --set always_yes true
   - conda config --set quiet true 
   - conda config --add channels conda-forge
