@@ -10,10 +10,11 @@ env:
 
 before_install:
 - tools/ci/travis/install_miniconda.sh
-- conda install conda-build=3.15 conda-verify -qy
+- conda install mamba boa
+- conda install conda-build conda-verify
 
 script:
-- conda build tools/conda-recipe --numpy=$CONDA_NPY -c conda-forge
+- conda mambabuild tools/conda-recipe --numpy=$CONDA_NPY -c conda-forge 
 
 after_script:
 - bash <(curl -s https://codecov.io/bash) -f $HOME/coverage.xml -e CONDA_PY
