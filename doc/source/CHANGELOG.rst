@@ -1,8 +1,21 @@
 Changelog
 =========
 
+1.2.6 (02-10-21)
+----------------
+
+**Fixes:**
+- Fixed transition matrix sampling drawing from wrong distribution. #125
+
+
+1.2.5 (11-06-19)
+----------------
+
+[generation] replaced scipy.stats.rv_discrete by np.random.choice #123
+
+
 1.2.4 (11-12-18)
----------------
+----------------
 
 **Fixes:**
 - Effective count matrix parallel evaluation fixes. #116, #117
