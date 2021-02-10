@@ -28,7 +28,7 @@
 #include "sample_rev.h"
 #include "util.h"
 
-double _square(x) { return x*x; }
+static inline double _square(double x) { return x*x; }
 
 
 int _accept_step(double log_prob_old, double log_prob_new)
