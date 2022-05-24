@@ -24,7 +24,6 @@ r"""
 
 import numpy as np
 from scipy.sparse import csr_matrix, diags, bmat
-from scipy.sparse.construct import _compressed_sparse_stack
 from scipy.sparse.linalg import LinearOperator
 
 cimport cython
