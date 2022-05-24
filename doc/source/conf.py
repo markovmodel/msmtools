@@ -29,7 +29,6 @@ mock_imports = [
     'scipy.sparse.csr',
     'scipy.sparse.csgraph',
     'scipy.sparse.sputils',
-    'scipy.sparse.construct',
     'scipy.sparse.linalg',
 ]
 

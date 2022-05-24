@@ -26,7 +26,7 @@ expectation values for a given transition matrix.
 import numpy as np
 
 from scipy.sparse import coo_matrix
-from scipy.sparse.construct import diags
+from scipy.sparse import diags
 
 from .stationary_vector import stationary_distribution
 

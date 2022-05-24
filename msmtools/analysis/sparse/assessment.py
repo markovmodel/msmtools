@@ -22,7 +22,7 @@
 
 from scipy.sparse.csgraph import connected_components
 from scipy.sparse.sputils import isdense
-from scipy.sparse.construct import diags
+from scipy.sparse import diags
 
 from ...util.numeric import allclose_sparse
 
